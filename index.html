@@ -611,6 +611,125 @@
 .more-btn i { width: 30px; text-align: center; font-size: 1.3rem; color: var(--accent-color); }
 .more-btn.msg i { color: #0084FF; }
 
+/* ===== ÚVODNÁ NAČÍTAVACIA OBRAZOVKA (VINYL) ===== */
+#app-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image:
+        linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
+        url('https://i.postimg.cc/MKWjf3dD/IMG-20251210-160137.png');
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: opacity 0.5s ease;
+}
+#app-splash.splash-hide { opacity: 0; pointer-events: none; }
+
+.splash-vinyl-wrap {
+    position: relative;
+    width: 46vw;
+    height: 46vw;
+    max-width: 230px;
+    max-height: 230px;
+    margin-bottom: 26px;
+}
+.splash-vinyl {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 32%, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%),
+        repeating-radial-gradient(circle at center, #1c1a18 0px, #1c1a18 2px, #050505 3px, #050505 5px);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.7), inset 0 0 0 3px rgba(255,255,255,0.06);
+    animation: splashSpin 2.6s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@keyframes splashSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+.splash-vinyl-label {
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 3px var(--accent-color), 0 2px 6px rgba(0,0,0,0.6);
+    position: relative;
+}
+.splash-vinyl-label img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.splash-vinyl-label::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 10px; height: 10px;
+    background: #000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
+}
+.splash-tonearm {
+    position: absolute;
+    top: -6%;
+    right: 2%;
+    width: 8%;
+    height: 8%;
+    background: radial-gradient(circle, #ddd 40%, #888 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    z-index: 2;
+}
+.splash-tonearm::after {
+    content: "";
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 68%;
+    height: 14%;
+    background: linear-gradient(to right, #ccc, #888);
+    border-radius: 3px;
+    transform-origin: left center;
+    transform: rotate(48deg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.splash-wordmark {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
+    color: var(--accent-color);
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 3px;
+}
+.splash-tagline {
+    font-size: 0.85rem;
+    color: #ddd;
+    letter-spacing: 3px;
+    margin-top: 4px;
+    text-shadow: 1px 1px 0 #000;
+}
+.splash-loading {
+    margin-top: 30px;
+    font-size: 0.95rem;
+    color: #bbb;
+    letter-spacing: 2px;
+}
+.splash-loading .dots span {
+    opacity: 0;
+    animation: splashDots 1.4s infinite;
+}
+.splash-loading .dots span:nth-child(2) { animation-delay: 0.2s; }
+.splash-loading .dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes splashDots {
+    0%, 20% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 /* --- NOVÉ: tlačidlá v detaile koncertu --- */
 .btn-cal { color: var(--accent-color); border: 1px solid var(--accent-color); }
 .btn-share { color: #fff; border: 1px solid #fff; }
@@ -645,6 +764,20 @@
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
+
+    <div id="app-splash">
+        <div class="splash-vinyl-wrap">
+            <div class="splash-vinyl">
+                <div class="splash-vinyl-label">
+                    <img src="vinyl-label.png" alt="">
+                </div>
+            </div>
+            <div class="splash-tonearm"></div>
+        </div>
+        <div class="splash-wordmark">KÔŇCERTY</div>
+        <div class="splash-tagline">PUNK · SKA · ROCK'N'ROLL</div>
+        <div class="splash-loading">NAČÍTAVAM<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+    </div>
 
     <div id="screen-calendar" class="screen">
         <div class="page-header">
@@ -1507,7 +1640,18 @@ window.addEventListener("popstate", function(event) {
         showScreen("screen-home");
     }
 });
-        loadApp();
+        const splashStartTime = Date.now();
+        function hideSplash() {
+            const el = document.getElementById('app-splash');
+            if (!el) return;
+            const minTime = 1300;
+            const wait = Math.max(0, minTime - (Date.now() - splashStartTime));
+            setTimeout(() => {
+                el.classList.add('splash-hide');
+                setTimeout(() => { el.style.display = 'none'; }, 550);
+            }, wait);
+        }
+        loadApp().finally(hideSplash);
 
         // Ak je vyplnený Spotify playlist, pridaj tlačidlo do SIETÍ
         if (spotifyPlaylistUrl) {
