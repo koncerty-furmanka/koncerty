@@ -1644,7 +1644,7 @@ window.addEventListener("popstate", function(event) {
         function hideSplash() {
             const el = document.getElementById('app-splash');
             if (!el) return;
-            const minTime = 1300;
+            const minTime = 2300;
             const wait = Math.max(0, minTime - (Date.now() - splashStartTime));
             setTimeout(() => {
                 el.classList.add('splash-hide');
