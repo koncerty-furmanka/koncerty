@@ -505,6 +505,17 @@
     margin: 18px 4px 8px 4px;
     letter-spacing: 2px;
 }
+.cal-empty {
+    background: rgba(0,0,0,0.55);
+    border: 2px dashed rgba(255,255,255,0.3);
+    color: #ccc;
+    text-align: center;
+    padding: 24px 16px;
+    margin-bottom: 9px;
+    font-size: 1.05rem;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+}
 .cal-row {
     display: flex;
     align-items: center;
@@ -1355,8 +1366,8 @@ function handleBackNavClick() {
         // Voliteľný Spotify playlist — vlož link a tlačidlo sa samo pridá do SIETÍ
         const spotifyPlaylistUrl = ""; // napr. "https://open.spotify.com/playlist/..."
 
-        const aboutUrl = "https://gist.githubusercontent.com/Martiner11/98b726f8972949d2725abec254c32102/raw/340f9a408e747fdfce6ff8dfd6e52d035dc811e6/onas.csv"; 
-        const gistUrl = "https://gist.githubusercontent.com/Martiner11/98b726f8972949d2725abec254c32102/raw/data.csv";
+        const aboutUrl = "https://gist.githubusercontent.com/koncerty-furmanka/b0b92b8561e564c9fbe80e9d4655865c/raw/onas.csv"; 
+        const gistUrl = "https://gist.githubusercontent.com/koncerty-furmanka/b0b92b8561e564c9fbe80e9d4655865c/raw/data.csv";
         const defaultUpcomingImg = "https://i.postimg.cc/TY3P8RQH/Najblizsie-koncerty.webp";
         
         let updateTimer = null;
@@ -1624,10 +1635,10 @@ const clean = cols.map(c =>
                     };
                     const up = allEventsList.filter(e => e.isUpcoming).sort((a, b) => a.date - b.date);
                     const past = allEventsList.filter(e => !e.isUpcoming).sort((a, b) => b.date - a.date);
-                    let calHtml = '';
-                    if (up.length) calHtml += '<div class="cal-section-title">NAJBLIŽŠIE</div>' + up.map(fmtRow).join('');
-                    if (past.length) calHtml += '<div class="cal-section-title">UŽ BOLO</div>' + past.map(fmtRow).join('');
-                    calEl.innerHTML = calHtml || '<p style="text-align:center; padding-top:40px;">ZATIAĽ PRÁZDNO...</p>';
+                    let calHtml = '<div class="cal-section-title">NAJBLIŽŠIE KONCERTY</div>';
+                    calHtml += up.length ? up.map(fmtRow).join('') : '<div class="cal-empty">Zatiaľ nie sú naplánované žiadne koncerty.</div>';
+                    if (past.length) calHtml += '<div class="cal-section-title">PREDOŠLÉ KONCERTY</div>' + past.map(fmtRow).join('');
+                    calEl.innerHTML = calHtml;
                 }
 
                 // ===== KAPELY (A-Z) =====
