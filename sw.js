@@ -1,7 +1,7 @@
 // Kôňcerty – service worker
 // Zabezpečuje: rýchlejší štart, offline shell, vždy čerstvé dáta z Gistu, vždy čerstvý HTML shell.
 
-const CACHE = 'koncerty-v2';
+const CACHE = 'koncerty-v3';
 const SHELL = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
@@ -57,7 +57,11 @@ self.addEventListener('fetch', (e) => {
       if (cached) return cached;
       return fetch(req)
         .then((resp) => {
-          if (resp && resp.ok && url.origin === self.location.origin) {
+          // resp.ok platí len pre odpovede z vlastnej domény.
+          // Plagáty z i.postimg.cc sú cudzozemské (cross-origin) -> prehliadač vráti
+          // "opaque" odpoveď (nedá sa jej pozrieť do vnútra), ale STÁLE sa dá uložiť
+          // do cache a nabudúce servírovať okamžite bez sťahovania.
+          if (resp && (resp.ok || resp.type === 'opaque')) {
             const copy = resp.clone();
             caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
           }
