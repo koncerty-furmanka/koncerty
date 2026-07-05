@@ -171,8 +171,8 @@
 
         /* Tlačidlá a efekty */
         .action-btn { cursor: pointer; display: block; }
-        .btn-image, .small-btn-img, .back-btn, .social-link, .contact-btn { transition: transform 0.15s ease-out; }
-        .img-btn-wrapper:active .btn-image, .action-btn:active .small-btn-img, .back-btn:active { transform: scale(0.9) rotate(-2deg); }
+        .btn-image, .small-btn-img, .social-link, .contact-btn { transition: transform 0.15s ease-out; }
+        .img-btn-wrapper:active .btn-image, .action-btn:active .small-btn-img { transform: scale(0.9) rotate(-2deg); }
         .small-btn-img { width: 100%; height: auto; display: block; filter: drop-shadow(3px 5px 5px rgba(0,0,0,0.9)); }
 
 .size-s { width: 16vh; } 
@@ -194,27 +194,6 @@
     margin: 10px 0 5px 0;
     position: relative;
 }
-.back-btn { 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.6);
-    border: 2px solid rgba(255,255,255,0.25);
-    color: var(--accent-color);
-    font-size: 1.25rem;
-    cursor: pointer;
-    filter: drop-shadow(2px 2px 3px #000);
-    transition: transform 0.15s ease-out;
-    -webkit-tap-highlight-color: transparent;
-}
-.back-btn:active { transform: translateY(-50%) scale(0.85); background: rgba(0,0,0,0.8); }
 .page-title { 
     font-size: 2rem; 
     color: var(--accent-color); 
@@ -478,6 +457,27 @@
 .nav-item.active { color: var(--accent-color); }
 .nav-item.active i { filter: drop-shadow(0 0 6px rgba(255,204,0,0.55)); }
 
+#exit-toast {
+    position: fixed;
+    bottom: 78px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: rgba(0,0,0,0.92);
+    border: 2px solid var(--accent-color);
+    color: #fff;
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    border-radius: 4px;
+    z-index: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+    text-shadow: none;
+}
+#exit-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* miesto pre lištu naspodku všetkých obrazoviek */
 .screen { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 #screen-home.active { height: calc(100dvh - 60px); }
@@ -618,6 +618,60 @@
 .more-btn:active { transform: scale(0.97); }
 .more-btn i { width: 30px; text-align: center; font-size: 1.3rem; color: var(--accent-color); }
 .more-btn.msg i { color: #0084FF; }
+
+/* ===== NAPÍŠ NÁM (formulár) ===== */
+.msg-form { padding: 16px 18px 30px 18px; }
+.msg-intro {
+    font-size: 1rem;
+    color: #ddd;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 22px;
+    text-shadow: 1px 1px 0 #000;
+}
+.msg-input, .msg-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0,0,0,0.6);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-family: var(--primary-font);
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    padding: 13px 14px;
+    margin-bottom: 14px;
+    text-transform: none !important;
+}
+.msg-textarea { min-height: 130px; resize: vertical; }
+.msg-input::placeholder, .msg-textarea::placeholder { color: #999; text-transform: uppercase; }
+.msg-input:focus, .msg-textarea:focus { outline: none; border-color: var(--accent-color); }
+.msg-submit-btn {
+    width: 100%;
+    background: var(--accent-color);
+    color: #000;
+    border: 3px solid #000;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.msg-submit-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 rgba(0,0,0,0.9); }
+.msg-submit-btn:disabled { opacity: 0.6; }
+#msg-status {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    min-height: 1.2em;
+}
+.msg-status-ok { color: #7CFC00; }
+.msg-status-err { color: #ff5c5c; }
 
 /* ===== ÚVODNÁ NAČÍTAVACIA OBRAZOVKA (VINYL) ===== */
 #app-splash {
@@ -789,7 +843,6 @@
 
     <div id="screen-calendar" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">KALENDÁR</div>
         </div>
         <div id="calendar-list" class="cal-list">
@@ -799,7 +852,6 @@
 
     <div id="screen-bands" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">KAPELY</div>
         </div>
         <div id="bands-list" class="bands-list">
@@ -809,13 +861,12 @@
 
     <div id="screen-more" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">VIAC</div>
         </div>
         <div class="more-grid">
             <div class="more-btn" onclick="handleButtonClick('screen-about')"><i class="fas fa-record-vinyl"></i> O NÁS</div>
             <div class="more-btn" onclick="handleButtonClick('screen-merch')"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
-            <a class="more-btn msg" href="https://m.me/k0ncerty" target="_blank"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</a>
+            <div class="more-btn msg" onclick="handleButtonClick('screen-message')"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
             <div class="more-btn" onclick="handleButtonClick('screen-contact')"><i class="fas fa-phone"></i> KONTAKT</div>
             <div class="more-btn" onclick="handleButtonClick('screen-map')"><i class="fas fa-map-marker-alt"></i> MAPA</div>
             <div class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
@@ -824,6 +875,9 @@
     </div>
 
     <nav id="bottom-nav">
+        <div class="nav-item nav-item-back" onclick="handleBackNavClick()">
+            <i class="fas fa-arrow-left"></i><span>SPÄŤ</span>
+        </div>
         <div class="nav-item active" data-nav="screen-home" onclick="handleButtonClick('screen-home')">
             <i class="fas fa-house"></i><span>DOMOV</span>
         </div>
@@ -837,6 +891,8 @@
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
     </nav>
+
+    <div id="exit-toast">ŤUKNI EŠTE RAZ PRE UKONČENIE</div>
 
     <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
 
@@ -885,7 +941,6 @@
 
     <div id="screen-upcoming" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">Program</div>
         </div>
         <div id="carousel-upcoming" class="carousel-container">
@@ -895,7 +950,6 @@
 
     <div id="screen-past" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">ARCHÍV</div>
         </div>
         <div id="year-chips" class="year-chips"></div>
@@ -906,7 +960,6 @@
 
     <div id="screen-about" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">O NÁS</div>
         </div>
         <div id="about-container" class="about-container">
@@ -916,7 +969,6 @@
 
     <div id="screen-merch" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">KÚP SI TO</div>
         </div>
         <div class="merch-grid">
@@ -948,9 +1000,24 @@
         </p>
     </div>
 
+    <div id="screen-message" class="screen">
+        <div class="page-header">
+            <div class="page-title">NAPÍŠ NÁM</div>
+        </div>
+        <form id="message-form" class="msg-form" onsubmit="return submitMessageForm(event)">
+            <p class="msg-intro">Bolo to super na koncerte? Máš tip na kapelu? Napíš nám pár riadkov, príde nám to rovno na mail.</p>
+            <input type="hidden" name="access_key" value="TU_VLOZ_SVOJ_WEB3FORMS_ACCESS_KEY">
+            <input type="hidden" name="subject" value="Nová správa z appky Kôňcerty">
+            <input type="hidden" name="from_name" value="Kôňcerty appka">
+            <input type="text" name="name" class="msg-input" placeholder="Tvoje meno (nepovinné)">
+            <textarea name="message" class="msg-textarea" placeholder="Tvoj odkaz..." required></textarea>
+            <button type="submit" class="msg-submit-btn"><i class="fas fa-paper-plane"></i> ODOSLAŤ</button>
+            <div id="msg-status"></div>
+        </form>
+    </div>
+
     <div id="screen-contact" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">KONTAKT</div>
         </div>
         <div style="padding: 20px;">
@@ -962,7 +1029,6 @@
 
     <div id="screen-map" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">MAPA</div>
         </div>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2616.536465492434!2d19.48123457636904!3d49.403561979344485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4715c60f25a58793%3A0x6c6e75551351111!2sFurmanka!5e0!3m2!1ssk!2ssk!4v1709123456789!5m2!1ssk!2ssk" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
@@ -970,7 +1036,6 @@
 
     <div id="screen-social" class="screen">
         <div class="page-header">
-            <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
             <div class="page-title">SIETE</div>
         </div>
         <div class="social-grid">
@@ -1017,6 +1082,38 @@ function goBack() {
     }
 }
 
+// Tlačidlo SPÄŤ v spodnej lište:
+// - ak je otvorený detail koncertu, zavrie ho
+// - ak sme na Domov (niet kam ísť späť), vyžiada druhé ťuknutie (poistka proti nechcenému odchodu z appky)
+// - inak normálny krok späť
+let exitArmed = false;
+let exitArmTimer = null;
+function handleBackNavClick() {
+    const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
+    if (modalOpen) { closeModal(); return; }
+
+    if (activeScreenId === 'screen-home') {
+        buzz();
+        if (exitArmed) {
+            clearTimeout(exitArmTimer);
+            exitArmed = false;
+            document.getElementById('exit-toast').classList.remove('show');
+            // Pokus o zatvorenie appky (funguje len na časti Android zariadení,
+            // webová appka nemá spoľahlivé právo zavrieť sa sama všade).
+            window.close();
+        } else {
+            exitArmed = true;
+            document.getElementById('exit-toast').classList.add('show');
+            exitArmTimer = setTimeout(() => {
+                exitArmed = false;
+                document.getElementById('exit-toast').classList.remove('show');
+            }, 2000);
+        }
+        return;
+    }
+    goBack();
+}
+
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -1036,6 +1133,7 @@ function goBack() {
                 'screen-calendar': 'screen-calendar',
                 'screen-bands': 'screen-bands',
                 'screen-more': 'screen-more',
+                'screen-message': 'screen-more',
                 'screen-about': 'screen-more',
                 'screen-merch': 'screen-more',
                 'screen-contact': 'screen-more',
@@ -1053,6 +1151,43 @@ function goBack() {
 
         function hideModalNow() {
             document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        async function submitMessageForm(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('.msg-submit-btn');
+            const statusEl = document.getElementById('msg-status');
+            const originalBtnHtml = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ODOSIELAM...';
+            statusEl.textContent = '';
+            statusEl.className = '';
+
+            try {
+                const res = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: new FormData(form)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    buzz();
+                    form.reset();
+                    statusEl.textContent = 'ĎAKUJEME! ODKAZ SME DOSTALI.';
+                    statusEl.className = 'msg-status-ok';
+                } else {
+                    throw new Error(data.message || 'Odoslanie zlyhalo');
+                }
+            } catch (err) {
+                statusEl.textContent = 'NEPODARILO SA ODOSLAŤ. SKÚS PROSÍM NESKÔR.';
+                statusEl.className = 'msg-status-err';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+            }
+            return false;
         }
 
         function closeModal() {
