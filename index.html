@@ -46,6 +46,20 @@
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Polia formulára musia ísť normálne označiť/upraviť */
+        input, textarea {
+            -webkit-touch-callout: default;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
         button, input, textarea, h1, h2, h3, p, span, div, a {
@@ -280,9 +294,8 @@
         }
 
         /* MODAL */
-        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; flex-direction: column; overflow-y: auto; padding: 20px; box-sizing: border-box; animation: popIn 0.3s; }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; flex-direction: column; overflow-y: auto; padding: 20px 20px calc(90px + env(safe-area-inset-bottom)) 20px; box-sizing: border-box; animation: popIn 0.3s; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .modal-close-btn { position: absolute; top: 20px; right: 20px; font-size: 3rem; color: white; cursor: pointer; z-index: 10000; }
         .modal-content { margin-top: 40px; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; padding-bottom: 50px; }
 .modal-poster {
     width: 80%;
@@ -428,7 +441,7 @@
 #bottom-nav {
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    z-index: 500;
+    z-index: 10500;
     display: flex;
     background: rgba(10, 8, 6, 0.97);
     border-top: 2px solid rgba(255,255,255,0.12);
@@ -1052,7 +1065,6 @@
     </div>
 
     <div id="modal-overlay" onclick="overlayClick(event)">
-        <div class="modal-close-btn" onclick="closeModal()">×</div>
         <div class="modal-content" id="modal-content-body"></div>
     </div>
 
