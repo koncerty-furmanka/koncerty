@@ -38,13 +38,36 @@
             await OneSignal.init({
                 appId: "354e9b76-b089-4dbc-beaa-79d26da33787",
                 serviceWorkerParam: { scope: "onesignal/" },
-                serviceWorkerPath: "onesignal/OneSignalSDKWorker.js"
+                serviceWorkerPath: "onesignal/OneSignalSDKWorker.js",
+                promptOptions: {
+                    slidedown: {
+                        prompts: [
+                            {
+                                type: "category",
+                                autoPrompt: false,
+                                text: {
+                                    actionMessage: "Vyber si, o čom chceš vedieť ako prvý:",
+                                    acceptButton: "ULOŽIŤ",
+                                    cancelButton: "NECHCEM"
+                                },
+                                categories: {
+                                    tags: [
+                                        { tag: "novy_koncert", label: "Nový koncert" },
+                                        { tag: "update_koncertu", label: "Zmena koncertu (čas, kapela...)" },
+                                        { tag: "den_pred", label: "Pripomienka deň pred koncertom" },
+                                        { tag: "ostatne", label: "Ostatné novinky (merch a pod.)" }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
             });
         });
         function requestPushPermission() {
             buzz();
             window.OneSignalDeferred.push(async function (OneSignal) {
-                await OneSignal.Slidedown.promptPush();
+                await OneSignal.Slidedown.promptPushCategories();
             });
         }
     </script>
