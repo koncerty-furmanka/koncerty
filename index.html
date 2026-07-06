@@ -63,11 +63,34 @@
                     }
                 }
             });
+
+            updatePushButtonUI(OneSignal.User.PushSubscription.optedIn);
+            OneSignal.User.PushSubscription.addEventListener('change', function (event) {
+                updatePushButtonUI(event.current.optedIn);
+            });
         });
-        function requestPushPermission() {
+
+        function updatePushButtonUI(isSubscribed) {
+            const icon = document.getElementById('push-btn-icon');
+            const label = document.getElementById('push-btn-label');
+            if (!icon || !label) return;
+            if (isSubscribed) {
+                icon.className = 'fas fa-bell-slash';
+                label.textContent = 'VYPNÚŤ UPOZORNENIA';
+            } else {
+                icon.className = 'fas fa-bell';
+                label.textContent = 'DOSTÁVAŤ UPOZORNENIA';
+            }
+        }
+
+        function handlePushButtonClick() {
             buzz();
             window.OneSignalDeferred.push(async function (OneSignal) {
-                await OneSignal.Slidedown.promptPushCategories();
+                if (OneSignal.User.PushSubscription.optedIn) {
+                    await OneSignal.User.PushSubscription.optOut();
+                } else {
+                    await OneSignal.Slidedown.promptPushCategories();
+                }
             });
         }
     </script>
@@ -976,7 +999,7 @@
         </div>
         <div class="more-grid">
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-about')"><i class="fas fa-record-vinyl"></i> O NÁS</div>
-            <div role="button" tabindex="0" class="more-btn" onclick="requestPushPermission()"><i class="fas fa-bell"></i> DOSTÁVAŤ UPOZORNENIA</div>
+            <div role="button" tabindex="0" id="push-btn" class="more-btn" onclick="handlePushButtonClick()"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-gallery')"><i class="fas fa-images"></i> FOTOGALÉRIA</div>
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-merch')"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
             <div role="button" tabindex="0" class="more-btn msg" onclick="handleButtonClick('screen-message')"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
