@@ -91,35 +91,48 @@
         function handlePushButtonClick() {
             buzz();
 
-            // DIAGNOSTIKA: ak sa OneSignal SDK nenačíta do 3 sekúnd, povie to
             let sdkResponded = false;
             setTimeout(function () {
                 if (!sdkResponded) {
-                    alert('PROBLÉM: OneSignal skript sa vôbec nenačítal.\n\nNajčastejšia príčina: blokovač reklám alebo súkromné DNS na telefóne blokuje cdn.onesignal.com.\n\nSkús: Nastavenia telefónu -> Sieť -> Súkromné DNS -> Vypnúť, alebo vypni AdGuard/blokovač, a otvor appku znova.');
+                    alert('PROBLÉM: OneSignal skript sa nenačítal.\n\nSkús vypnúť blokovač reklám / súkromné DNS a otvor appku znova.');
                 }
             }, 3000);
 
             window.OneSignalDeferred.push(async function (OneSignal) {
                 sdkResponded = true;
                 try {
-                    const perm = (typeof Notification !== 'undefined') ? Notification.permission : 'nepodporované';
-                    const optedIn = OneSignal.User.PushSubscription.optedIn;
-                    const subId = OneSignal.User.PushSubscription.id;
-
-                    alert('DIAGNOSTIKA:\n'
-                        + '• Povolenie prehliadača: ' + perm + '\n'
-                        + '• Prihlásený na odber: ' + (optedIn ? 'ÁNO' : 'NIE') + '\n'
-                        + '• ID odberu: ' + (subId ? subId.substring(0, 13) + '...' : 'žiadne'));
-
-                    if (optedIn) {
+                    if (OneSignal.User.PushSubscription.optedIn) {
                         await OneSignal.User.PushSubscription.optOut();
+                        return;
+                    }
+                    // Vyžiada systémové povolenie a prihlási na odber
+                    await OneSignal.User.PushSubscription.optIn();
+
+                    if (OneSignal.Notifications.permission) {
+                        openNotifCats();
                     } else {
-                        await OneSignal.Slidedown.promptPushCategories({ force: true });
+                        showToast('UPOZORNENIA NEBOLI POVOLENÉ');
                     }
                 } catch (e) {
                     alert('CHYBA: ' + (e && e.message ? e.message : e));
                 }
             });
+        }
+
+        function openNotifCats() {
+            const o = document.getElementById('notif-cats-overlay');
+            if (o) o.style.display = 'flex';
+        }
+        function saveNotifCats() {
+            buzz();
+            const tags = {};
+            document.querySelectorAll('#notif-cats-overlay input[type="checkbox"]').forEach(cb => {
+                tags[cb.value] = cb.checked ? '1' : '0';
+            });
+            window.OneSignalDeferred.push(async function (OneSignal) {
+                try { await OneSignal.User.addTags(tags); } catch (e) {}
+            });
+            document.getElementById('notif-cats-overlay').style.display = 'none';
         }
     </script>
     
@@ -598,6 +611,72 @@
 }
 #exit-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ===== VÝBER KATEGÓRIÍ UPOZORNENÍ ===== */
+#notif-cats-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 11000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.notif-cats-panel {
+    background: #14100d;
+    border: 3px solid var(--accent-color);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.9);
+    padding: 22px 18px;
+    width: 100%;
+    max-width: 380px;
+}
+.notif-cats-title {
+    font-size: 1.4rem;
+    color: var(--accent-color);
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 2px;
+    text-align: center;
+}
+.notif-cats-sub {
+    font-size: 0.95rem;
+    color: #ccc;
+    text-align: center;
+    margin: 6px 0 16px 0;
+}
+.notif-cat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.25);
+    padding: 13px 14px;
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+    color: #fff;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+.notif-cat input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--accent-color);
+    flex: 0 0 auto;
+}
+.notif-cats-save {
+    margin-top: 14px;
+    background: var(--accent-color);
+    color: #000;
+    border: 3px solid #000;
+    text-align: center;
+    padding: 14px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.9);
+}
+.notif-cats-save:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 rgba(0,0,0,0.9); }
+
 /* miesto pre lištu naspodku všetkých obrazoviek */
 .screen { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 #screen-home.active { height: calc(100dvh - 60px); }
@@ -1057,6 +1136,18 @@
     </nav>
 
     <div id="exit-toast"></div>
+
+    <div id="notif-cats-overlay">
+        <div class="notif-cats-panel">
+            <div class="notif-cats-title">UPOZORNENIA ZAPNUTÉ ✓</div>
+            <div class="notif-cats-sub">Vyber si, o čom chceš vedieť:</div>
+            <label class="notif-cat"><input type="checkbox" value="novy_koncert" checked> NOVÝ KONCERT</label>
+            <label class="notif-cat"><input type="checkbox" value="update_koncertu" checked> ZMENA KONCERTU</label>
+            <label class="notif-cat"><input type="checkbox" value="den_pred" checked> PRIPOMIENKA DEŇ PRED</label>
+            <label class="notif-cat"><input type="checkbox" value="ostatne" checked> OSTATNÉ NOVINKY</label>
+            <div role="button" tabindex="0" class="notif-cats-save" onclick="saveNotifCats()">ULOŽIŤ</div>
+        </div>
+    </div>
 
     <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
 
