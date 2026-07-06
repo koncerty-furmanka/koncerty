@@ -90,16 +90,34 @@
 
         function handlePushButtonClick() {
             buzz();
+
+            // DIAGNOSTIKA: ak sa OneSignal SDK nenačíta do 3 sekúnd, povie to
+            let sdkResponded = false;
+            setTimeout(function () {
+                if (!sdkResponded) {
+                    alert('PROBLÉM: OneSignal skript sa vôbec nenačítal.\n\nNajčastejšia príčina: blokovač reklám alebo súkromné DNS na telefóne blokuje cdn.onesignal.com.\n\nSkús: Nastavenia telefónu -> Sieť -> Súkromné DNS -> Vypnúť, alebo vypni AdGuard/blokovač, a otvor appku znova.');
+                }
+            }, 3000);
+
             window.OneSignalDeferred.push(async function (OneSignal) {
+                sdkResponded = true;
                 try {
-                    if (OneSignal.User.PushSubscription.optedIn) {
+                    const perm = (typeof Notification !== 'undefined') ? Notification.permission : 'nepodporované';
+                    const optedIn = OneSignal.User.PushSubscription.optedIn;
+                    const subId = OneSignal.User.PushSubscription.id;
+
+                    alert('DIAGNOSTIKA:\n'
+                        + '• Povolenie prehliadača: ' + perm + '\n'
+                        + '• Prihlásený na odber: ' + (optedIn ? 'ÁNO' : 'NIE') + '\n'
+                        + '• ID odberu: ' + (subId ? subId.substring(0, 13) + '...' : 'žiadne'));
+
+                    if (optedIn) {
                         await OneSignal.User.PushSubscription.optOut();
                     } else {
                         await OneSignal.Slidedown.promptPushCategories({ force: true });
                     }
                 } catch (e) {
-                    console.log('Push chyba:', e);
-                    showToast('NIEČO SA POKAZILO, SKÚS NESKÔR');
+                    alert('CHYBA: ' + (e && e.message ? e.message : e));
                 }
             });
         }
