@@ -64,10 +64,15 @@
                 }
             });
 
-            updatePushButtonUI(OneSignal.User.PushSubscription.optedIn);
-            OneSignal.User.PushSubscription.addEventListener('change', function (event) {
-                updatePushButtonUI(event.current.optedIn);
-            });
+            try {
+                updatePushButtonUI(OneSignal.User.PushSubscription.optedIn);
+                OneSignal.User.PushSubscription.addEventListener('change', function (event) {
+                    updatePushButtonUI(event.current.optedIn);
+                    showToast(event.current.optedIn ? 'UPOZORNENIA ZAPNUTÉ ✓' : 'UPOZORNENIA VYPNUTÉ');
+                });
+            } catch (e) {
+                console.log('OneSignal stav sa nepodarilo zistiť:', e);
+            }
         });
 
         function updatePushButtonUI(isSubscribed) {
@@ -86,10 +91,15 @@
         function handlePushButtonClick() {
             buzz();
             window.OneSignalDeferred.push(async function (OneSignal) {
-                if (OneSignal.User.PushSubscription.optedIn) {
-                    await OneSignal.User.PushSubscription.optOut();
-                } else {
-                    await OneSignal.Slidedown.promptPushCategories();
+                try {
+                    if (OneSignal.User.PushSubscription.optedIn) {
+                        await OneSignal.User.PushSubscription.optOut();
+                    } else {
+                        await OneSignal.Slidedown.promptPushCategories();
+                    }
+                } catch (e) {
+                    console.log('Push chyba:', e);
+                    showToast('NIEČO SA POKAZILO, SKÚS NESKÔR');
                 }
             });
         }
@@ -1028,7 +1038,7 @@
         </div>
     </nav>
 
-    <div id="exit-toast">ŤUKNI EŠTE RAZ PRE UKONČENIE</div>
+    <div id="exit-toast"></div>
 
     <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
 
@@ -1233,6 +1243,16 @@ function goBack() {
 // - inak normálny krok späť
 let exitArmed = false;
 let exitArmTimer = null;
+let toastHideTimer = null;
+function showToast(message, duration) {
+    const t = document.getElementById('exit-toast');
+    if (!t) return;
+    t.textContent = message;
+    t.classList.add('show');
+    clearTimeout(toastHideTimer);
+    toastHideTimer = setTimeout(() => { t.classList.remove('show'); }, duration || 2200);
+}
+
 function handleBackNavClick() {
     const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
     if (modalOpen) { closeModal(); return; }
@@ -1248,7 +1268,7 @@ function handleBackNavClick() {
             window.close();
         } else {
             exitArmed = true;
-            document.getElementById('exit-toast').classList.add('show');
+            showToast('ŤUKNI EŠTE RAZ PRE UKONČENIE', 2000);
             exitArmTimer = setTimeout(() => {
                 exitArmed = false;
                 document.getElementById('exit-toast').classList.remove('show');
