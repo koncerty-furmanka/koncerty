@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kôňcerty</title>
+    <meta name="description" content="Kôňcerty — Punk, Ska a Rock'n'Roll vo Furmanke, Námestovo. Program, archív, kapely, merch a pripomienky na koncerty.">
+
+    <!-- Náhľad pri zdieľaní na Facebooku, WhatsApp, Messengeri a pod. -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
+    <meta property="og:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
+    <meta property="og:image" content="https://i.postimg.cc/MZN7znGd/IMG-20251211-132426.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
+    <meta name="twitter:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
+    <meta name="twitter:image" content="https://i.postimg.cc/MZN7znGd/IMG-20251211-132426.png">
 
     <!-- PWA / pridanie na plochu -->
     <link rel="manifest" href="manifest.json">
@@ -15,6 +26,28 @@
     <!-- ZMEŇ na vlastnú štvorcovú ikonu 180x180 (najlepšie lokálny súbor v repe) -->
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" href="favicon.png">
+
+    <!-- PUSH NOTIFIKÁCIE (OneSignal, zadarmo) -->
+    <!-- 1) Vytvor appku na onesignal.com, sekcia Web Push -->
+    <!-- 2) Nahraď TU_VLOZ_ONESIGNAL_APP_ID dolu skutočným App ID -->
+    <!-- 3) Nahraj do repa priečinok "onesignal" so súborom OneSignalSDKWorker.js (poslal som ho) -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function (OneSignal) {
+            await OneSignal.init({
+                appId: "TU_VLOZ_ONESIGNAL_APP_ID",
+                serviceWorkerParam: { scope: "onesignal/" },
+                serviceWorkerPath: "onesignal/OneSignalSDKWorker.js"
+            });
+        });
+        function requestPushPermission() {
+            buzz();
+            window.OneSignalDeferred.push(async function (OneSignal) {
+                await OneSignal.Slidedown.promptPush();
+            });
+        }
+    </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -643,6 +676,37 @@
 .more-btn i { width: 30px; text-align: center; font-size: 1.3rem; color: var(--accent-color); }
 .more-btn.msg i { color: #0084FF; }
 
+/* ===== FOTOGALÉRIA ===== */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 14px;
+}
+.gallery-item {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.5);
+}
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.gallery-empty {
+    grid-column: 1 / -1;
+    background: rgba(0,0,0,0.55);
+    border: 2px dashed rgba(255,255,255,0.3);
+    color: #ccc;
+    text-align: center;
+    padding: 30px 16px;
+    font-size: 1.05rem;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+}
+
 /* ===== NAPÍŠ NÁM (formulár) ===== */
 .msg-form { padding: 16px 18px 30px 18px; }
 .msg-intro {
@@ -888,30 +952,32 @@
             <div class="page-title">VIAC</div>
         </div>
         <div class="more-grid">
-            <div class="more-btn" onclick="handleButtonClick('screen-about')"><i class="fas fa-record-vinyl"></i> O NÁS</div>
-            <div class="more-btn" onclick="handleButtonClick('screen-merch')"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
-            <div class="more-btn msg" onclick="handleButtonClick('screen-message')"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
-            <div class="more-btn" onclick="handleButtonClick('screen-contact')"><i class="fas fa-phone"></i> KONTAKT</div>
-            <div class="more-btn" onclick="handleButtonClick('screen-map')"><i class="fas fa-map-marker-alt"></i> MAPA</div>
-            <div class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
-            <div class="more-btn" onclick="shareApp()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-about')"><i class="fas fa-record-vinyl"></i> O NÁS</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="requestPushPermission()"><i class="fas fa-bell"></i> DOSTÁVAŤ UPOZORNENIA</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-gallery')"><i class="fas fa-images"></i> FOTOGALÉRIA</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-merch')"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
+            <div role="button" tabindex="0" class="more-btn msg" onclick="handleButtonClick('screen-message')"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-contact')"><i class="fas fa-phone"></i> KONTAKT</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-map')"><i class="fas fa-map-marker-alt"></i> MAPA</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="shareApp()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
     </div>
 
     <nav id="bottom-nav">
-        <div class="nav-item nav-item-back" onclick="handleBackNavClick()">
+        <div role="button" tabindex="0" class="nav-item nav-item-back" onclick="handleBackNavClick()">
             <i class="fas fa-arrow-left"></i><span>SPÄŤ</span>
         </div>
-        <div class="nav-item active" data-nav="screen-home" onclick="handleButtonClick('screen-home')">
+        <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="handleButtonClick('screen-home')">
             <i class="fas fa-house"></i><span>DOMOV</span>
         </div>
-        <div class="nav-item" data-nav="screen-calendar" onclick="handleButtonClick('screen-calendar')">
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-calendar" onclick="handleButtonClick('screen-calendar')">
             <i class="fas fa-calendar-days"></i><span>KALENDÁR</span>
         </div>
-        <div class="nav-item" data-nav="screen-bands" onclick="handleButtonClick('screen-bands')">
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-bands" onclick="handleButtonClick('screen-bands')">
             <i class="fas fa-guitar"></i><span>KAPELY</span>
         </div>
-        <div class="nav-item" data-nav="screen-more" onclick="handleButtonClick('screen-more')">
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="handleButtonClick('screen-more')">
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
     </nav>
@@ -929,33 +995,33 @@
             <div id="countdown-bar">NAČÍTAVAM...</div>
             
             <div class="menu-grid">
-                <div id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-upcoming')">
+                <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-upcoming')">
 <img id="dynamic-upcoming-img"
      class="btn-image"
      alt="Najbližšie">
                 </div>
-                <div id="btn-archive" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-past')">
+                <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-past')">
                     <img src="https://i.postimg.cc/Jh1JSwDn/IKONA-PLAGATU-archiv-KONCERTY.webp" class="btn-image" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
-                    <div class="about-btn-wrapper action-btn size-l rot-1" onclick="handleButtonClick('screen-about')">
+                    <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="handleButtonClick('screen-about')">
                         <img src="https://i.postimg.cc/8P8YWLkx/IMG-20251213-095003.png" class="small-btn-img" alt="O Nás">
                     </div>
-                    <div class="mech-btn-wrapper action-btn size-m rot-2" onclick="handleButtonClick('screen-merch')">
+                    <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2" onclick="handleButtonClick('screen-merch')">
                         <img src="https://i.postimg.cc/MK779RDr/IMG-20251213-110006.png" class="small-btn-img" alt="Náš Mech">
                     </div>
                 </div>
                 <div class="right-col">
-                    <div class="small-btn-wrapper action-btn size-s rot-3" onclick="handleButtonClick('screen-contact')">
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="handleButtonClick('screen-contact')">
                         <img src="https://i.postimg.cc/ZR58ZS2S/IMG_20251213_070108.png" class="small-btn-img" alt="Kontakt">
                     </div>
-                    <div class="small-btn-wrapper action-btn size-s rot-4" onclick="handleButtonClick('screen-map')">
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="handleButtonClick('screen-map')">
                         <img src="https://i.postimg.cc/TwNr3svW/IMG_20251213_070131.png" class="small-btn-img" alt="Mapa">
                     </div>
-                    <div class="small-btn-wrapper action-btn size-s rot-5" onclick="handleButtonClick('screen-social')">
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="handleButtonClick('screen-social')">
                         <img src="https://i.postimg.cc/904yRBcP/IMG_20251213_070156.png" class="small-btn-img" alt="Social">
                     </div>
                 </div>
@@ -1022,6 +1088,15 @@
         <p style="text-align:center; color:#fff; margin-top:30px; font-size: 1.2rem; background: rgba(0,0,0,0.5); padding: 10px;">
             PÝTAJ SI NA BARE.
         </p>
+    </div>
+
+    <div id="screen-gallery" class="screen">
+        <div class="page-header">
+            <div class="page-title">FOTOGALÉRIA</div>
+        </div>
+        <div id="gallery-grid" class="gallery-grid">
+            <div class="gallery-empty">NAČÍTAVAM...</div>
+        </div>
     </div>
 
     <div id="screen-message" class="screen">
@@ -1158,6 +1233,7 @@ function handleBackNavClick() {
                 'screen-bands': 'screen-bands',
                 'screen-more': 'screen-more',
                 'screen-message': 'screen-more',
+                'screen-gallery': 'screen-more',
                 'screen-about': 'screen-more',
                 'screen-merch': 'screen-more',
                 'screen-contact': 'screen-more',
@@ -1228,6 +1304,14 @@ function handleBackNavClick() {
         function overlayClick(e) {
             if (e.target && e.target.id === 'modal-overlay') closeModal();
         }
+        // Klávesnicová prístupnosť: Enter/Medzera aktivuje prvky s role="button"
+        document.addEventListener('keydown', function(e) {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('role') === 'button') {
+                e.preventDefault();
+                e.target.click();
+            }
+        });
+
         // Zatvorenie modalu klávesou Esc
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') { closeModal(); }
@@ -1368,6 +1452,7 @@ function handleBackNavClick() {
 
         const aboutUrl = "https://gist.githubusercontent.com/koncerty-furmanka/b0b92b8561e564c9fbe80e9d4655865c/raw/onas.csv"; 
         const gistUrl = "https://gist.githubusercontent.com/koncerty-furmanka/b0b92b8561e564c9fbe80e9d4655865c/raw/data.csv";
+        const galleryUrl = "https://gist.githubusercontent.com/koncerty-furmanka/b0b92b8561e564c9fbe80e9d4655865c/raw/galeria.csv";
         const defaultUpcomingImg = "https://i.postimg.cc/TY3P8RQH/Najblizsie-koncerty.webp";
         
         let updateTimer = null;
@@ -1531,7 +1616,7 @@ const clean = cols.map(c =>
                         && eventDateObj.getDate() === today.getDate();
 
                     const cardHtml = `
-                        <div class="carousel-card" data-year="${eventYear}" onclick="openDetail(this)" data-details="${eventDataEncoded}">
+                        <div role="button" tabindex="0" class="carousel-card" data-year="${eventYear}" onclick="openDetail(this)" data-details="${eventDataEncoded}">
                             ${isToday ? '<div class="today-badge">DNES!</div>' : ''}
                             ${event.poster ? `<img src="${event.poster}" class="poster-clean" loading="lazy" decoding="async" alt="Plagát">` : '<div class="poster-clean" style="height:300px; background:#333; display:flex; align-items:center; justify-content:center;">BEZ FOTKY</div>'}
                             <div class="card-mini-info">
@@ -1610,8 +1695,8 @@ const clean = cols.map(c =>
                 if (chipsEl) {
                     const years = [...new Set(pastEvents.map(e => e.date.getFullYear()))].sort((a, b) => b - a);
                     if (years.length > 1) {
-                        chipsEl.innerHTML = '<div class="year-chip active" onclick="filterArchiveYear(this, \'all\')">VŠETKO</div>'
-                            + years.map(y => `<div class="year-chip" onclick="filterArchiveYear(this, '${y}')">${y}</div>`).join('');
+                        chipsEl.innerHTML = '<div role="button" tabindex="0" class="year-chip active" onclick="filterArchiveYear(this, \'all\')">VŠETKO</div>'
+                            + years.map(y => `<div role="button" tabindex="0" class="year-chip" onclick="filterArchiveYear(this, '${y}')">${y}</div>`).join('');
                     } else {
                         chipsEl.innerHTML = '';
                     }
@@ -1624,7 +1709,7 @@ const clean = cols.map(c =>
                         const parts = ev.dateRaw.replace(/\s/g, '').split('.');
                         const dm = parts[0] + '.' + parts[1] + '.';
                         return `
-                        <div class="cal-row ${ev.isUpcoming ? '' : 'past-row'}" onclick="openDetailData('${ev.encoded}')">
+                        <div role="button" tabindex="0" class="cal-row ${ev.isUpcoming ? '' : 'past-row'}" onclick="openDetailData('${ev.encoded}')">
                             <div class="cal-date"><span class="d">${dm}</span><span class="y">${parts[2] || ''}</span></div>
                             <div class="cal-info">
                                 <div class="cal-title">${ev.title}</div>
@@ -1647,7 +1732,7 @@ const clean = cols.map(c =>
                     const bands = [...bandsDir.values()].sort((a, b) => a.name.localeCompare(b.name, 'sk'));
                     bandsEl.innerHTML = bands.map(b => `
                         <div class="band-row">
-                            <div class="band-head" onclick="toggleBand(this)">
+                            <div role="button" tabindex="0" class="band-head" onclick="toggleBand(this)">
                                 <div class="band-letter">${b.name.charAt(0).toUpperCase()}</div>
                                 <div class="band-head-info">
                                     <div class="band-head-name">${b.name}</div>
@@ -1697,10 +1782,35 @@ initCarouselObserver();
                     const cols = splitCsvRow(row, aboutDelimiter);
                     const clean = cols.map(c => c ? c.replace(/^"|"$/g, '').trim() : '');
                     const [popis, imgUrl] = clean;
-                    html += `<div class="about-item">${imgUrl ? `<img src="${imgUrl}" class="about-img">` : ''}<div class="about-text">${popis}</div></div>`;
+                    html += `<div class="about-item">${imgUrl ? `<img src="${imgUrl}" class="about-img" alt="">` : ''}<div class="about-text">${popis}</div></div>`;
                 }
                 if(html) aboutContainer.innerHTML = html;
             } catch (e) { console.log("O nás error:", e); }
+
+            // FOTOGALÉRIA (galeria.csv v tom istom gist - stĺpce: url,popis)
+            const galleryGrid = document.getElementById('gallery-grid');
+            try {
+                const resp = await fetch(galleryUrl + "?t=" + Date.now());
+                if (!resp.ok) throw new Error("galeria.csv zatiaľ neexistuje");
+                const txt = await resp.text();
+                const rows = txt.trim().split(/\r?\n/);
+                const delim = detectCsvDelimiter(rows[0]);
+                const headers = splitCsvRow(rows[0], delim).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
+                const uIdx = headers.indexOf('url');
+                const pIdx = headers.indexOf('popis');
+                let html = "";
+                for (let i = 1; i < rows.length; i++) {
+                    if (!rows[i].trim()) continue;
+                    const cols = splitCsvRow(rows[i], delim).map(c => c ? c.replace(/^"|"$/g, '').replace(/\r/g, '').trim() : '');
+                    const url = cols[uIdx];
+                    const popis = pIdx > -1 ? cols[pIdx] : '';
+                    if (!url) continue;
+                    html += `<a class="gallery-item" href="${url}" target="_blank"><img src="${url}" loading="lazy" decoding="async" alt="${popis || 'Fotka z koncertu'}"></a>`;
+                }
+                galleryGrid.innerHTML = html || '<div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div>';
+            } catch (e) {
+                if (galleryGrid) galleryGrid.innerHTML = '<div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div>';
+            }
         }
 
         function initCarouselObserver() {
@@ -1763,7 +1873,7 @@ initCarouselObserver();
                 });
                 bandsHtml += `</div>`;
             }
-            modalBody.innerHTML = `${data.poster ? `<img src="${data.poster}" class="modal-poster">` : ''}<div class="modal-title">${data.title}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${data.date}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${data.time}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${data.place}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${data.price}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${data.fb_event ? `<a href="${data.fb_event}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>`;
+            modalBody.innerHTML = `${data.poster ? `<img src="${data.poster}" class="modal-poster" alt="Plagát: ${data.title}">` : ''}<div class="modal-title">${data.title}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${data.date}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${data.time}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${data.place}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${data.price}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${data.fb_event ? `<a href="${data.fb_event}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>`;
             document.getElementById('modal-overlay').style.display = 'flex';
             history.pushState({ screen: activeScreenId, modal: true }, "", "#detail");
         }
