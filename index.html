@@ -95,7 +95,7 @@
                     if (OneSignal.User.PushSubscription.optedIn) {
                         await OneSignal.User.PushSubscription.optOut();
                     } else {
-                        await OneSignal.Slidedown.promptPushCategories();
+                        await OneSignal.Slidedown.promptPushCategories({ force: true });
                     }
                 } catch (e) {
                     console.log('Push chyba:', e);
