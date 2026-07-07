@@ -1,7 +1,7 @@
 // Kôňcerty – service worker
 // Zabezpečuje: rýchlejší štart, offline shell, vždy čerstvé dáta z Gistu, vždy čerstvý HTML shell.
 
-const CACHE = 'koncerty-v3';
+const CACHE = 'koncerty-v4';
 const SHELL = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
@@ -27,6 +27,13 @@ self.addEventListener('fetch', (e) => {
 
   let url;
   try { url = new URL(req.url); } catch (err) { return; }
+
+  // OneSignal má VLASTNÝ service worker na inom scope (/onesignal/) a vlastné
+  // sieťové volania na svoje domény. Do toho nezasahujeme vôbec - necháme to
+  // ísť rovno do siete, aby sme mu nič nekazili/nezdržovali.
+  if (url.pathname.includes('/onesignal/') || url.hostname.includes('onesignal')) {
+    return;
+  }
 
   // HTML stránka (navigácia) – VŽDY najprv zo siete, aby telefón dostal aktuálnu verziu appky
   // po každom nasadení. Cache slúži len ako záchranná sieť pri výpadku pripojenia.
