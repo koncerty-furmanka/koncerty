@@ -114,20 +114,29 @@
             // Takto Chrome ukáže plné systémové okno namiesto "tichej" mini-ikonky,
             // ktorá v nainštalovanej appke nemá kde byť (nie je adresný riadok).
             Notification.requestPermission().then(function (perm) {
+                showToast('Povolenie: ' + perm, 1500);
+
                 if (perm === 'granted') {
-                    window.OneSignalDeferred.push(async function (OneSignal) {
-                        try {
-                            await OneSignal.User.PushSubscription.optIn();
-                            openNotifCats();
-                        } catch (e) {
-                            alert('CHYBA: ' + (e && e.message ? e.message : e));
-                        }
-                    });
+                    setTimeout(function () {
+                        window.OneSignalDeferred.push(async function (OneSignal) {
+                            showToast('Prihlasujem na odber...', 1500);
+                            try {
+                                const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT: optIn() sa nedokončil do 8 sekúnd. Skús skontrolovať onesignal/OneSignalSDKWorker.js.')), 8000));
+                                await Promise.race([OneSignal.User.PushSubscription.optIn(), timeout]);
+                                showToast('Prihlásený! Otváram výber...', 1500);
+                                openNotifCats();
+                            } catch (e) {
+                                alert('CHYBA pri optIn(): ' + (e && e.message ? e.message : JSON.stringify(e)));
+                            }
+                        });
+                    }, 400);
                 } else if (perm === 'denied') {
                     showToast('UPOZORNENIA SI ZABLOKOVAL');
                 } else {
                     showToast('POVOLENIE NEBOLO UDELENÉ');
                 }
+            }).catch(function (e) {
+                alert('CHYBA requestPermission(): ' + (e && e.message ? e.message : e));
             });
         }
 
