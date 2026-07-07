@@ -111,46 +111,25 @@
                 return;
             }
 
-            // KĽÚČOVÉ: povolenie žiadame PRIAMO tu, v momente ťuknutia.
-            // Takto Chrome ukáže plné systémové okno namiesto "tichej" mini-ikonky,
-            // ktorá v nainštalovanej appke nemá kde byť (nie je adresný riadok).
-            Notification.requestPermission().then(function (perm) {
-                showToast('Povolenie: ' + perm, 1500);
+            // Necháme VÝHRADNE OneSignal nech si povolenie vypýta sám (žiadne
+            // miešanie s manuálnym Notification.requestPermission() - to
+            // spôsobovalo, že si SDK interne "myslel", že povolenie chýba).
+            showToast('Prihlasujem na odber...', 1500);
+            window.OneSignalDeferred.push(async function (OneSignal) {
+                try {
+                    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 10000));
+                    await Promise.race([OneSignal.User.PushSubscription.optIn(), timeout]);
 
-                if (perm === 'granted') {
-                    setTimeout(function () {
-                        window.OneSignalDeferred.push(async function (OneSignal) {
-                            // DIAGNOSTIKA: zisti stav registrovaných service workerov
-                            try {
-                                const regs = await navigator.serviceWorker.getRegistrations();
-                                let info = 'SW registrácie (' + regs.length + '):\n';
-                                regs.forEach(r => {
-                                    const sw = r.active || r.waiting || r.installing;
-                                    info += '• scope: ' + r.scope + ' | stav: ' + (sw ? sw.state : 'žiadny') + '\n';
-                                });
-                                alert(info);
-                            } catch (e) {
-                                alert('Nedá sa zistiť SW registrácie: ' + e.message);
-                            }
-
-                            showToast('Prihlasujem na odber...', 1500);
-                            try {
-                                const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT: optIn() sa nedokončil do 8 sekúnd. Skús skontrolovať onesignal/OneSignalSDKWorker.js.')), 8000));
-                                await Promise.race([OneSignal.User.PushSubscription.optIn(), timeout]);
-                                showToast('Prihlásený! Otváram výber...', 1500);
-                                openNotifCats();
-                            } catch (e) {
-                                alert('CHYBA pri optIn(): ' + (e && e.message ? e.message : JSON.stringify(e)));
-                            }
-                        });
-                    }, 400);
-                } else if (perm === 'denied') {
-                    showToast('UPOZORNENIA SI ZABLOKOVAL');
-                } else {
-                    showToast('POVOLENIE NEBOLO UDELENÉ');
+                    const perm = Notification.permission;
+                    if (perm === 'granted') {
+                        showToast('Prihlásený! Otváram výber...', 1500);
+                        openNotifCats();
+                    } else {
+                        showToast('Povolenie: ' + perm);
+                    }
+                } catch (e) {
+                    alert('CHYBA pri optIn(): ' + (e && e.message ? e.message : JSON.stringify(e)) + '\n\nSkús radšej otvoriť appku raz priamo v bežnej karte Chrome (nie nainštalovanú) a tam to skús ako prvé.');
                 }
-            }).catch(function (e) {
-                alert('CHYBA requestPermission(): ' + (e && e.message ? e.message : e));
             });
         }
 
