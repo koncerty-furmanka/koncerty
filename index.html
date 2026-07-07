@@ -119,6 +119,19 @@
                 if (perm === 'granted') {
                     setTimeout(function () {
                         window.OneSignalDeferred.push(async function (OneSignal) {
+                            // DIAGNOSTIKA: zisti stav registrovaných service workerov
+                            try {
+                                const regs = await navigator.serviceWorker.getRegistrations();
+                                let info = 'SW registrácie (' + regs.length + '):\n';
+                                regs.forEach(r => {
+                                    const sw = r.active || r.waiting || r.installing;
+                                    info += '• scope: ' + r.scope + ' | stav: ' + (sw ? sw.state : 'žiadny') + '\n';
+                                });
+                                alert(info);
+                            } catch (e) {
+                                alert('Nedá sa zistiť SW registrácie: ' + e.message);
+                            }
+
                             showToast('Prihlasujem na odber...', 1500);
                             try {
                                 const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT: optIn() sa nedokončil do 8 sekúnd. Skús skontrolovať onesignal/OneSignalSDKWorker.js.')), 8000));
