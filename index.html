@@ -76,6 +76,7 @@
         });
 
         function updatePushButtonUI(isSubscribed) {
+            window.__pushOptedIn = !!isSubscribed;
             const icon = document.getElementById('push-btn-icon');
             const label = document.getElementById('push-btn-label');
             if (!icon || !label) return;
@@ -91,30 +92,41 @@
         function handlePushButtonClick() {
             buzz();
 
-            let sdkResponded = false;
-            setTimeout(function () {
-                if (!sdkResponded) {
-                    alert('PROBLÉM: OneSignal skript sa nenačítal.\n\nSkús vypnúť blokovač reklám / súkromné DNS a otvor appku znova.');
-                }
-            }, 3000);
+            if (!('Notification' in window)) {
+                alert('Tento prehliadač nepodporuje upozornenia.');
+                return;
+            }
 
-            window.OneSignalDeferred.push(async function (OneSignal) {
-                sdkResponded = true;
-                try {
-                    if (OneSignal.User.PushSubscription.optedIn) {
-                        await OneSignal.User.PushSubscription.optOut();
-                        return;
-                    }
-                    // Vyžiada systémové povolenie a prihlási na odber
-                    await OneSignal.User.PushSubscription.optIn();
+            // Už prihlásený -> ťuknutie odhlási
+            if (window.__pushOptedIn) {
+                window.OneSignalDeferred.push(async function (OneSignal) {
+                    try { await OneSignal.User.PushSubscription.optOut(); } catch (e) {}
+                });
+                return;
+            }
 
-                    if (OneSignal.Notifications.permission) {
-                        openNotifCats();
-                    } else {
-                        showToast('UPOZORNENIA NEBOLI POVOLENÉ');
-                    }
-                } catch (e) {
-                    alert('CHYBA: ' + (e && e.message ? e.message : e));
+            if (Notification.permission === 'denied') {
+                alert('Upozornenia sú pre appku zablokované v telefóne.\n\nOdblokuješ ich takto:\nNastavenia telefónu -> Aplikácie -> Chrome -> Upozornenia,\nalebo otvor appku v Chrome, ťukni na ikonku vedľa adresy -> Povolenia -> Upozornenia -> Povoliť.');
+                return;
+            }
+
+            // KĽÚČOVÉ: povolenie žiadame PRIAMO tu, v momente ťuknutia.
+            // Takto Chrome ukáže plné systémové okno namiesto "tichej" mini-ikonky,
+            // ktorá v nainštalovanej appke nemá kde byť (nie je adresný riadok).
+            Notification.requestPermission().then(function (perm) {
+                if (perm === 'granted') {
+                    window.OneSignalDeferred.push(async function (OneSignal) {
+                        try {
+                            await OneSignal.User.PushSubscription.optIn();
+                            openNotifCats();
+                        } catch (e) {
+                            alert('CHYBA: ' + (e && e.message ? e.message : e));
+                        }
+                    });
+                } else if (perm === 'denied') {
+                    showToast('UPOZORNENIA SI ZABLOKOVAL');
+                } else {
+                    showToast('POVOLENIE NEBOLO UDELENÉ');
                 }
             });
         }
