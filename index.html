@@ -253,7 +253,7 @@
 }
 
 .main-logo { 
-    width: clamp(200px, 42vw, 320px);
+    width: clamp(180px, 38vw, 290px);
     height: auto; 
     display: block; 
     margin: 0 auto; 
@@ -263,8 +263,8 @@
         
         /* HLAVNÉ MENU */
 .menu-grid { 
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 1 1 0;
+    min-height: 110px;
     display: flex; 
     flex-direction: row; 
     justify-content: center; 
@@ -272,6 +272,8 @@
     gap: 20px; 
     width: 100%; 
     margin: 0; 
+    padding: 4px 0;
+    box-sizing: border-box;
     z-index: 20; 
 }
 
@@ -280,16 +282,21 @@
     max-width: 230px; 
     cursor: pointer; 
     z-index: 50; 
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-image { 
-    width: 100%; 
+    width: auto;
+    max-width: 100%;
     height: auto; 
+    max-height: 100%;
     display: block; 
     filter: drop-shadow(4px 8px 8px rgba(0,0,0,0.8)); 
     border-radius: 2px; 
     object-fit: contain; 
-    max-height: 55dvh; 
 }
 
 #btn-upcoming { 
@@ -298,7 +305,7 @@
 }
 
 #btn-archive { 
-    transform: rotate(3deg) translateY(15px); 
+    transform: rotate(3deg) translateY(6px); 
     z-index: 1; 
 }
 
@@ -310,7 +317,8 @@
     align-items: flex-end; 
     margin-top: auto; 
     gap: 20px; 
-    padding-bottom: 10px; 
+    padding-bottom: 6px; 
+    flex-shrink: 0;
 }
 
 .left-col { 
@@ -318,7 +326,7 @@
     flex-direction: column; 
     align-items: flex-start; 
     padding-left: 5px; 
-    gap: 18px; 
+    gap: 12px; 
 }
 
 .right-col { 
@@ -335,9 +343,9 @@
         .img-btn-wrapper:active .btn-image, .action-btn:active .small-btn-img { transform: scale(0.9) rotate(-2deg); }
         .small-btn-img { width: 100%; height: auto; display: block; filter: drop-shadow(3px 5px 5px rgba(0,0,0,0.9)); }
 
-.size-s { width: 16vh; } 
-.size-m { width: 20vh; }  
-.size-l { width: 24vh; }
+.size-s { width: 13dvh; max-width: 125px; } 
+.size-m { width: 16dvh; max-width: 155px; }  
+.size-l { width: 19dvh; max-width: 185px; }
 
         .rot-1 { transform: rotate(-3deg); }
         .rot-2 { transform: rotate(4deg); align-self: center; }
