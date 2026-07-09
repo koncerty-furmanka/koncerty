@@ -105,7 +105,7 @@
                         showToast('Povolenie: ' + perm);
                     }
                 } catch (e) {
-                    alert('CHYBA pri optIn(): ' + (e && e.message ? e.message : JSON.stringify(e)) + '\n\nSkús radšej otvoriť appku raz priamo v bežnej karte Chrome (nie nainštalovanú) a tam to skús ako prvé.');
+                    showToast('NEPODARILO SA PRIHLÁSIŤ, SKÚS NESKÔR');
                 }
             });
         }
@@ -141,14 +141,16 @@
             --accent-color: #ffcc00; 
         }
 
+        html, body {
+            /* zákaz obnovenia stránky potiahnutím prsta dole (pull-to-refresh) */
+            overscroll-behavior-y: none;
+        }
+
+        html {
+            overscroll-behavior-y: none;
+        }
         body { 
-            background-image: 
-                linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5)), 
-                url('https://i.postimg.cc/MKWjf3dD/IMG-20251210-160137.png');
-            background-position: top center;
-            background-repeat: no-repeat;
-            background-size: cover; 
-            background-attachment: fixed; 
+            background-color: #0d0a08;
             color: var(--text-color); 
             font-family: var(--primary-font); 
             text-transform: uppercase;
@@ -157,6 +159,7 @@
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
             overflow-x: hidden;
+            overscroll-behavior-y: none;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -171,6 +174,26 @@
             -moz-user-select: text;
             -ms-user-select: text;
             user-select: text;
+        }
+
+        /* STATICKÉ POZADIE: samostatná pevná vrstva s výškou najväčšieho
+           možného výrezu (100lvh). Nemení veľkosť pri schovávaní adresného
+           riadku ani pri scrollovaní - žiadne preskakovanie. */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            z-index: -1;
+            background-image: 
+                linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5)), 
+                url('https://i.postimg.cc/MKWjf3dD/IMG-20251210-160137.png');
+            background-position: top center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            pointer-events: none;
         }
 
         button, input, textarea, h1, h2, h3, p, span, div, a {
@@ -207,7 +230,18 @@
 
         /* --- DOMOVSKÁ OBRAZOVKA --- */
 #screen-home.active {
-    height: 100dvh;
+    height: calc(100dvh - 62px - env(safe-area-inset-bottom));
+    overflow: hidden;
+    padding-bottom: 0;
+}
+
+.home-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: calc(6px + env(safe-area-inset-top));
 }
 
 .home-header { 
@@ -229,7 +263,8 @@
         
         /* HLAVNÉ MENU */
 .menu-grid { 
-    flex-grow: 1; 
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex; 
     flex-direction: row; 
     justify-content: center; 
@@ -241,8 +276,8 @@
 }
 
 .img-btn-wrapper { 
-    width: 40%; 
-    max-width: 200px; 
+    width: 42%; 
+    max-width: 230px; 
     cursor: pointer; 
     z-index: 50; 
 }
@@ -275,7 +310,7 @@
     align-items: flex-end; 
     margin-top: auto; 
     gap: 20px; 
-    padding-bottom: 20px; 
+    padding-bottom: 10px; 
 }
 
 .left-col { 
@@ -670,8 +705,6 @@
 
 /* miesto pre lištu naspodku všetkých obrazoviek */
 .screen { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-#screen-home.active { height: calc(100dvh - 60px); }
-#install-btn { bottom: calc(76px + env(safe-area-inset-bottom)); }
 
 /* ===== KALENDÁR ===== */
 .cal-list { padding: 10px 14px 20px 14px; }
@@ -1039,20 +1072,25 @@
 }
 .retry-btn:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 rgba(0,0,0,0.8); }
 
-/* --- Tlačidlo Nainštalovať appku --- */
+/* --- Tlačidlo Nainštalovať appku (v toku domovskej obrazovky) --- */
 #install-btn {
-    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 200; background: var(--accent-color); color: #000; border: 3px solid #000;
-    padding: 14px 26px; font-size: 1.2rem; font-weight: 600; cursor: pointer; border-radius: 4px;
-    box-shadow: 5px 5px 0 rgba(0,0,0,0.9); display: none; align-items: center; gap: 10px;
+    display: none;
+    margin: 6px auto 4px auto;
+    flex-shrink: 0;
+    width: fit-content;
+    background: var(--accent-color); color: #000; border: 3px solid #000;
+    padding: 10px 22px; font-size: 1.05rem; font-weight: 600; cursor: pointer; border-radius: 4px;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.9);
+    align-items: center; gap: 10px;
     animation: installPulse 1.6s infinite alternate;
     white-space: nowrap;
+    z-index: 30;
 }
 #install-btn.show { display: inline-flex; }
-#install-btn:active { transform: translateX(-50%) scale(0.94); animation: none; }
+#install-btn:active { transform: scale(0.94); animation: none; }
 @keyframes installPulse {
-    from { box-shadow: 5px 5px 0 rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
-    to   { box-shadow: 5px 5px 0 rgba(0,0,0,0.9), 0 0 0 14px rgba(255,204,0,0); }
+    from { box-shadow: 4px 4px 0 rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
+    to   { box-shadow: 4px 4px 0 rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
 }
     </style>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
@@ -1140,8 +1178,6 @@
         </div>
     </div>
 
-    <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
-
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
@@ -1149,6 +1185,8 @@
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
+
+            <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
             
             <div class="menu-grid">
                 <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-upcoming')">
@@ -1262,6 +1300,7 @@
         <form id="message-form" class="msg-form" onsubmit="return submitMessageForm(event)">
             <p class="msg-intro">Bolo to super na koncerte? Máš tip na kapelu? Napíš nám pár riadkov, príde nám to rovno na mail.</p>
             <input type="hidden" name="access_key" value="098bcd63-5ac7-42d3-b832-16444c07caab">
+            <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
             <input type="hidden" name="subject" value="Nová správa z appky Kôňcerty">
             <input type="hidden" name="from_name" value="Kôňcerty appka">
             <input type="text" name="name" class="msg-input" placeholder="Tvoje meno (nepovinné)">
@@ -1312,6 +1351,24 @@
     </div>
 
     <script>
+// Bezpečnostné pomocné funkcie: očistenie textu a URL adries z gistu (CSV dát)
+// pred vložením do stránky, aby sa nedal spustiť cudzí kód cez dáta.
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+function safeUrl(str) {
+    if (!str) return '';
+    const s = String(str).trim();
+    if (/^https?:\/\//i.test(s)) return escapeHtml(s);
+    return '';
+}
+
 function buzz(ms) {
     if (navigator.vibrate) { try { navigator.vibrate(ms || 12); } catch(e) {} }
 }
@@ -1784,9 +1841,9 @@ const clean = cols.map(c =>
                     const cardHtml = `
                         <div role="button" tabindex="0" class="carousel-card" data-year="${eventYear}" onclick="openDetail(this)" data-details="${eventDataEncoded}">
                             ${isToday ? '<div class="today-badge">DNES!</div>' : ''}
-                            ${event.poster ? `<img src="${event.poster}" class="poster-clean" loading="lazy" decoding="async" alt="Plagát">` : '<div class="poster-clean" style="height:300px; background:#333; display:flex; align-items:center; justify-content:center;">BEZ FOTKY</div>'}
+                            ${safeUrl(event.poster) ? `<img src="${safeUrl(event.poster)}" class="poster-clean" loading="lazy" decoding="async" alt="Plagát">` : '<div class="poster-clean" style="height:300px; background:#333; display:flex; align-items:center; justify-content:center;">BEZ FOTKY</div>'}
                             <div class="card-mini-info">
-                                <div class="mini-title">${mainTitle}</div>
+                                <div class="mini-title">${escapeHtml(mainTitle)}</div>
                                 <div class="mini-date">${event.dateRaw}</div>
                                 <div class="click-hint"><i class="fas fa-hand-pointer"></i> KLIK PRE INFO</div>
                             </div>
@@ -1836,7 +1893,7 @@ const clean = cols.map(c =>
                 // Odpočet a ikonka — spustí sa RAZ, až keď poznáme finálny najbližší koncert
                 if (nextEventDate) {
                     startCountdown(nextEventDate, nextEventTitle);
-                    document.getElementById('dynamic-upcoming-img').src = nextEventIcon || defaultUpcomingImg;
+                    document.getElementById('dynamic-upcoming-img').src = safeUrl(nextEventIcon) || defaultUpcomingImg;
                 } else {
                     if (updateTimer) clearInterval(updateTimer);
                     const bar = document.getElementById('countdown-bar');
@@ -1878,7 +1935,7 @@ const clean = cols.map(c =>
                         <div role="button" tabindex="0" class="cal-row ${ev.isUpcoming ? '' : 'past-row'}" onclick="openDetailData('${ev.encoded}')">
                             <div class="cal-date"><span class="d">${dm}</span><span class="y">${parts[2] || ''}</span></div>
                             <div class="cal-info">
-                                <div class="cal-title">${ev.title}</div>
+                                <div class="cal-title">${escapeHtml(ev.title)}</div>
                                 <div class="cal-sub">${ev.time ? ev.time + ' • ' : ''}Furmanka</div>
                             </div>
                             ${ev.isToday ? '<div class="cal-today-tag">DNES!</div>' : ''}
@@ -1899,18 +1956,18 @@ const clean = cols.map(c =>
                     bandsEl.innerHTML = bands.map(b => `
                         <div class="band-row">
                             <div role="button" tabindex="0" class="band-head" onclick="toggleBand(this)">
-                                <div class="band-letter">${b.name.charAt(0).toUpperCase()}</div>
+                                <div class="band-letter">${escapeHtml(b.name.charAt(0).toUpperCase())}</div>
                                 <div class="band-head-info">
-                                    <div class="band-head-name">${b.name}</div>
-                                    <div class="band-head-sub">${[b.city, b.style].filter(Boolean).join(' • ')}</div>
+                                    <div class="band-head-name">${escapeHtml(b.name)}</div>
+                                    <div class="band-head-sub">${escapeHtml([b.city, b.style].filter(Boolean).join(' • '))}</div>
                                 </div>
                                 <div class="band-head-count">${b.count}x<br>u nás</div>
                             </div>
                             <div class="band-body">
-                                ${b.bio ? `<div class="band-bio">${b.bio}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
+                                ${b.bio ? `<div class="band-bio">${escapeHtml(b.bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
                                 <div class="band-links">
-                                    ${b.spotify ? `<a class="band-link-btn spotify" href="${b.spotify}" target="_blank"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
-                                    ${b.facebook ? `<a class="band-link-btn fb" href="${b.facebook}" target="_blank"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}
+                                    ${safeUrl(b.spotify) ? `<a class="band-link-btn spotify" href="${safeUrl(b.spotify)}" target="_blank"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
+                                    ${safeUrl(b.facebook) ? `<a class="band-link-btn fb" href="${safeUrl(b.facebook)}" target="_blank"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}
                                 </div>
                             </div>
                         </div>`).join('') || '<p style="text-align:center; padding-top:40px;">ZATIAĽ PRÁZDNO...</p>';
@@ -1948,7 +2005,7 @@ initCarouselObserver();
                     const cols = splitCsvRow(row, aboutDelimiter);
                     const clean = cols.map(c => c ? c.replace(/^"|"$/g, '').trim() : '');
                     const [popis, imgUrl] = clean;
-                    html += `<div class="about-item">${imgUrl ? `<img src="${imgUrl}" class="about-img" alt="">` : ''}<div class="about-text">${popis}</div></div>`;
+                    html += `<div class="about-item">${safeUrl(imgUrl) ? `<img src="${safeUrl(imgUrl)}" class="about-img" alt="">` : ''}<div class="about-text">${escapeHtml(popis)}</div></div>`;
                 }
                 if(html) aboutContainer.innerHTML = html;
             } catch (e) { console.log("O nás error:", e); }
@@ -1971,7 +2028,8 @@ initCarouselObserver();
                     const url = cols[uIdx];
                     const popis = pIdx > -1 ? cols[pIdx] : '';
                     if (!url) continue;
-                    html += `<a class="gallery-item" href="${url}" target="_blank"><img src="${url}" loading="lazy" decoding="async" alt="${popis || 'Fotka z koncertu'}"></a>`;
+                    if (!safeUrl(url)) continue;
+                    html += `<a class="gallery-item" href="${safeUrl(url)}" target="_blank"><img src="${safeUrl(url)}" loading="lazy" decoding="async" alt="${escapeHtml(popis || 'Fotka z koncertu')}"></a>`;
                 }
                 galleryGrid.innerHTML = html || '<div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div>';
             } catch (e) {
@@ -2032,14 +2090,14 @@ initCarouselObserver();
             if (data.bands && data.bands.length > 0) {
                 bandsHtml = `<div class="modal-desc">`;
                 data.bands.forEach(band => {
-                    bandsHtml += `<div class="band-block"><div class="band-name-detail">${band.name}</div>${band.city || band.style ? `<div class="band-meta">${band.city ? band.city : ''} ${band.style ? '• ' + band.style : ''}</div>` : ''}${band.bio ? `<div class="band-bio">${band.bio}</div>` : ''}${band.spotify ? `<a href="${band.spotify}" target="_blank" class="band-link"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
-                    ${band.fb ? `<a href="${band.fb}" target="_blank" class="band-link" style="border-color:#1877F2; color:#1877F2;"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}</div
+                    bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeUrl(band.spotify) ? `<a href="${safeUrl(band.spotify)}" target="_blank" class="band-link"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
+                    ${safeUrl(band.fb) ? `<a href="${safeUrl(band.fb)}" target="_blank" class="band-link" style="border-color:#1877F2; color:#1877F2;"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}</div
                     
                     >`;
                 });
                 bandsHtml += `</div>`;
             }
-            modalBody.innerHTML = `${data.poster ? `<img src="${data.poster}" class="modal-poster" alt="Plagát: ${data.title}">` : ''}<div class="modal-title">${data.title}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${data.date}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${data.time}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${data.place}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${data.price}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${data.fb_event ? `<a href="${data.fb_event}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>`;
+            modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>`;
             document.getElementById('modal-overlay').style.display = 'flex';
             history.pushState({ screen: activeScreenId, modal: true }, "", "#detail");
         }
@@ -2109,6 +2167,7 @@ window.addEventListener("popstate", function(event) {
     }
 });
 history.replaceState({ screen: 'screen-home' }, "", "#screen-home");
+showScreen('screen-home');
         const splashStartTime = Date.now();
         function hideSplash() {
             const el = document.getElementById('app-splash');
