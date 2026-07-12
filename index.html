@@ -231,6 +231,7 @@
         /* --- DOMOVSKÁ OBRAZOVKA --- */
 #screen-home.active {
     height: calc(100dvh - 62px - env(safe-area-inset-bottom));
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     padding-bottom: 0;
@@ -1169,6 +1170,8 @@
         </div>
         <div id="app-version-footer">Verzia: 1.0.0</div>
     </div>
+
+    <nav id="bottom-nav">
         <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="handleButtonClick('screen-home')">
             <i class="fas fa-house"></i><span>DOMOV</span>
         </div>
