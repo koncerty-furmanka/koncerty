@@ -857,6 +857,7 @@
 
 /* ===== VIAC ===== */
 .more-grid { padding: 14px; display: flex; flex-direction: column; gap: 11px; }
+#app-version-footer { text-align: center; color: #777; font-size: 0.75rem; padding: 18px 0 calc(90px + env(safe-area-inset-bottom)) 0; letter-spacing: 0.5px; }
 .more-btn {
     display: flex;
     align-items: center;
@@ -1166,9 +1167,8 @@
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
             <div role="button" tabindex="0" class="more-btn" onclick="shareApp()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
+        <div id="app-version-footer">Verzia: 1.0.0</div>
     </div>
-
-    <nav id="bottom-nav">
         <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="handleButtonClick('screen-home')">
             <i class="fas fa-house"></i><span>DOMOV</span>
         </div>
@@ -1399,6 +1399,8 @@ let activeScreenId = 'screen-home';
 
 function handleButtonClick(screenId) {
     buzz();
+    const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
+    if (modalOpen) hideModalNow();
     setTimeout(function() {
         showScreen(screenId);
         history.pushState({ screen: screenId }, "", "#" + screenId);
