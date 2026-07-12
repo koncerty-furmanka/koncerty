@@ -267,8 +267,8 @@
         
         /* HLAVNÉ MENU */
 .menu-grid { 
-    flex: 1 1 0;
-    min-height: 95px;
+    flex: 1.4 1 0;
+    min-height: 70px;
     display: flex; 
     flex-direction: row; 
     justify-content: center; 
@@ -318,12 +318,11 @@
     display: flex; 
     width: 100%; 
     justify-content: center; 
-    align-items: flex-end; 
-    margin-top: auto; 
+    align-items: stretch; 
     gap: 20px; 
     padding-bottom: 6px; 
-    flex-shrink: 1;
-    min-height: 60px;
+    flex: 1 1 0;
+    min-height: 70px;
 }
 
 .left-col { 
@@ -331,7 +330,8 @@
     flex-direction: column; 
     align-items: flex-start; 
     padding-left: 5px; 
-    gap: 12px; 
+    gap: 10px; 
+    height: 100%;
 }
 
 .right-col { 
@@ -339,22 +339,32 @@
     flex-direction: column; 
     align-items: flex-end; 
     padding-right: 5px; 
-    gap: 8px; 
+    gap: 6px; 
+    height: 100%;
+}
+
+.left-col > .action-btn, .right-col > .action-btn {
+    flex: 1 1 0;
+    min-height: 0;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
         /* Tlačidlá a efekty */
         .action-btn { cursor: pointer; display: block; }
         .btn-image, .small-btn-img, .social-link, .contact-btn { transition: transform 0.15s ease-out; }
         .img-btn-wrapper:active .btn-image, .action-btn:active .small-btn-img { transform: scale(0.9) rotate(-2deg); }
-        .small-btn-img { width: 100%; height: auto; display: block; filter: drop-shadow(3px 5px 5px rgba(0,0,0,0.9)); }
+        .small-btn-img { max-height: 100%; max-width: 100%; width: auto; height: auto; display: block; filter: drop-shadow(3px 5px 5px rgba(0,0,0,0.9)); margin: 0 auto; }
 
-.size-s { width: 13dvh; max-width: 125px; } 
-.size-m { width: 16dvh; max-width: 155px; }  
-.size-l { width: 19dvh; max-width: 185px; }
+.size-s { flex-grow: 1; max-width: 120px; } 
+.size-m { flex-grow: 1.3; max-width: 150px; }  
+.size-l { flex-grow: 1.6; max-width: 180px; }
 
         .rot-1 { transform: rotate(-3deg); }
         .rot-2 { transform: rotate(4deg); align-self: center; }
-        .rot-3 { transform: rotate(2deg); margin-top: 10px; }
+        .rot-3 { transform: rotate(2deg); }
         .rot-4 { transform: rotate(5deg); }
         .rot-5 { transform: rotate(1deg); }
 
@@ -1117,7 +1127,6 @@
                     <img src="vinyl-label.png" alt="">
                 </div>
             </div>
-            <div class="splash-tonearm"></div>
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
         <div class="splash-tagline">PUNK · SKA · ROCK'N'ROLL</div>
@@ -1836,9 +1845,7 @@ const clean = cols.map(c =>
                 const today = new Date();
                 today.setHours(0,0,0,0); 
                 
-                let nextEventDate = null;
-                let nextEventTitle = "";
-                let nextEventIcon = null;
+                let nextEventQueue = [];
 
                 eventsMap.forEach((event) => {
                     const parts = event.dateRaw.replace(/\s/g, '').split('.');
@@ -1880,12 +1887,10 @@ const clean = cols.map(c =>
                         pastEvents.push({ date: eventDateObj, html: cardHtml });
                     } else {
                         upcomingEvents.push({ date: eventDateObj, html: cardHtml });
-                        if (nextEventDate === null || eventDateObj < nextEventDate) {
-                            nextEventDate = eventDateObj;
-                            nextEventTitle = mainTitle;
-                            if (event.icon && event.icon.length > 5) nextEventIcon = event.icon;
-                            else if (event.poster && event.poster.length > 5) nextEventIcon = event.poster;
-                        }
+                        let thisIcon = null;
+                        if (event.icon && event.icon.length > 5) thisIcon = event.icon;
+                        else if (event.poster && event.poster.length > 5) thisIcon = event.poster;
+                        nextEventQueue.push({ date: eventDateObj, title: mainTitle, bands: event.bands, icon: thisIcon });
                     }
 
                     // dáta pre KALENDÁR
@@ -1916,10 +1921,10 @@ const clean = cols.map(c =>
                     });
                 });
 
-                // Odpočet a ikonka — spustí sa RAZ, až keď poznáme finálny najbližší koncert
-                if (nextEventDate) {
-                    startCountdown(nextEventDate, nextEventTitle);
-                    document.getElementById('dynamic-upcoming-img').src = safeUrl(nextEventIcon) || defaultUpcomingImg;
+                // Odpočet a ikonka — spustí sa RAZ, potom sa appka sama prepína na ďalšie termíny vo fronte
+                nextEventQueue.sort((a, b) => a.date - b.date);
+                if (nextEventQueue.length > 0) {
+                    startCountdown(nextEventQueue, 0);
                 } else {
                     if (updateTimer) clearInterval(updateTimer);
                     const bar = document.getElementById('countdown-bar');
@@ -2129,29 +2134,60 @@ initCarouselObserver();
             updateBackButtonVisibility();
         }
 
-        function startCountdown(targetDate, bandName) {
+        // queue = zoradené pole všetkých budúcich koncertov [{date, title, bands, icon}, ...]
+        // index = ktorý koncert z frony sa práve rieši (odpočítava sa naň, alebo práve prebieha)
+        function startCountdown(queue, index) {
             const bar = document.getElementById('countdown-bar');
+            const imgEl = document.getElementById('dynamic-upcoming-img');
             bar.style.display = 'block';
             if (updateTimer) clearInterval(updateTimer);
-            updateTimer = setInterval(() => {
-                const now = new Date().getTime();
-                const distance = targetDate.getTime() - now;
-                if (distance < 0) {
-                    clearInterval(updateTimer);
-                    bar.innerHTML = `
-                        <div class="count-band">${bandName}</div>
-                        <div class="no-event-sub">KÔŇCERT PRÁVE PREBIEHA! PRÍĎ DO FURMANKY!</div>
-                    `;
-                    return;
+
+            if (!queue || index >= queue.length) {
+                bar.innerHTML = `
+                    <div class="count-band">PRACUJEME NA ĎALŠÍCH KÔŇCERTOCH</div>
+                    <div class="no-event-sub">SLEDUJTE NÁS, ČOSKORO PRIDÁME NOVÝ TERMÍN</div>
+                `;
+                if (imgEl) imgEl.src = defaultUpcomingImg;
+                return;
+            }
+
+            const current = queue[index];
+            const targetDate = current.date;
+            const bandName = current.title;
+            if (imgEl) imgEl.src = safeUrl(current.icon) || defaultUpcomingImg;
+
+            // Kapely v poradí, ako sú riadky v giste (1. riadok = hrá prvá, 2. riadok = hrá druhá...)
+            // Každá kapela okrem poslednej hrá presne 1 hodinu, posledná hrá až do 23:59.
+            const bandList = (current.bands && current.bands.length > 0) ? current.bands : [{ name: bandName }];
+            const nightEnd = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
+            const slots = [];
+            let cursor = new Date(targetDate.getTime());
+            for (let i = 0; i < bandList.length; i++) {
+                const isLast = i === bandList.length - 1;
+                const slotStart = new Date(cursor.getTime());
+                let slotEnd;
+                if (isLast) {
+                    slotEnd = nightEnd;
+                } else {
+                    slotEnd = new Date(cursor.getTime() + 60 * 60 * 1000);
                 }
-                const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((distance % (1000 * 60)) / 1000);
-                const hStr = h < 10 ? '0'+h : h;
-                const mStr = m < 10 ? '0'+m : m;
-                const sStr = s < 10 ? '0'+s : s;
-    bar.innerHTML = `
+                slots.push({ name: bandList[i].name, start: slotStart, end: slotEnd });
+                cursor = slotEnd;
+            }
+
+            updateTimer = setInterval(() => {
+                const now = new Date();
+                const distance = targetDate.getTime() - now.getTime();
+
+                if (distance >= 0) {
+                    const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((distance % (1000 * 60)) / 1000);
+                    const hStr = h < 10 ? '0'+h : h;
+                    const mStr = m < 10 ? '0'+m : m;
+                    const sStr = s < 10 ? '0'+s : s;
+                    bar.innerHTML = `
     <div class="count-band">
         ${bandName}
     </div>
@@ -2184,6 +2220,18 @@ initCarouselObserver();
     </div>
 </div>
 `;
+                    return;
+                }
+
+                const currentSlot = slots.find(s => now >= s.start && now < s.end);
+                if (currentSlot) {
+                    bar.innerHTML = `
+                        <div class="count-band">PRÁVE HRÁ: ${escapeHtml(currentSlot.name)}</div>
+                    `;
+                } else {
+                    // Koncert skončil -> automaticky sa prepneme na ďalší termín vo fronte
+                    startCountdown(queue, index + 1);
+                }
             }, 1000);
         }
 window.addEventListener("popstate", function(event) {
