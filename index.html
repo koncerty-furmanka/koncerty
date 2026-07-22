@@ -908,6 +908,45 @@
     letter-spacing: 1px;
     text-shadow: 1px 1px 0 #000;
 }
+.gallery-section-title {
+    padding: 16px 14px 4px 14px;
+    font-size: 1rem;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+.gallery-section-title .sub { display: block; color: #999; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
+.gallery-section-title:first-of-type { border-top: none; margin-top: 0; }
+
+/* ===== GALÉRIA KONCERTU (v detaile / archíve) ===== */
+.event-gallery-wrap { margin: 14px 0; }
+.event-gallery-heading {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+.event-gallery-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+}
+.event-gallery-strip a {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: 62%;
+    max-width: 260px;
+    aspect-ratio: 4 / 5;
+    display: block;
+    border: 2px solid rgba(255,255,255,0.15);
+    overflow: hidden;
+    background: rgba(0,0,0,0.5);
+}
+.event-gallery-strip img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ===== NAPÍŠ NÁM (formulár) ===== */
 .msg-form { padding: 16px 18px 30px 18px; }
@@ -1871,6 +1910,10 @@ const clean = cols.map(c =>
                     const eventDataObj = { title: mainTitle, date: event.dateRaw, time: event.time, place: event.place, price: event.price, poster: event.poster, fb_event: event.fbEvent, bands: event.bands };
                     const eventDataEncoded = encodeURIComponent(JSON.stringify(eventDataObj));
 
+                    // Uložíme si názov koncertu podľa dátumu — použije sa v galérii aj v detaile na priradenie fotiek
+                    window.eventTitleByDate = window.eventTitleByDate || {};
+                    window.eventTitleByDate[event.dateRaw] = mainTitle;
+
                     const eventYear = eventDateObj.getFullYear();
                     const isToday = eventDateObj.getFullYear() === today.getFullYear()
                         && eventDateObj.getMonth() === today.getMonth()
@@ -2046,8 +2089,12 @@ initCarouselObserver();
                 if(html) aboutContainer.innerHTML = html;
             } catch (e) { console.log("O nás error:", e); }
 
-            // FOTOGALÉRIA (galeria.csv v tom istom gist - stĺpce: url,popis)
+            // FOTOGALÉRIA (galeria.csv v tom istom gist - stĺpce: url,popis,datum)
+            // "datum" je VOLITEĽNÝ stĺpec — musí byť v rovnakom formáte ako v data.csv (napr. 30.4.2022).
+            // Ak ho vyplníš, foto sa zobrazí zoskupené pod daným koncertom v galérii AJ v detaile toho koncertu (archív).
+            // Ak ho necháš prázdny, foto pôjde len do skupiny "OSTATNÉ FOTKY" v galérii.
             const galleryGrid = document.getElementById('gallery-grid');
+            window.photosByDate = {};
             try {
                 const resp = await fetch(galleryUrl + "?t=" + Date.now());
                 if (!resp.ok) throw new Error("galeria.csv zatiaľ neexistuje");
@@ -2057,19 +2104,52 @@ initCarouselObserver();
                 const headers = splitCsvRow(rows[0], delim).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
                 const uIdx = headers.indexOf('url');
                 const pIdx = headers.indexOf('popis');
-                let html = "";
+                const dIdx = headers.indexOf('datum');
+
+                const groups = new Map(); // datum ("" = nezaradené) -> [{url,popis}]
                 for (let i = 1; i < rows.length; i++) {
                     if (!rows[i].trim()) continue;
                     const cols = splitCsvRow(rows[i], delim).map(c => c ? c.replace(/^"|"$/g, '').replace(/\r/g, '').trim() : '');
                     const url = cols[uIdx];
                     const popis = pIdx > -1 ? cols[pIdx] : '';
-                    if (!url) continue;
-                    if (!safeUrl(url)) continue;
-                    html += `<a class="gallery-item" href="${safeUrl(url)}" target="_blank"><img src="${safeUrl(url)}" loading="lazy" decoding="async" alt="${escapeHtml(popis || 'Fotka z koncertu')}"></a>`;
+                    const datum = dIdx > -1 ? cols[dIdx] : '';
+                    if (!url || !safeUrl(url)) continue;
+                    const key = datum || '';
+                    if (!groups.has(key)) groups.set(key, []);
+                    groups.get(key).push({ url, popis });
+                    if (key) {
+                        if (!window.photosByDate[key]) window.photosByDate[key] = [];
+                        window.photosByDate[key].push({ url, popis });
+                    }
                 }
-                galleryGrid.innerHTML = html || '<div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div>';
+
+                // Zoradené skupiny podľa dátumu koncertu (najnovšie hore), nezaradené fotky nakoniec
+                const dateKeys = [...groups.keys()].filter(k => k);
+                dateKeys.sort((a, b) => {
+                    const da = parseEventDate(a) || new Date(0);
+                    const db = parseEventDate(b) || new Date(0);
+                    return db - da;
+                });
+                const orderedKeys = [...dateKeys, ...(groups.has('') ? [''] : [])];
+
+                let html = "";
+                orderedKeys.forEach(key => {
+                    const photos = groups.get(key);
+                    const heading = key
+                        ? `${escapeHtml(window.eventTitleByDate && window.eventTitleByDate[key] ? window.eventTitleByDate[key] : 'KONCERT')}<span class="sub">${escapeHtml(key)}</span>`
+                        : `OSTATNÉ FOTKY`;
+                    html += `<div class="gallery-section-title">${heading}</div><div class="gallery-grid">`;
+                    photos.forEach(p => {
+                        html += `<a class="gallery-item" href="${safeUrl(p.url)}" target="_blank"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></a>`;
+                    });
+                    html += `</div>`;
+                });
+
+                galleryGrid.outerHTML = html
+                    ? `<div id="gallery-grid">${html}</div>`
+                    : `<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>`;
             } catch (e) {
-                if (galleryGrid) galleryGrid.innerHTML = '<div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div>';
+                if (galleryGrid) galleryGrid.outerHTML = '<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>';
             }
         }
 
@@ -2133,7 +2213,14 @@ initCarouselObserver();
                 });
                 bandsHtml += `</div>`;
             }
-            modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>`;
+            // Fotky z tohto konkrétneho koncertu (podľa dátumu, priradené v galeria.csv stĺpcom "datum")
+            const eventPhotos = (window.photosByDate && window.photosByDate[data.date]) || [];
+            let eventGalleryHtml = "";
+            if (eventPhotos.length > 0) {
+                eventGalleryHtml = `<div class="event-gallery-wrap"><div class="event-gallery-heading"><i class="fas fa-images"></i> FOTKY Z KONCERTU</div><div class="event-gallery-strip">${eventPhotos.map(p => `<a href="${safeUrl(p.url)}" target="_blank"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></a>`).join('')}</div></div>`;
+            }
+
+            modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}${eventGalleryHtml}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>`;
             document.getElementById('modal-overlay').style.display = 'flex';
             history.pushState({ screen: activeScreenId, modal: true }, "", "#detail");
             updateBackButtonVisibility();
