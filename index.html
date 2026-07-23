@@ -555,34 +555,40 @@
     letter-spacing: 1px;
 }
 
-/* --- FILTER ROKOV V ARCHÍVE --- */
-.year-chips {
+/* --- NAVIGÁTOR ROKOV V ARCHÍVE --- */
+.archive-year-nav {
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 10px 15px 4px 15px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 14px 15px 10px 15px;
 }
-.year-chips::-webkit-scrollbar { display: none; }
-.year-chip {
+.archive-year-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    text-shadow: 2px 2px 0 #000;
+    min-width: 92px;
+    text-align: center;
+    transition: opacity 0.15s ease;
+}
+.archive-year-arrow {
+    width: 42px;
+    height: 42px;
     flex: 0 0 auto;
-    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 2px solid rgba(255,255,255,0.4);
-    border-radius: 20px;
     background: rgba(0,0,0,0.55);
     color: #fff;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    text-shadow: 1px 1px 0 #000;
+    transition: all 0.15s ease;
 }
-.year-chip.active {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    background: rgba(0,0,0,0.85);
-    transform: scale(1.05);
-}
+.archive-year-arrow:active:not(.disabled) { transform: scale(0.92); background: rgba(0,0,0,0.85); }
+.archive-year-arrow.disabled { opacity: 0.25; pointer-events: none; }
 
 /* --- DNES BADGE --- */
 .today-badge {
@@ -1358,7 +1364,11 @@
         <div class="page-header">
             <div class="page-title">ARCHÍV</div>
         </div>
-        <div id="year-chips" class="year-chips"></div>
+        <div id="archive-year-nav" class="archive-year-nav" style="display:none;">
+            <div role="button" tabindex="0" id="archive-year-prev" class="archive-year-arrow" onclick="archiveYearStep(-1)"><i class="fas fa-chevron-left"></i></div>
+            <div class="archive-year-label" id="archive-year-label">—</div>
+            <div role="button" tabindex="0" id="archive-year-next" class="archive-year-arrow" onclick="archiveYearStep(1)"><i class="fas fa-chevron-right"></i></div>
+        </div>
         <div id="carousel-past" class="carousel-container">
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
         </div>
@@ -2052,19 +2062,21 @@ const clean = cols.map(c =>
                 if (upcomingEvents.length > 0) upcomingEvents.forEach(e => upcomingContainer.innerHTML += e.html);
                 else upcomingContainer.innerHTML = "<p style='width:100%; text-align:center; padding-top:50px;'>ŽIADNE NOVÉ AKCIE...</p>";
 
-                pastEvents.sort((a, b) => b.date - a.date);
+                pastEvents.sort((a, b) => a.date - b.date);
                 if (pastEvents.length > 0) pastEvents.forEach(e => pastContainer.innerHTML += e.html);
                 else pastContainer.innerHTML = "<p style='width:100%; text-align:center; padding-top:50px;'>ARCHÍV JE PRÁZDNY...</p>";
 
-                // Filter rokov v archíve
-                const chipsEl = document.getElementById('year-chips');
-                if (chipsEl) {
-                    const years = [...new Set(pastEvents.map(e => e.date.getFullYear()))].sort((a, b) => b - a);
-                    if (years.length > 1) {
-                        chipsEl.innerHTML = '<div role="button" tabindex="0" class="year-chip active" onclick="filterArchiveYear(this, \'all\')">VŠETKO</div>'
-                            + years.map(y => `<div role="button" tabindex="0" class="year-chip" onclick="filterArchiveYear(this, '${y}')">${y}</div>`).join('');
+                // Navigátor rokov v archíve — ukazuje aktuálny (najnovší) rok, šípkami sa dá prejsť na starší/novší rok,
+                // a pri ručnom posúvaní plagátov sa rok hore sám prepína podľa toho, čo je práve vidieť.
+                const yearNavEl = document.getElementById('archive-year-nav');
+                window.archiveYears = [...new Set(pastEvents.map(e => e.date.getFullYear()))].sort((a, b) => a - b);
+                if (yearNavEl) {
+                    if (window.archiveYears.length > 0) {
+                        yearNavEl.style.display = 'flex';
+                        goToArchiveYear(window.archiveYears[window.archiveYears.length - 1], true);
+                        setupArchiveScrollTracking();
                     } else {
-                        chipsEl.innerHTML = '';
+                        yearNavEl.style.display = 'none';
                     }
                 }
 
@@ -2236,15 +2248,71 @@ initCarouselObserver();
             head.parentElement.classList.toggle('open');
         }
 
-        function filterArchiveYear(chip, year) {
-            buzz();
-            document.querySelectorAll('#year-chips .year-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
+        // ===== NAVIGÁTOR ROKOV V ARCHÍVE =====
+        function updateArchiveYearUI(year) {
+            const label = document.getElementById('archive-year-label');
+            if (label) label.textContent = year;
+            const years = window.archiveYears || [];
+            const idx = years.indexOf(year);
+            const prevBtn = document.getElementById('archive-year-prev');
+            const nextBtn = document.getElementById('archive-year-next');
+            if (prevBtn) prevBtn.classList.toggle('disabled', idx <= 0);
+            if (nextBtn) nextBtn.classList.toggle('disabled', idx === -1 || idx >= years.length - 1);
+        }
+
+        function goToArchiveYear(year, instant) {
             const container = document.getElementById('carousel-past');
-            container.querySelectorAll('.carousel-card').forEach(card => {
-                card.style.display = (year === 'all' || card.getAttribute('data-year') === year) ? 'flex' : 'none';
+            if (!container) return;
+            // Prvá karta s daným rokom v DOM = chronologicky prvý (najstarší) koncert toho roku,
+            // lebo plagáty sú teraz zoradené od najstaršieho po najnovší.
+            const card = container.querySelector(`.carousel-card[data-year="${year}"]`);
+            if (card) card.scrollIntoView({ inline: 'start', block: 'nearest', behavior: instant ? 'auto' : 'smooth' });
+            window.currentArchiveYear = year;
+            updateArchiveYearUI(year);
+        }
+
+        function archiveYearStep(dir) {
+            buzz();
+            const years = window.archiveYears || [];
+            if (!years.length) return;
+            let idx = years.indexOf(window.currentArchiveYear);
+            if (idx === -1) idx = years.length - 1;
+            idx += dir;
+            if (idx < 0 || idx >= years.length) return;
+            goToArchiveYear(years[idx]);
+        }
+
+        function getCurrentArchiveCard(container) {
+            const cards = container.querySelectorAll('.carousel-card');
+            const scrollLeft = container.scrollLeft;
+            let closest = null, closestDist = Infinity;
+            cards.forEach(c => {
+                const dist = Math.abs(c.offsetLeft - scrollLeft);
+                if (dist < closestDist) { closestDist = dist; closest = c; }
             });
-            container.scrollTo({ left: 0, behavior: 'smooth' });
+            return closest;
+        }
+
+        function setupArchiveScrollTracking() {
+            const container = document.getElementById('carousel-past');
+            if (!container || container.dataset.scrollBound) return;
+            container.dataset.scrollBound = '1';
+            let ticking = false;
+            container.addEventListener('scroll', () => {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(() => {
+                    const card = getCurrentArchiveCard(container);
+                    if (card) {
+                        const y = parseInt(card.getAttribute('data-year'));
+                        if (y && y !== window.currentArchiveYear) {
+                            window.currentArchiveYear = y;
+                            updateArchiveYearUI(y);
+                        }
+                    }
+                    ticking = false;
+                });
+            }, { passive: true });
         }
 
         // Auto-refresh: keď sa appka vráti na obrazovku po >10 min, stiahne čerstvé dáta
