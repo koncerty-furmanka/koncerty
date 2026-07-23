@@ -1472,6 +1472,12 @@
         <div class="modal-content" id="modal-content-body"></div>
     </div>
 
+    <div id="lightbox-overlay" class="lightbox-overlay">
+        <div class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></div>
+        <img id="lightbox-img" src="" alt="Fotka z koncertu">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
     <script>
 // Bezpečnostné pomocné funkcie: očistenie textu a URL adries z gistu (CSV dát)
 // pred vložením do stránky, aby sa nedal spustiť cudzí kód cez dáta.
@@ -2438,10 +2444,6 @@ showScreen('screen-home');
             if (sg) sg.insertAdjacentHTML('beforeend',
                 `<a href="${spotifyPlaylistUrl}" target="_blank" class="social-link" style="border-color:#1DB954;"><i class="fab fa-spotify" style="color:#1DB954;"></i> PLAYLIST</a>`);
         }
-    </script>    <div id="lightbox-overlay" class="lightbox-overlay">
-        <div class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></div>
-        <img id="lightbox-img" src="" alt="Fotka z koncertu">
-        <div class="lightbox-caption" id="lightbox-caption"></div>
-    </div>
+    </script>
 </body>
 </html>
