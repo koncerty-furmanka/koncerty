@@ -2303,11 +2303,10 @@ initCarouselObserver();
             const container = document.getElementById('carousel-past');
             if (!container || container.dataset.scrollBound) return;
             container.dataset.scrollBound = '1';
-            let ticking = false;
+            let debounceTimer = null;
             container.addEventListener('scroll', () => {
-                if (ticking) return;
-                ticking = true;
-                requestAnimationFrame(() => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
                     const card = getCurrentArchiveCard(container);
                     if (card) {
                         const y = parseInt(card.getAttribute('data-year'));
@@ -2316,8 +2315,7 @@ initCarouselObserver();
                             updateArchiveYearUI(y);
                         }
                     }
-                    ticking = false;
-                });
+                }, 120);
             }, { passive: true });
         }
 
