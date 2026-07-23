@@ -1372,9 +1372,9 @@
             <div class="page-title">ARCHÍV</div>
         </div>
         <div id="archive-year-nav" class="archive-year-nav" style="display:none;">
-            <div role="button" tabindex="0" id="archive-year-prev" class="archive-year-arrow" onclick="archiveYearStep(-1)"><i class="fas fa-chevron-left"></i></div>
+            <div role="button" tabindex="0" id="archive-year-prev" class="archive-year-arrow" onclick="archiveYearStep(1)"><i class="fas fa-chevron-left"></i></div>
             <div class="archive-year-label" id="archive-year-label">—</div>
-            <div role="button" tabindex="0" id="archive-year-next" class="archive-year-arrow" onclick="archiveYearStep(1)"><i class="fas fa-chevron-right"></i></div>
+            <div role="button" tabindex="0" id="archive-year-next" class="archive-year-arrow" onclick="archiveYearStep(-1)"><i class="fas fa-chevron-right"></i></div>
         </div>
         <div id="carousel-past" class="carousel-container">
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
@@ -2263,8 +2263,8 @@ initCarouselObserver();
             const idx = years.indexOf(year);
             const prevBtn = document.getElementById('archive-year-prev');
             const nextBtn = document.getElementById('archive-year-next');
-            if (prevBtn) prevBtn.classList.toggle('disabled', idx <= 0);
-            if (nextBtn) nextBtn.classList.toggle('disabled', idx === -1 || idx >= years.length - 1);
+            if (prevBtn) prevBtn.classList.toggle('disabled', idx === -1 || idx >= years.length - 1);
+            if (nextBtn) nextBtn.classList.toggle('disabled', idx <= 0);
         }
 
         function goToArchiveYear(year, instant) {
