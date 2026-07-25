@@ -676,27 +676,6 @@
 .nav-item.active { color: var(--accent-color); }
 .nav-item.active i { filter: drop-shadow(0 0 6px rgba(255,204,0,0.55)); }
 
-#exit-toast {
-    position: fixed;
-    bottom: 78px;
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: rgba(0,0,0,0.92);
-    border: 2px solid var(--accent-color);
-    color: #fff;
-    padding: 10px 18px;
-    font-size: 0.85rem;
-    letter-spacing: 1.5px;
-    border-radius: 4px;
-    z-index: 600;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    white-space: nowrap;
-    text-shadow: none;
-}
-#exit-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 /* ===== VÝBER KATEGÓRIÍ UPOZORNENÍ ===== */
 #notif-cats-overlay {
     display: none;
@@ -1356,12 +1335,8 @@
         <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="handleButtonClick('screen-more')">
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
-        <div role="button" tabindex="0" id="back-nav-btn" class="nav-item nav-item-back" onclick="handleBackNavClick()" style="display:none;">
-            <i class="fas fa-arrow-left"></i><span>SPÄŤ</span>
-        </div>
     </nav>
 
-    <div id="exit-toast"></div>
 
     <div id="notif-cats-overlay">
         <div class="notif-cats-panel">
@@ -1597,70 +1572,6 @@ function handleButtonClick(screenId) {
     }, 200);
 }
 
-// Jednotné tlačidlo "späť" - funguje pre obrazovky aj pre modal s detailom koncertu,
-// rovnako na Androide aj iPhone (nezávisí od hardvérového/gesta tlačidla).
-function goBack() {
-    buzz();
-    if (history.state && history.state.screen) {
-        history.back();
-    } else {
-        showScreen('screen-home');
-    }
-}
-
-// Tlačidlo SPÄŤ v spodnej lište:
-// - ak je otvorený detail koncertu, zavrie ho
-// - ak sme na Domov (niet kam ísť späť), vyžiada druhé ťuknutie (poistka proti nechcenému odchodu z appky)
-// - inak normálny krok späť
-let exitArmed = false;
-let exitArmTimer = null;
-let toastHideTimer = null;
-function showToast(message, duration) {
-    const t = document.getElementById('exit-toast');
-    if (!t) return;
-    t.textContent = message;
-    t.classList.add('show');
-    clearTimeout(toastHideTimer);
-    toastHideTimer = setTimeout(() => { t.classList.remove('show'); }, duration || 2200);
-}
-
-// Šípka SPÄŤ v spodnej lište je viditeľná len vtedy, keď má zmysel:
-// - schovaná na Domov obrazovke (niet kam sa vracať, appka sa tam ináč len zatvára)
-// - viditeľná na všetkých ostatných obrazovkách aj pri otvorenom detaile koncertu
-function updateBackButtonVisibility() {
-    const backBtn = document.getElementById('back-nav-btn');
-    if (!backBtn) return;
-    const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
-    const shouldShow = modalOpen || activeScreenId !== 'screen-home';
-    backBtn.style.display = shouldShow ? 'flex' : 'none';
-}
-
-function handleBackNavClick() {
-    const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
-    if (modalOpen) { closeModal(); return; }
-
-    if (activeScreenId === 'screen-home') {
-        buzz();
-        if (exitArmed) {
-            clearTimeout(exitArmTimer);
-            exitArmed = false;
-            document.getElementById('exit-toast').classList.remove('show');
-            // Pokus o zatvorenie appky (funguje len na časti Android zariadení,
-            // webová appka nemá spoľahlivé právo zavrieť sa sama všade).
-            window.close();
-        } else {
-            exitArmed = true;
-            showToast('ŤUKNI EŠTE RAZ PRE UKONČENIE', 2000);
-            exitArmTimer = setTimeout(() => {
-                exitArmed = false;
-                document.getElementById('exit-toast').classList.remove('show');
-            }, 2000);
-        }
-        return;
-    }
-    goBack();
-}
-
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -1695,12 +1606,10 @@ function handleBackNavClick() {
 
             window.scrollTo(0, 0);
             setTimeout(initCarouselObserver, 100);
-            updateBackButtonVisibility();
         }
 
         function hideModalNow() {
             document.getElementById('modal-overlay').style.display = 'none';
-            updateBackButtonVisibility();
         }
 
         async function submitMessageForm(e) {
@@ -2500,7 +2409,6 @@ initCarouselObserver();
             modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>${eventGalleryHtml}`;
             document.getElementById('modal-overlay').style.display = 'flex';
             history.pushState({ screen: activeScreenId, modal: true }, "", "#detail");
-            updateBackButtonVisibility();
         }
 
         // queue = zoradené pole všetkých budúcich koncertov [{date, title, bands, icon}, ...]
