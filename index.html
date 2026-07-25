@@ -1659,9 +1659,15 @@ function handleButtonClick(screenId) {
             }
         }
 
-        // Zatvorenie modalu klikom mimo obsahu
+        // Zatvorenie modalu klikom mimo obsahu — modal-content-body je neviditeľne roztiahnutý na celú šírku,
+        // preto sa počíta skutočná viditeľná plocha karty (ohraničujúci box), nie len id klikutého elementu.
         function overlayClick(e) {
-            if (e.target && e.target.id === 'modal-overlay') closeModal();
+            const content = document.getElementById('modal-content-body');
+            if (!content) return;
+            const rect = content.getBoundingClientRect();
+            const x = e.clientX, y = e.clientY;
+            const inside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+            if (!inside) closeModal();
         }
         // Klávesnicová prístupnosť: Enter/Medzera aktivuje prvky s role="button"
         document.addEventListener('keydown', function(e) {
@@ -2332,13 +2338,17 @@ initCarouselObserver();
             return closest;
         }
 
-        // Hint "POSUŇ DOPRAVA" zmizne, keď človek raz sám potiahne prstom (netreba ho ukazovať naveky)
+        // Hint "POSUŇ DOPRAVA" zmizne, keď človek raz sám potiahne prstom (netreba ho ukazovať naveky).
+        // Viaže sa na skutočný dotyk/kliknutie, nie na 'scroll' event — appka vie scrollnúť sama pri
+        // vykresľovaní obsahu, čo by hint schovalo skôr, než ho človek vôbec uvidí.
         function setupSwipeHintAutoHide(containerId, hintId) {
             const container = document.getElementById(containerId);
             const hint = document.getElementById(hintId);
             if (!container || !hint || container.dataset.swipeHintBound) return;
             container.dataset.swipeHintBound = '1';
-            container.addEventListener('scroll', () => { hint.classList.add('hidden'); }, { passive: true, once: true });
+            const hide = () => hint.classList.add('hidden');
+            container.addEventListener('touchstart', hide, { passive: true, once: true });
+            container.addEventListener('mousedown', hide, { once: true });
         }
 
         function setupArchiveScrollTracking() {
