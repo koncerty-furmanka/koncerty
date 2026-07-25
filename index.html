@@ -466,9 +466,9 @@
         }
 
         /* MODAL */
-        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; flex-direction: column; overflow-y: auto; padding: 20px 20px calc(90px + env(safe-area-inset-bottom)) 20px; box-sizing: border-box; animation: popIn 0.3s; }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; flex-direction: column; overflow-y: auto; padding: 20px 20px calc(90px + env(safe-area-inset-bottom)) 20px; box-sizing: border-box; }
+        .modal-content { margin-top: 40px; text-align: center; width: 88%; max-width: 380px; margin-left: auto; margin-right: auto; padding-bottom: 50px; animation: popIn 0.3s; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .modal-content { margin-top: 40px; text-align: center; width: 88%; max-width: 380px; margin-left: auto; margin-right: auto; padding-bottom: 50px; }
 .modal-poster {
     width: 80%;
     max-width: 300px;
@@ -1426,12 +1426,12 @@
         <div class="page-header">
             <div class="page-title">ARCHÍV</div>
         </div>
+        <div class="swipe-hint" id="archive-swipe-hint"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
         <div id="archive-year-nav" class="archive-year-nav" style="display:none;">
             <div role="button" tabindex="0" id="archive-year-prev" class="archive-year-arrow" onclick="archiveYearStep(1)"><i class="fas fa-chevron-left"></i></div>
             <div class="archive-year-label" id="archive-year-label">—</div>
             <div role="button" tabindex="0" id="archive-year-next" class="archive-year-arrow" onclick="archiveYearStep(-1)"><i class="fas fa-chevron-right"></i></div>
         </div>
-        <div class="swipe-hint" id="archive-swipe-hint"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
         <div id="carousel-past" class="carousel-container">
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
         </div>
@@ -1677,15 +1677,10 @@ function handleButtonClick(screenId) {
             }
         }
 
-        // Zatvorenie modalu klikom mimo obsahu — modal-content-body je neviditeľne roztiahnutý na celú šírku,
-        // preto sa počíta skutočná viditeľná plocha karty (ohraničujúci box), nie len id klikutého elementu.
+        // Zatvorenie modalu klikom mimo obsahu — zatvorí sa vždy, keď klik nepatrí do samotnej karty (ani do × tlačidla).
         function overlayClick(e) {
-            const content = document.getElementById('modal-content-body');
-            if (!content) return;
-            const rect = content.getBoundingClientRect();
-            const x = e.clientX, y = e.clientY;
-            const inside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
-            if (!inside) closeModal();
+            if (e.target.closest('#modal-content-body') || e.target.closest('.modal-close-btn')) return;
+            closeModal();
         }
         // Klávesnicová prístupnosť: Enter/Medzera aktivuje prvky s role="button"
         document.addEventListener('keydown', function(e) {
