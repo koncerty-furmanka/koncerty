@@ -2124,7 +2124,10 @@ const clean = cols.map(c =>
                 if (yearNavEl) {
                     if (window.archiveYears.length > 0) {
                         yearNavEl.style.display = 'flex';
-                        goToArchiveYear(window.archiveYears[window.archiveYears.length - 1], true);
+                        // Zoznam plagátov reálne začína najnovším koncertom, netreba nikam skákať.
+                        window.currentArchiveYear = window.archiveYears[window.archiveYears.length - 1];
+                        window.archiveAtFront = true;
+                        updateArchiveYearUI(window.currentArchiveYear);
                         setupArchiveScrollTracking();
                     } else {
                         yearNavEl.style.display = 'none';
@@ -2303,29 +2306,50 @@ initCarouselObserver();
         }
 
         // ===== NAVIGÁTOR ROKOV V ARCHÍVE =====
+        // window.currentArchiveYear = rok, ktorý sa práve ukazuje hore
+        // window.archiveAtFront = true, ak je vidieť úplne najnovší koncert zo všetkých (začiatok archívu)
         function updateArchiveYearUI(year) {
             const label = document.getElementById('archive-year-label');
             if (label) label.textContent = year;
             const years = window.archiveYears || [];
             const idx = years.indexOf(year);
-            const prevBtn = document.getElementById('archive-year-prev');
-            const nextBtn = document.getElementById('archive-year-next');
-            if (prevBtn) prevBtn.classList.toggle('disabled', idx === -1 || idx >= years.length - 1);
-            if (nextBtn) nextBtn.classList.toggle('disabled', idx <= 0);
+            const prevBtn = document.getElementById('archive-year-prev'); // smer "novšie"
+            const nextBtn = document.getElementById('archive-year-next'); // smer "staršie"
+            if (prevBtn) prevBtn.classList.toggle('disabled', !!window.archiveAtFront);
+            if (nextBtn) nextBtn.classList.toggle('disabled', idx <= 0 && !window.archiveAtFront);
+        }
+
+        function getFirstArchiveCard(container) {
+            return container.querySelector('.carousel-card');
+        }
+        function getOldestCardOfYear(container, year) {
+            // Posledná karta s daným rokom v DOM = najstarší koncert toho roku (plagáty idú od najnovšieho po najstarší).
+            const cards = container.querySelectorAll(`.carousel-card[data-year="${year}"]`);
+            return cards.length ? cards[cards.length - 1] : null;
+        }
+
+        function scrollArchiveToCard(card, instant) {
+            const container = document.getElementById('carousel-past');
+            if (!container || !card) return;
+            window.archiveJumping = true;
+            card.scrollIntoView({ inline: 'start', block: 'nearest', behavior: instant ? 'auto' : 'smooth' });
+            armArchiveJumpQuietTimer();
+        }
+
+        // Kým sa scroll ešte hýbe (vrátane prípadného "doskočenia" na snap bod), živé sledovanie je vypnuté.
+        // Časovač sa pri každom scroll evente reštartuje, takže sa uvoľní až keď je scroll naozaj v pokoji.
+        function armArchiveJumpQuietTimer() {
+            clearTimeout(window.archiveJumpingTimer);
+            window.archiveJumpingTimer = setTimeout(() => { window.archiveJumping = false; }, 350);
         }
 
         function goToArchiveYear(year, instant) {
             const container = document.getElementById('carousel-past');
             if (!container) return;
-            // Prvá karta s daným rokom v DOM = najnovší koncert toho roku (plagáty idú od najnovšieho po najstarší).
-            const card = container.querySelector(`.carousel-card[data-year="${year}"]`);
-            if (card) {
-                window.archiveJumping = true;
-                card.scrollIntoView({ inline: 'start', block: 'nearest', behavior: instant ? 'auto' : 'smooth' });
-                clearTimeout(window.archiveJumpingTimer);
-                window.archiveJumpingTimer = setTimeout(() => { window.archiveJumping = false; }, 500);
-            }
+            const card = getOldestCardOfYear(container, year);
+            if (card) scrollArchiveToCard(card, instant);
             window.currentArchiveYear = year;
+            window.archiveAtFront = false;
             updateArchiveYearUI(year);
         }
 
@@ -2333,11 +2357,32 @@ initCarouselObserver();
             buzz();
             const years = window.archiveYears || [];
             if (!years.length) return;
+            const container = document.getElementById('carousel-past');
             let idx = years.indexOf(window.currentArchiveYear);
             if (idx === -1) idx = years.length - 1;
-            idx += dir;
-            if (idx < 0 || idx >= years.length) return;
-            goToArchiveYear(years[idx]);
+
+            if (dir > 0) {
+                // Smer "novšie"
+                if (window.archiveAtFront) return; // už na úplnom začiatku, niet kam ísť
+                if (idx >= years.length - 1) {
+                    // Sme v najnovšom roku, ale nie na jeho najnovšom koncerte — doskoč na úplný začiatok archívu.
+                    const front = getFirstArchiveCard(container);
+                    if (front) scrollArchiveToCard(front);
+                    window.archiveAtFront = true;
+                    updateArchiveYearUI(window.currentArchiveYear);
+                    return;
+                }
+                goToArchiveYear(years[idx + 1]);
+            } else {
+                // Smer "staršie"
+                if (!window.archiveAtFront && idx <= 0) return; // už na najstaršom koncerte, niet kam ísť
+                if (window.archiveAtFront) {
+                    // Z úplného začiatku archívu ideme na najstarší koncert aktuálneho (najnovšieho) roku.
+                    goToArchiveYear(years[idx]);
+                    return;
+                }
+                goToArchiveYear(years[idx - 1]);
+            }
         }
 
         function getCurrentArchiveCard(container) {
@@ -2357,24 +2402,26 @@ initCarouselObserver();
             container.dataset.scrollBound = '1';
             let ticking = false;
             container.addEventListener('scroll', () => {
-                // Kým beží plynulý skok zo šípky, nesledujeme živo (aby rok "necuklo" cez medziľahlé roky)
-                if (window.archiveJumping) return;
+                // Kým beží plynulý skok zo šípky (aj s prípadným doťuknutím na snap bod), nesledujeme živo.
+                if (window.archiveJumping) { armArchiveJumpQuietTimer(); return; }
                 if (ticking) return;
                 ticking = true;
                 requestAnimationFrame(() => {
                     const card = getCurrentArchiveCard(container);
                     if (card) {
                         const y = parseInt(card.getAttribute('data-year'));
+                        const isFront = card === getFirstArchiveCard(container);
+                        if (isFront !== !!window.archiveAtFront) window.archiveAtFront = isFront;
                         if (y && y !== window.currentArchiveYear) {
                             window.currentArchiveYear = y;
                             updateArchiveYearUI(y);
+                        } else {
+                            updateArchiveYearUI(window.currentArchiveYear);
                         }
                     }
                     ticking = false;
                 });
             }, { passive: true });
-            // Poistka: aj keby scrollend nikdy nenastal, po skoku živé sledovanie sa uvoľní vďaka timeoutu vyššie.
-            container.addEventListener('scrollend', () => { window.archiveJumping = false; });
         }
 
         // Auto-refresh: keď sa appka vráti na obrazovku po >10 min, stiahne čerstvé dáta
