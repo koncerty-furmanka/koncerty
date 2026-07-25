@@ -557,6 +557,27 @@
     letter-spacing: 1px;
 }
 
+/* --- HINT "POSUŇ DOPRAVA" --- */
+.swipe-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 15px 0 15px;
+    color: #999;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+    transition: opacity 0.3s ease;
+}
+.swipe-hint.hidden { display: none; }
+.swipe-hint i.fa-hand-pointer { color: var(--accent-color); }
+.swipe-hint i.fa-chevron-right { animation: swipeHintNudge 1.3s ease-in-out infinite; color: var(--accent-color); }
+@keyframes swipeHintNudge {
+    0%, 100% { transform: translateX(0); opacity: 0.6; }
+    50% { transform: translateX(6px); opacity: 1; }
+}
+
 /* --- NAVIGÁTOR ROKOV V ARCHÍVE --- */
 .archive-year-nav {
     display: flex;
@@ -1403,6 +1424,7 @@
         <div class="page-header">
             <div class="page-title">Program</div>
         </div>
+        <div class="swipe-hint" id="upcoming-swipe-hint" style="display:none;"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
         <div id="carousel-upcoming" class="carousel-container">
             <div class="loading">HĽADÁM PLAGÁTY...</div>
         </div>
@@ -1417,6 +1439,7 @@
             <div class="archive-year-label" id="archive-year-label">—</div>
             <div role="button" tabindex="0" id="archive-year-next" class="archive-year-arrow" onclick="archiveYearStep(-1)"><i class="fas fa-chevron-right"></i></div>
         </div>
+        <div class="swipe-hint" id="archive-swipe-hint"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
         <div id="carousel-past" class="carousel-container">
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
         </div>
@@ -2112,6 +2135,9 @@ const clean = cols.map(c =>
                 upcomingEvents.sort((a, b) => a.date - b.date);
                 if (upcomingEvents.length > 0) upcomingEvents.forEach(e => upcomingContainer.innerHTML += e.html);
                 else upcomingContainer.innerHTML = "<p style='width:100%; text-align:center; padding-top:50px;'>ŽIADNE NOVÉ AKCIE...</p>";
+                const upcomingHint = document.getElementById('upcoming-swipe-hint');
+                if (upcomingHint) upcomingHint.style.display = upcomingEvents.length > 1 ? 'flex' : 'none';
+                setupSwipeHintAutoHide('carousel-upcoming', 'upcoming-swipe-hint');
 
                 pastEvents.sort((a, b) => b.date - a.date);
                 if (pastEvents.length > 0) pastEvents.forEach(e => pastContainer.innerHTML += e.html);
@@ -2129,6 +2155,7 @@ const clean = cols.map(c =>
                         window.archiveAtFront = true;
                         updateArchiveYearUI(window.currentArchiveYear);
                         setupArchiveScrollTracking();
+                        setupSwipeHintAutoHide('carousel-past', 'archive-swipe-hint');
                     } else {
                         yearNavEl.style.display = 'none';
                     }
@@ -2394,6 +2421,15 @@ initCarouselObserver();
                 if (dist < closestDist) { closestDist = dist; closest = c; }
             });
             return closest;
+        }
+
+        // Hint "POSUŇ DOPRAVA" zmizne, keď človek raz sám potiahne prstom (netreba ho ukazovať naveky)
+        function setupSwipeHintAutoHide(containerId, hintId) {
+            const container = document.getElementById(containerId);
+            const hint = document.getElementById(hintId);
+            if (!container || !hint || container.dataset.swipeHintBound) return;
+            container.dataset.swipeHintBound = '1';
+            container.addEventListener('scroll', () => { hint.classList.add('hidden'); }, { passive: true, once: true });
         }
 
         function setupArchiveScrollTracking() {
