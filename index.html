@@ -557,6 +557,26 @@
     letter-spacing: 1px;
 }
 
+/* ===== OFFLINE BANNER ===== */
+#offline-banner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10500;
+    background: #b8860b;
+    color: #1a1400;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    padding: 7px 12px calc(7px) 12px;
+    padding-top: calc(7px + env(safe-area-inset-top));
+    border-bottom: 2px solid #000;
+}
+#offline-banner.show { display: block; }
+
 /* --- HINT "POSUŇ DOPRAVA" --- */
 .swipe-hint {
     display: flex;
@@ -1290,6 +1310,8 @@
 </head>
 <body>
 
+    <div id="offline-banner"><i class="fas fa-wifi"></i> <span id="offline-banner-text">OFFLINE — ZOBRAZUJEM POSLEDNÉ ULOŽENÉ DÁTA</span></div>
+
     <div id="app-splash">
         <div class="splash-vinyl-wrap">
             <div class="splash-vinyl">
@@ -1416,17 +1438,16 @@
         <div class="page-header">
             <div class="page-title">Program</div>
         </div>
-        <div class="swipe-hint" id="upcoming-swipe-hint" style="display:none;"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
         <div id="carousel-upcoming" class="carousel-container">
             <div class="loading">HĽADÁM PLAGÁTY...</div>
         </div>
+        <div class="swipe-hint" id="upcoming-swipe-hint" style="display:none;"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
     </div>
 
     <div id="screen-past" class="screen">
         <div class="page-header">
             <div class="page-title">ARCHÍV</div>
         </div>
-        <div class="swipe-hint" id="archive-swipe-hint"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
         <div id="archive-year-nav" class="archive-year-nav" style="display:none;">
             <div role="button" tabindex="0" id="archive-year-prev" class="archive-year-arrow" onclick="archiveYearStep(1)"><i class="fas fa-chevron-left"></i></div>
             <div class="archive-year-label" id="archive-year-label">—</div>
@@ -1435,7 +1456,9 @@
         <div id="carousel-past" class="carousel-container">
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
         </div>
+        <div class="swipe-hint" id="archive-swipe-hint"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
     </div>
+
 
     <div id="screen-about" class="screen">
         <div class="page-header">
@@ -1835,6 +1858,26 @@ function handleButtonClick(screenId) {
         
         let updateTimer = null;
 
+// Banner "OFFLINE — zobrazujem posledné uložené dáta" — zobrazí sa, keď appka nemá pripojenie
+// a musí použiť dáta uložené z posledného úspešného načítania (localStorage).
+function showOfflineBanner(timestampStr) {
+    const banner = document.getElementById('offline-banner');
+    if (!banner) return;
+    let suffix = '';
+    const ts = parseInt(timestampStr);
+    if (ts) {
+        const d = new Date(ts);
+        const pad = n => String(n).padStart(2, '0');
+        suffix = ` (${pad(d.getDate())}.${pad(d.getMonth() + 1)}. ${pad(d.getHours())}:${pad(d.getMinutes())})`;
+    }
+    document.getElementById('offline-banner-text').textContent = 'OFFLINE — ZOBRAZUJEM POSLEDNÉ ULOŽENÉ DÁTA' + suffix;
+    banner.classList.add('show');
+}
+function hideOfflineBanner() {
+    const banner = document.getElementById('offline-banner');
+    if (banner) banner.classList.remove('show');
+}
+
 async function loadApp() {
     document.getElementById('dynamic-upcoming-img').src = defaultUpcomingImg;
 
@@ -1886,8 +1929,20 @@ document.getElementById('countdown-bar').innerHTML = `
 `;
 
     try {
-                const response = await fetch(gistUrl + "?t=" + Date.now());
-                const data = await response.text();
+                let data;
+                try {
+                    const response = await fetch(gistUrl + "?t=" + Date.now());
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    data = await response.text();
+                    localStorage.setItem('koncerty_cache_data', data);
+                    localStorage.setItem('koncerty_cache_data_time', String(Date.now()));
+                    hideOfflineBanner();
+                } catch (fetchErr) {
+                    const cached = localStorage.getItem('koncerty_cache_data');
+                    if (!cached) throw fetchErr;
+                    data = cached;
+                    showOfflineBanner(localStorage.getItem('koncerty_cache_data_time'));
+                }
 
 const rows = data.trim().split(/\r?\n/);
 if (rows.length === 0) return;
@@ -2156,8 +2211,17 @@ initCarouselObserver();
 
             // O NÁS
             try {
-                const resp = await fetch(aboutUrl + "?t=" + Date.now());
-                const txt = await resp.text();
+                let txt;
+                try {
+                    const resp = await fetch(aboutUrl + "?t=" + Date.now());
+                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                    txt = await resp.text();
+                    localStorage.setItem('koncerty_cache_about', txt);
+                } catch (fetchErr) {
+                    const cached = localStorage.getItem('koncerty_cache_about');
+                    if (!cached) throw fetchErr;
+                    txt = cached;
+                }
                 const aboutRows = txt.trim().split('\n');
                 const aboutContainer = document.getElementById('about-container');
                 const startIdx = aboutRows[0].toLowerCase().includes("popis") ? 1 : 0;
@@ -2182,9 +2246,17 @@ initCarouselObserver();
             const galleryGrid = document.getElementById('gallery-grid');
             window.galleryGroups = {};
             try {
-                const resp = await fetch(galleryUrl + "?t=" + Date.now());
-                if (!resp.ok) throw new Error("galeria.csv zatiaľ neexistuje");
-                const txt = await resp.text();
+                let txt;
+                try {
+                    const resp = await fetch(galleryUrl + "?t=" + Date.now());
+                    if (!resp.ok) throw new Error("galeria.csv zatiaľ neexistuje");
+                    txt = await resp.text();
+                    localStorage.setItem('koncerty_cache_gallery', txt);
+                } catch (fetchErr) {
+                    const cached = localStorage.getItem('koncerty_cache_gallery');
+                    if (!cached) throw fetchErr;
+                    txt = cached;
+                }
                 const rows = txt.trim().split(/\r?\n/);
                 const delim = detectCsvDelimiter(rows[0]);
                 const headers = splitCsvRow(rows[0], delim).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
