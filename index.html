@@ -559,7 +559,7 @@
 
 /* ===== OFFLINE BANNER ===== */
 #offline-banner {
-    display: none;
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
@@ -574,8 +574,12 @@
     padding: 7px 12px calc(7px) 12px;
     padding-top: calc(7px + env(safe-area-inset-top));
     border-bottom: 2px solid #000;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
 }
-#offline-banner.show { display: block; }
+#offline-banner.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
 /* --- ANIMÁCIA "SWIPNI" (ruka prejde cez plagát a zmizne) --- */
 .swipe-gesture-hint {
@@ -1877,7 +1881,9 @@ function handleButtonClick(screenId) {
         let updateTimer = null;
 
 // Banner "OFFLINE — zobrazujem posledné uložené dáta" — zobrazí sa, keď appka nemá pripojenie
-// a musí použiť dáta uložené z posledného úspešného načítania (localStorage).
+// a musí použiť dáta uložené z posledného úspešného načítania (localStorage). Po pár sekundách,
+// keď si to človek stihne prečítať, sám zmizne (netreba ho tam držať naveky).
+let offlineBannerTimer = null;
 function showOfflineBanner(timestampStr) {
     const banner = document.getElementById('offline-banner');
     if (!banner) return;
@@ -1890,8 +1896,11 @@ function showOfflineBanner(timestampStr) {
     }
     document.getElementById('offline-banner-text').textContent = 'OFFLINE — ZOBRAZUJEM POSLEDNÉ ULOŽENÉ DÁTA' + suffix;
     banner.classList.add('show');
+    clearTimeout(offlineBannerTimer);
+    offlineBannerTimer = setTimeout(() => { banner.classList.remove('show'); }, 4500);
 }
 function hideOfflineBanner() {
+    clearTimeout(offlineBannerTimer);
     const banner = document.getElementById('offline-banner');
     if (banner) banner.classList.remove('show');
 }
