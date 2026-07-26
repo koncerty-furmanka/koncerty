@@ -577,25 +577,35 @@
 }
 #offline-banner.show { display: block; }
 
-/* --- HINT "POSUŇ DOPRAVA" --- */
-.swipe-hint {
+/* --- ANIMÁCIA "SWIPNI" (ruka prejde cez plagát a zmizne) --- */
+.swipe-gesture-hint {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 46%;
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 8px 15px 0 15px;
-    color: #999;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 0 #000;
-    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 550;
+    opacity: 0;
 }
-.swipe-hint.hidden { display: none; }
-.swipe-hint i.fa-hand-pointer { color: var(--accent-color); }
-.swipe-hint i.fa-chevron-right { animation: swipeHintNudge 1.3s ease-in-out infinite; color: var(--accent-color); }
-@keyframes swipeHintNudge {
-    0%, 100% { transform: translateX(0); opacity: 0.6; }
-    50% { transform: translateX(6px); opacity: 1; }
+.swipe-gesture-hint.playing { animation: swipeGestureFade 1.9s ease; }
+.swipe-gesture-hand {
+    font-size: 2.8rem;
+    color: #fff;
+    text-shadow: 0 0 14px rgba(0,0,0,0.9), 2px 2px 0 #000;
+}
+.swipe-gesture-hint.playing .swipe-gesture-hand { animation: swipeGestureMove 1.9s ease; }
+@keyframes swipeGestureFade {
+    0% { opacity: 0; }
+    12% { opacity: 1; }
+    82% { opacity: 1; }
+    100% { opacity: 0; }
+}
+@keyframes swipeGestureMove {
+    0% { transform: translateX(-34px); }
+    50% { transform: translateX(34px); }
+    100% { transform: translateX(-34px); }
 }
 
 /* --- NAVIGÁTOR ROKOV V ARCHÍVE --- */
@@ -1441,7 +1451,6 @@
         <div id="carousel-upcoming" class="carousel-container">
             <div class="loading">HĽADÁM PLAGÁTY...</div>
         </div>
-        <div class="swipe-hint" id="upcoming-swipe-hint" style="display:none;"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
     </div>
 
     <div id="screen-past" class="screen">
@@ -1456,7 +1465,6 @@
         <div id="carousel-past" class="carousel-container">
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
         </div>
-        <div class="swipe-hint" id="archive-swipe-hint"><i class="fas fa-hand-pointer"></i> POSUŇ DOPRAVA <i class="fas fa-chevron-right"></i></div>
     </div>
 
 
@@ -1578,6 +1586,10 @@
         <div class="lightbox-counter" id="lightbox-counter"></div>
     </div>
 
+    <div id="swipe-gesture-hint" class="swipe-gesture-hint">
+        <div class="swipe-gesture-hand"><i class="fas fa-hand-pointer"></i></div>
+    </div>
+
     <script>
 // Bezpečnostné pomocné funkcie: očistenie textu a URL adries z gistu (CSV dát)
 // pred vložením do stránky, aby sa nedal spustiť cudzí kód cez dáta.
@@ -1617,6 +1629,12 @@ function handleButtonClick(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             activeScreenId = screenId;
+
+            if (screenId === 'screen-past') {
+                playSwipeGesture('carousel-past');
+            } else if (screenId === 'screen-upcoming' && (window.upcomingEventsCount || 0) > 1) {
+                playSwipeGesture('carousel-upcoming');
+            }
             
             if(screenId === 'screen-home') {
                 document.body.style.overflow = 'hidden';
@@ -2118,9 +2136,7 @@ const clean = cols.map(c =>
                 upcomingEvents.sort((a, b) => a.date - b.date);
                 if (upcomingEvents.length > 0) upcomingEvents.forEach(e => upcomingContainer.innerHTML += e.html);
                 else upcomingContainer.innerHTML = "<p style='width:100%; text-align:center; padding-top:50px;'>ŽIADNE NOVÉ AKCIE...</p>";
-                const upcomingHint = document.getElementById('upcoming-swipe-hint');
-                if (upcomingHint) upcomingHint.style.display = upcomingEvents.length > 1 ? 'flex' : 'none';
-                setupSwipeHintAutoHide('carousel-upcoming', 'upcoming-swipe-hint');
+                window.upcomingEventsCount = upcomingEvents.length;
 
                 pastEvents.sort((a, b) => b.date - a.date);
                 if (pastEvents.length > 0) pastEvents.forEach(e => pastContainer.innerHTML += e.html);
@@ -2138,7 +2154,6 @@ const clean = cols.map(c =>
                         window.archiveAtFront = true;
                         updateArchiveYearUI(window.currentArchiveYear);
                         setupArchiveScrollTracking();
-                        setupSwipeHintAutoHide('carousel-past', 'archive-swipe-hint');
                     } else {
                         yearNavEl.style.display = 'none';
                     }
@@ -2423,17 +2438,21 @@ initCarouselObserver();
             return closest;
         }
 
-        // Hint "POSUŇ DOPRAVA" zmizne, keď človek raz sám potiahne prstom (netreba ho ukazovať naveky).
-        // Viaže sa na skutočný dotyk/kliknutie, nie na 'scroll' event — appka vie scrollnúť sama pri
-        // vykresľovaní obsahu, čo by hint schovalo skôr, než ho človek vôbec uvidí.
-        function setupSwipeHintAutoHide(containerId, hintId) {
+        // Krátka animácia ruky nad plagátmi, ktorá ukáže "toto sa dá posúvať" a sama zmizne.
+        // Prehrá sa len raz za appku (za reláciu) na daný carousel, a zruší sa okamžite,
+        // ak človek sám začne posúvať skôr, než animácia doletí do konca.
+        function playSwipeGesture(containerId) {
             const container = document.getElementById(containerId);
-            const hint = document.getElementById(hintId);
-            if (!container || !hint || container.dataset.swipeHintBound) return;
-            container.dataset.swipeHintBound = '1';
-            const hide = () => hint.classList.add('hidden');
-            container.addEventListener('touchstart', hide, { passive: true, once: true });
-            container.addEventListener('mousedown', hide, { once: true });
+            const overlay = document.getElementById('swipe-gesture-hint');
+            if (!container || !overlay || container.dataset.swipeAnimPlayed) return;
+            container.dataset.swipeAnimPlayed = '1';
+            overlay.classList.remove('playing');
+            void overlay.offsetWidth; // reflow, aby sa CSS animácia vedela znova spustiť
+            overlay.classList.add('playing');
+            const stop = () => overlay.classList.remove('playing');
+            setTimeout(stop, 2000);
+            container.addEventListener('touchstart', stop, { once: true, passive: true });
+            container.addEventListener('mousedown', stop, { once: true });
         }
 
         function setupArchiveScrollTracking() {
