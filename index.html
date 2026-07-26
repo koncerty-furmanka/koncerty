@@ -1897,7 +1897,7 @@ function showOfflineBanner(timestampStr) {
     document.getElementById('offline-banner-text').textContent = 'OFFLINE — ZOBRAZUJEM POSLEDNÉ ULOŽENÉ DÁTA' + suffix;
     banner.classList.add('show');
     clearTimeout(offlineBannerTimer);
-    offlineBannerTimer = setTimeout(() => { banner.classList.remove('show'); }, 4500);
+    offlineBannerTimer = setTimeout(() => { banner.classList.remove('show'); }, 2500);
 }
 function hideOfflineBanner() {
     clearTimeout(offlineBannerTimer);
