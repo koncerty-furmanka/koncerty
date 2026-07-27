@@ -32,6 +32,7 @@
     <!-- 2) Nahraď TU_VLOZ_ONESIGNAL_APP_ID dolu skutočným App ID -->
     <!-- 3) Nahraj do repa priečinok "onesignal" so súborom OneSignalSDKWorker.js (poslal som ho) -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         OneSignalDeferred.push(async function (OneSignal) {
@@ -128,6 +129,7 @@
     </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://i.postimg.cc" crossorigin>
@@ -219,8 +221,6 @@
     margin-top: -5px;
     margin-bottom: 2px;
 }
-        
-        .countdown-time { color: white; }
 
 .screen { 
     display: none; 
@@ -482,7 +482,7 @@
         .band-block:last-child { border-bottom: none; }
         .band-name-detail { color: var(--accent-color); font-size: 1.5rem; margin-bottom: 5px; }
         .band-meta { font-size: 0.9rem; color: #aaa; margin-bottom: 10px; font-style: italic; }
-        .band-bio { font-size: 1.1rem; color: #eee; white-space: pre-line; line-height: 1.4; }
+        .band-bio { font-size: 0.95rem; color: #ddd; white-space: pre-line; line-height: 1.45; padding-top: 10px; }
   .band-link {
     display: inline-block;
     margin-top: 10px;
@@ -509,7 +509,6 @@
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .loading { font-size: 2rem; color: var(--accent-color); text-align: center; margin-top: 50px; text-shadow: 2px 2px 0 black; }
-        .footer-text { margin-top: 50px; font-size: 1rem; color: #ccc; text-align: center; letter-spacing: 2px; padding-bottom: 30px; }
         .countdown-wrapper {
     display: flex;
     justify-content: center;
@@ -555,6 +554,63 @@
     color: #ccc;
     text-shadow: 1px 1px 0 #000;
     letter-spacing: 1px;
+}
+
+/* ===== INTERAKTÍVNA MAPA ===== */
+#leaflet-map {
+    width: 100%;
+    height: 340px;
+    filter: saturate(0.9) contrast(1.05);
+}
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1a1a1a; color: #fff; }
+.leaflet-popup-content { font-family: inherit; font-size: 0.85rem; text-align: center; }
+.leaflet-popup-content strong { color: var(--accent-color); }
+.map-marker-pin {
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.map-marker-pin i { transform: rotate(45deg); font-size: 0.85rem; color: #000; }
+.map-marker-venue { background: var(--accent-color); }
+.map-marker-parking { background: #4da3ff; }
+.map-legend {
+    padding: 14px 15px 4px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.map-legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(0,0,0,0.45);
+    border: 2px solid rgba(255,255,255,0.15);
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    color: #ddd;
+    line-height: 1.4;
+}
+.map-legend-item strong { color: var(--accent-color); letter-spacing: 0.5px; }
+.map-legend-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #000; flex: 0 0 auto; margin-top: 3px; }
+.map-legend-dot-venue { background: var(--accent-color); }
+.map-legend-dot-parking { background: #4da3ff; }
+.map-nav-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 15px 30px 15px;
+}
+.btn-map-nav {
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
 }
 
 /* ===== OFFLINE BANNER ===== */
@@ -674,8 +730,6 @@
     from { transform: translateX(-50%) rotate(-4deg) scale(1); }
     to   { transform: translateX(-50%) rotate(-4deg) scale(1.08); }
 }
-
-
 
 /* ===== SPODNÁ NAVIGAČNÁ LIŠTA ===== */
 #bottom-nav {
@@ -889,7 +943,6 @@
     border-top: 1px dashed rgba(255,255,255,0.2);
 }
 .band-row.open .band-body { display: block; }
-.band-bio { font-size: 0.95rem; color: #ddd; line-height: 1.45; padding-top: 10px; }
 .band-links { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .band-link-btn {
     display: inline-flex;
@@ -1336,7 +1389,7 @@
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
         <div class="splash-tagline">PUNK · SKA · ROCK'N'ROLL</div>
-        <div class="splash-loading">NAČÍTAVAM<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+        <div class="splash-loading" id="splash-loading-text">NAČÍTAVAM<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
     </div>
 
     <div id="screen-calendar" class="screen">
@@ -1389,7 +1442,6 @@
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
     </nav>
-
 
     <div id="notif-cats-overlay">
         <div class="notif-cats-panel">
@@ -1470,7 +1522,6 @@
             <p style="text-align:center; color:#ccc; font-size:1.5rem; width:100%;">TU SKAPAL PES...</p>
         </div>
     </div>
-
 
     <div id="screen-about" class="screen">
         <div class="page-header">
@@ -1556,7 +1607,21 @@
         <div class="page-header">
             <div class="page-title">MAPA</div>
         </div>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2616.536465492434!2d19.48123457636904!3d49.403561979344485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4715c60f25a58793%3A0x6c6e75551351111!2sFurmanka!5e0!3m2!1ssk!2ssk!4v1709123456789!5m2!1ssk!2ssk" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <div id="leaflet-map"></div>
+        <div class="map-legend">
+            <div class="map-legend-item">
+                <span class="map-legend-dot map-legend-dot-venue"></span>
+                <div><strong>FURMANKA</strong><br>Hviezdoslavova 54, Námestovo — tu vykladáme aj hráme</div>
+            </div>
+            <div class="map-legend-item">
+                <span class="map-legend-dot map-legend-dot-parking"></span>
+                <div><strong>PARKOVISKO</strong><br>Tu môžeš nechať auto na celý večer</div>
+            </div>
+        </div>
+        <div class="map-nav-buttons">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=49.4046478,19.4791651&travelmode=driving" target="_blank" class="btn btn-map-nav"><i class="fas fa-diamond-turn-right"></i> NAVIGOVAŤ NA PARKOVISKO</a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=49.4042671,19.4790494&travelmode=driving" target="_blank" class="btn btn-map-nav"><i class="fas fa-diamond-turn-right"></i> NAVIGOVAŤ NA VYLOŽENIE / FURMANKA</a>
+        </div>
     </div>
 
     <div id="screen-social" class="screen">
@@ -1638,6 +1703,8 @@ function handleButtonClick(screenId) {
                 playSwipeGesture('carousel-past');
             } else if (screenId === 'screen-upcoming' && (window.upcomingEventsCount || 0) > 1) {
                 playSwipeGesture('carousel-upcoming');
+            } else if (screenId === 'screen-map') {
+                initFurmankaMap();
             }
             
             if(screenId === 'screen-home') {
@@ -1739,7 +1806,6 @@ function handleButtonClick(screenId) {
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') { closeModal(); }
         });
-
 
         // Parsovanie dátumu "DD.MM.YYYY" + času "HH:MM" -> Date (null ak sa nedá)
         function parseEventDate(dateStr, timeStr) {
@@ -1881,12 +1947,12 @@ function handleButtonClick(screenId) {
         let updateTimer = null;
 
 // Banner "OFFLINE — zobrazujem posledné uložené dáta" — zobrazí sa, keď appka nemá pripojenie
-// a musí použiť dáta uložené z posledného úspešného načítania (localStorage). Po pár sekundách,
-// keď si to človek stihne prečítať, sám zmizne (netreba ho tam držať naveky).
+// a musí použiť dáta uložené z posledného úspešného načítania (localStorage).
+// Kým beží úvodné načítavanie (splash so škrupinou), hláška sa ukáže priamo tam namiesto "NAČÍTAVAM...".
+// Až keď je appka už otvorená a offline nastane neskôr (napr. pri obnove), použije sa horný banner,
+// ktorý po pár sekundách sám zmizne.
 let offlineBannerTimer = null;
 function showOfflineBanner(timestampStr) {
-    const banner = document.getElementById('offline-banner');
-    if (!banner) return;
     let suffix = '';
     const ts = parseInt(timestampStr);
     if (ts) {
@@ -1894,10 +1960,20 @@ function showOfflineBanner(timestampStr) {
         const pad = n => String(n).padStart(2, '0');
         suffix = ` (${pad(d.getDate())}.${pad(d.getMonth() + 1)}. ${pad(d.getHours())}:${pad(d.getMinutes())})`;
     }
+
+    const splash = document.getElementById('app-splash');
+    const splashText = document.getElementById('splash-loading-text');
+    if (splash && splashText && !splash.classList.contains('splash-hide')) {
+        splashText.textContent = 'OFFLINE — POUŽÍVAM ULOŽENÉ DÁTA' + suffix;
+        return;
+    }
+
+    const banner = document.getElementById('offline-banner');
+    if (!banner) return;
     document.getElementById('offline-banner-text').textContent = 'OFFLINE — ZOBRAZUJEM POSLEDNÉ ULOŽENÉ DÁTA' + suffix;
     banner.classList.add('show');
     clearTimeout(offlineBannerTimer);
-    offlineBannerTimer = setTimeout(() => { banner.classList.remove('show'); }, 2500);
+    offlineBannerTimer = setTimeout(() => { banner.classList.remove('show'); }, 4500);
 }
 function hideOfflineBanner() {
     clearTimeout(offlineBannerTimer);
@@ -1919,7 +1995,6 @@ async function loadApp() {
             : /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
         return row.split(re);
     }
-
 
 document.getElementById('countdown-bar').innerHTML = `
     <div class="count-band">
@@ -2032,7 +2107,6 @@ const clean = cols.map(c =>
         });
     }
 }
-
 
                 const upcomingContainer = document.getElementById('carousel-upcoming');
                 const pastContainer = document.getElementById('carousel-past');
@@ -2462,6 +2536,49 @@ initCarouselObserver();
             setTimeout(stop, 2000);
             container.addEventListener('touchstart', stop, { once: true, passive: true });
             container.addEventListener('mousedown', stop, { once: true });
+        }
+
+        // ===== INTERAKTÍVNA MAPA (Leaflet + OpenStreetMap) =====
+        // Súradnice: uprav tu, keby sa niečo presunulo (napr. iné parkovisko).
+        const MAP_VENUE = { lat: 49.4042671, lng: 19.4790494 };   // Furmanka / miesto na vyloženie vecí
+        const MAP_PARKING = { lat: 49.4046478, lng: 19.4791651 }; // Parkovisko
+        let furmankaMapInstance = null;
+
+        function initFurmankaMap() {
+            const el = document.getElementById('leaflet-map');
+            if (!el || furmankaMapInstance || typeof L === 'undefined') return;
+
+            const venueIcon = L.divIcon({
+                className: '',
+                html: '<div class="map-marker-pin map-marker-venue"><i class="fas fa-chess-knight"></i></div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -28]
+            });
+            const parkingIcon = L.divIcon({
+                className: '',
+                html: '<div class="map-marker-pin map-marker-parking"><i class="fas fa-square-parking"></i></div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -28]
+            });
+
+            furmankaMapInstance = L.map('leaflet-map', { scrollWheelZoom: false }).setView(
+                [(MAP_VENUE.lat + MAP_PARKING.lat) / 2, (MAP_VENUE.lng + MAP_PARKING.lng) / 2], 17
+            );
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap prispievatelia'
+            }).addTo(furmankaMapInstance);
+
+            L.marker([MAP_VENUE.lat, MAP_VENUE.lng], { icon: venueIcon }).addTo(furmankaMapInstance)
+                .bindPopup('<strong>FURMANKA</strong><br>Vchod / vyloženie vecí');
+            L.marker([MAP_PARKING.lat, MAP_PARKING.lng], { icon: parkingIcon }).addTo(furmankaMapInstance)
+                .bindPopup('<strong>PARKOVISKO</strong>');
+
+            // Keď sa appka otvorí rovno na tejto obrazovke (napr. cez odkaz), mapa sa dokreslí až po chvíli,
+            // preto ju po krátkom čase "prebudíme" aby sa správne prispôsobila veľkosti kontajnera.
+            setTimeout(() => { if (furmankaMapInstance) furmankaMapInstance.invalidateSize(); }, 200);
         }
 
         function setupArchiveScrollTracking() {
