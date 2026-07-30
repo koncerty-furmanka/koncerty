@@ -430,7 +430,9 @@
         .social-grid, .merch-grid { display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 20px; }
         .social-link { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 300px; padding: 20px; border: 3px solid white; background: rgba(0,0,0,0.5); color: white; text-decoration: none; font-size: 1.5rem; transform: rotate(-2deg); transition: transform 0.2s; }
         .social-link:active { transform: scale(0.95); }
-        .contact-btn { display: block; width: 100%; background: black; border: 3px solid white; padding: 20px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none; font-size: 2rem; box-shadow: 8px 8px 0 rgba(0,0,0,1); }
+        .contact-btn { display: block; width: 100%; background: black; border: 3px solid white; padding: 18px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none; font-size: 1.4rem; box-shadow: 8px 8px 0 rgba(0,0,0,1); }
+        .contact-btn i { font-size: 0.85rem; margin-right: 6px; }
+        .contact-btn-email { font-size: 1.05rem; word-break: break-all; }
         iframe { width: 100%; border: 4px solid white; margin-top: 20px; box-shadow: 8px 8px 0 rgba(0,0,0,1); }
         .merch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px; }
         .merch-item { background: rgba(0,0,0,0.8); border: 2px solid white; padding: 10px; text-align: center; }
@@ -1598,7 +1600,7 @@
         </div>
         <div style="padding: 20px;">
             <a href="tel:+4219181212128" class="contact-btn"><i class="fas fa-phone"></i> +421 918 121 2128</a>
-            <a href="mailto:k0ncerty.furmanka@gmail.com" class="contact-btn"><i class="fas fa-envelope"></i> EMAIL</a>
+            <a href="mailto:k0ncerty.furmanka@gmail.com" class="contact-btn contact-btn-email"><i class="fas fa-envelope"></i> k0ncerty.furmanka@gmail.com</a>
             <p style="text-align:center; margin-top:20px; font-size:1.2rem;">FURMANKA PUB<br>NÁMESTOVO</p>
         </div>
     </div>
@@ -1634,6 +1636,9 @@
             </a>
             <a href="https://www.instagram.com/k0ncerty/" target="_blank" class="social-link" style="border-color:#E1306C;">
                 <i class="fab fa-instagram" style="color:#E1306C;"></i> INSTAGRAM
+            </a>
+            <a href="https://www.tiktok.com/@k0ncerty_" target="_blank" class="social-link" style="border-color:#69C9D0;">
+                <i class="fab fa-tiktok" style="color:#fff;"></i> TIKTOK
             </a>
             <a onclick="shareApp()" class="social-link" style="border-color:var(--accent-color); cursor:pointer;">
                 <i class="fas fa-share-nodes" style="color:var(--accent-color);"></i> POŠLI KAMOŠOVI
