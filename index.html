@@ -1144,7 +1144,11 @@
     font-size: 1.2rem;
     cursor: pointer;
     z-index: 2;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+    pointer-events: auto;
 }
+.lightbox-arrow.faded { opacity: 0; pointer-events: none; }
 .lightbox-arrow:active { background: rgba(255,255,255,0.25); }
 .lightbox-arrow-left { left: 12px; }
 .lightbox-arrow-right { right: 12px; }
@@ -2789,6 +2793,20 @@ function renderLightbox() {
     const nextBtn = document.getElementById('lightbox-next');
     if (prevBtn) prevBtn.style.display = multi ? 'flex' : 'none';
     if (nextBtn) nextBtn.style.display = multi ? 'flex' : 'none';
+    if (multi) flashLightboxArrows(); else { if (prevBtn) prevBtn.classList.add('faded'); if (nextBtn) nextBtn.classList.add('faded'); }
+}
+// Šípky sa mihnú (nech človek vidí že sa dá posúvať) a po chvíli samé zmiznú, aby neprekážali pri pozeraní fotky.
+let lightboxArrowFadeTimer = null;
+function flashLightboxArrows() {
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    if (prevBtn) prevBtn.classList.remove('faded');
+    if (nextBtn) nextBtn.classList.remove('faded');
+    clearTimeout(lightboxArrowFadeTimer);
+    lightboxArrowFadeTimer = setTimeout(() => {
+        if (prevBtn) prevBtn.classList.add('faded');
+        if (nextBtn) nextBtn.classList.add('faded');
+    }, 1600);
 }
 function lightboxStep(dir) {
     const photos = (window.galleryGroups && window.galleryGroups[window.lightboxGroup]) || [];
@@ -2896,6 +2914,8 @@ document.getElementById('lightbox-overlay').addEventListener('click', function(e
             if (scale > 1) { scale = 1; panX = 0; panY = 0; }
             else { scale = 2.5; }
             applyTransform();
+        } else if (typeof flashLightboxArrows === 'function') {
+            flashLightboxArrows();
         }
         lastTapTime = now;
     }, { passive: true });
