@@ -1086,6 +1086,8 @@
     max-height: 78vh;
     object-fit: contain;
     border: 2px solid rgba(255,255,255,0.2);
+    touch-action: none;
+    will-change: transform;
 }
 .lightbox-caption {
     color: #ddd;
@@ -2770,6 +2772,7 @@ function openLightbox(group, index) {
     if (!photos.length) return;
     window.lightboxGroup = group;
     window.lightboxIndex = ((index % photos.length) + photos.length) % photos.length;
+    if (window.resetLightboxZoom) window.resetLightboxZoom();
     renderLightbox();
     document.getElementById('lightbox-overlay').classList.add('active');
 }
@@ -2791,30 +2794,110 @@ function lightboxStep(dir) {
     const photos = (window.galleryGroups && window.galleryGroups[window.lightboxGroup]) || [];
     if (!photos.length) return;
     window.lightboxIndex = ((window.lightboxIndex + dir) % photos.length + photos.length) % photos.length;
+    if (window.resetLightboxZoom) window.resetLightboxZoom();
     renderLightbox();
 }
 function closeLightbox() {
     const overlay = document.getElementById('lightbox-overlay');
     overlay.classList.remove('active');
     document.getElementById('lightbox-img').src = '';
+    if (window.resetLightboxZoom) window.resetLightboxZoom();
 }
 document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
     if (e.target.id === 'lightbox-overlay') closeLightbox();
 });
-// Posun prstom doľava/doprava na fotke = ďalšia/predchádzajúca fotka z galérie
+// Priblíženie fotky dvoma prstami (pinch-to-zoom) + posúvanie priblíženej fotky + swipe na ďalšiu/predchádzajúcu,
+// keď fotka NIE JE priblížená. Appka má natívne priblíženie stránky vypnuté, preto je toto vlastná implementácia.
 (function() {
-    let touchStartX = 0, touchStartY = 0;
     const overlay = document.getElementById('lightbox-overlay');
+    const img = document.getElementById('lightbox-img');
+    const MIN_SCALE = 1, MAX_SCALE = 4;
+    let scale = 1, panX = 0, panY = 0;
+    let startDist = 0, startScale = 1;
+    let startPanX = 0, startPanY = 0, startTouchX = 0, startTouchY = 0;
+    let isPinching = false, isPanning = false;
+    let swipeStartX = 0, swipeStartY = 0;
+    let lastTapTime = 0;
+
+    function applyTransform() {
+        img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+    window.resetLightboxZoom = function() {
+        scale = 1; panX = 0; panY = 0;
+        img.style.transition = 'none';
+        applyTransform();
+    };
+
+    function dist(t0, t1) {
+        return Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+    }
+    function clampPan() {
+        // Nedovolí odtiahnuť fotku úplne mimo obrazovky pri väčšom priblížení.
+        const maxX = (img.clientWidth * (scale - 1)) / 2;
+        const maxY = (img.clientHeight * (scale - 1)) / 2;
+        panX = Math.max(-maxX, Math.min(maxX, panX));
+        panY = Math.max(-maxY, Math.min(maxY, panY));
+    }
+
     overlay.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
-    overlay.addEventListener('touchend', function(e) {
-        const dx = e.changedTouches[0].screenX - touchStartX;
-        const dy = e.changedTouches[0].screenY - touchStartY;
-        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
-            lightboxStep(dx < 0 ? 1 : -1);
+        img.style.transition = 'none';
+        if (e.touches.length === 2) {
+            isPinching = true; isPanning = false;
+            startDist = dist(e.touches[0], e.touches[1]);
+            startScale = scale;
+        } else if (e.touches.length === 1) {
+            swipeStartX = e.touches[0].screenX;
+            swipeStartY = e.touches[0].screenY;
+            if (scale > 1) {
+                isPanning = true;
+                startTouchX = e.touches[0].clientX;
+                startTouchY = e.touches[0].clientY;
+                startPanX = panX; startPanY = panY;
+            }
         }
+    }, { passive: true });
+
+    overlay.addEventListener('touchmove', function(e) {
+        if (isPinching && e.touches.length === 2) {
+            e.preventDefault();
+            const newDist = dist(e.touches[0], e.touches[1]);
+            scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, startScale * (newDist / startDist)));
+            clampPan();
+            applyTransform();
+        } else if (isPanning && e.touches.length === 1) {
+            e.preventDefault();
+            panX = startPanX + (e.touches[0].clientX - startTouchX);
+            panY = startPanY + (e.touches[0].clientY - startTouchY);
+            clampPan();
+            applyTransform();
+        }
+    }, { passive: false });
+
+    overlay.addEventListener('touchend', function(e) {
+        img.style.transition = 'transform 0.2s ease';
+        if (scale < 1.02) { scale = 1; panX = 0; panY = 0; applyTransform(); }
+
+        if (isPinching || isPanning) {
+            isPinching = false; isPanning = false;
+            return;
+        }
+        // Swipe na ďalšiu/predchádzajúcu fotku - iba keď fotka nie je priblížená.
+        if (scale === 1) {
+            const dx = e.changedTouches[0].screenX - swipeStartX;
+            const dy = e.changedTouches[0].screenY - swipeStartY;
+            if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+                lightboxStep(dx < 0 ? 1 : -1);
+                return;
+            }
+        }
+        // Dvojité ťuknutie = rýchle priblíženie/oddialenie
+        const now = Date.now();
+        if (now - lastTapTime < 300) {
+            if (scale > 1) { scale = 1; panX = 0; panY = 0; }
+            else { scale = 2.5; }
+            applyTransform();
+        }
+        lastTapTime = now;
     }, { passive: true });
 })();
 document.addEventListener('click', function(e) {
