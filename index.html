@@ -1023,6 +1023,21 @@
     display: block;
     pointer-events: none;
 }
+.gallery-poster-tile { border-color: rgba(255,204,0,0.5); }
+.gallery-view-all-btn {
+    margin: 0 12px 12px 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255,204,0,0.1);
+    border: 1px solid rgba(255,204,0,0.35);
+    color: var(--accent-color);
+    text-align: center;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+.gallery-view-all-btn:active { transform: scale(0.98); background: rgba(255,204,0,0.18); }
 .gallery-empty {
     grid-column: 1 / -1;
     background: rgba(0,0,0,0.55);
@@ -2165,9 +2180,11 @@ const clean = cols.map(c =>
                     const eventDataObj = { title: mainTitle, date: event.dateRaw, time: event.time, place: event.place, price: event.price, poster: event.poster, fb_event: event.fbEvent, bands: event.bands };
                     const eventDataEncoded = encodeURIComponent(JSON.stringify(eventDataObj));
 
-                    // Uložíme si názov koncertu podľa dátumu — použije sa v galérii aj v detaile na priradenie fotiek
+                    // Uložíme si názov koncertu aj plagát podľa dátumu — použije sa v galérii aj v detaile na priradenie fotiek
                     window.eventTitleByDate = window.eventTitleByDate || {};
                     window.eventTitleByDate[event.dateRaw] = mainTitle;
+                    window.eventPosterByDate = window.eventPosterByDate || {};
+                    window.eventPosterByDate[event.dateRaw] = event.poster;
 
                     const eventYear = eventDateObj.getFullYear();
                     const isToday = eventDateObj.getFullYear() === today.getFullYear()
@@ -2416,14 +2433,29 @@ initCarouselObserver();
                         ? `${escapeHtml(window.eventTitleByDate && window.eventTitleByDate[key] ? window.eventTitleByDate[key] : 'KONCERT')}<span class="sub">${escapeHtml(key)}</span>`
                         : `OSTATNÉ FOTKY`;
                     html += `<div class="gallery-section"><div class="gallery-section-title">${heading}</div><div class="gallery-grid">`;
-                    photos.forEach((p, idx) => {
-                        const extra = idx >= GALLERY_PREVIEW_LIMIT ? ' gallery-item-extra" style="display:none;' : '';
-                        html += `<div class="gallery-item${extra}" data-group="${gid}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
-                    });
-                    if (photos.length > GALLERY_PREVIEW_LIMIT) {
-                        html += `<div class="gallery-item gallery-more-tile"><span>+${photos.length - GALLERY_PREVIEW_LIMIT}</span><small>ĎALŠIE</small></div>`;
+
+                    const poster = key && window.eventPosterByDate ? window.eventPosterByDate[key] : null;
+                    if (poster && safeUrl(poster)) {
+                        // Plagát ako prvá dlaždica + max. 2 fotky vedľa neho, zvyšok sa pozerá cez tlačidlo nižšie.
+                        html += `<div class="gallery-item gallery-poster-tile" onclick="openLightbox('${gid}', 0)"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
+                        photos.slice(0, 2).forEach((p, idx) => {
+                            html += `<div class="gallery-item" data-group="${gid}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
+                        });
+                        html += `</div>`;
+                        if (photos.length > 0) {
+                            html += `<div role="button" tabindex="0" class="gallery-view-all-btn" onclick="openLightbox('${gid}', 0)"><i class="fas fa-images"></i> POZRIEŤ CELÚ GALÉRIU (${photos.length})</div>`;
+                        }
+                    } else {
+                        photos.forEach((p, idx) => {
+                            const extra = idx >= GALLERY_PREVIEW_LIMIT ? ' gallery-item-extra" style="display:none;' : '';
+                            html += `<div class="gallery-item${extra}" data-group="${gid}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
+                        });
+                        if (photos.length > GALLERY_PREVIEW_LIMIT) {
+                            html += `<div class="gallery-item gallery-more-tile"><span>+${photos.length - GALLERY_PREVIEW_LIMIT}</span><small>ĎALŠIE</small></div>`;
+                        }
+                        html += `</div>`;
                     }
-                    html += `</div></div>`;
+                    html += `</div>`;
                 });
 
                 galleryGrid.outerHTML = html
