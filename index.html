@@ -997,7 +997,10 @@
 /* ===== FOTOGALÉRIA ===== */
 .gallery-sections { padding: 14px 14px 30px 14px; display: flex; flex-direction: column; gap: 18px; }
 .gallery-section {
-    background: rgba(0,0,0,0.45);
+    background-color: rgba(0,0,0,0.45);
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/796742-removebg-preview.png');
+    background-size: cover;
+    background-position: center;
     border: 1px solid rgba(255,255,255,0.18);
     box-shadow: 0 3px 9px rgba(0,0,0,0.4);
 }
@@ -1028,9 +1031,10 @@
     margin: 0 12px 12px 12px;
     padding: 12px;
     border-radius: 10px;
-    background: rgba(255,204,0,0.1);
-    border: 1px solid rgba(255,204,0,0.35);
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(0,0,0,0.4);
     color: var(--accent-color);
+    text-shadow: 0 1px 3px #000;
     text-align: center;
     font-size: 0.85rem;
     letter-spacing: 1px;
@@ -1055,10 +1059,10 @@
     color: var(--accent-color);
     letter-spacing: 1px;
     text-shadow: 0 1px 3px #000;
-    background: rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.55);
     border-bottom: 1px solid rgba(255,255,255,0.15);
 }
-.gallery-section-title .sub { display: block; color: #999; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
+.gallery-section-title .sub { display: block; color: #ddd; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
 
 /* ===== GALÉRIA KONCERTU (v detaile / archíve) ===== */
 .event-gallery-wrap {
