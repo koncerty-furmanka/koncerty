@@ -1775,6 +1775,30 @@ function buzz(ms) {
     if (navigator.vibrate) { try { navigator.vibrate(ms || 12); } catch(e) {} }
 }
 
+function showToast(msg, duration) {
+    let t = document.getElementById('app-toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'app-toast';
+        t.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);' +
+            'background:rgba(20,20,20,0.95);color:#fff;padding:10px 18px;border-radius:20px;' +
+            'font-size:14px;font-weight:600;z-index:99999;max-width:85vw;text-align:center;' +
+            'box-shadow:0 4px 16px rgba(0,0,0,0.4);opacity:0;transition:opacity .2s ease, transform .2s ease;' +
+            'pointer-events:none;';
+        document.body.appendChild(t);
+    }
+    if (t._hideTimeout) clearTimeout(t._hideTimeout);
+    t.textContent = msg;
+    requestAnimationFrame(() => {
+        t.style.opacity = '1';
+        t.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    t._hideTimeout = setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration || 2200);
+}
+
 let activeScreenId = 'screen-home';
 
 function handleButtonClick(screenId) {
