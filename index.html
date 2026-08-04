@@ -961,6 +961,51 @@
 .band-link-btn.spotify { border-color: #1DB954; color: #1DB954; }
 .band-link-btn.fb { border-color: #1877F2; color: #6ea8ff; }
 
+/* ===== POSÚVATEĽNÁ GALÉRIA KONCERTU (rovnaký efekt ako plagáty v archíve) ===== */
+.event-gallery-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    background: rgba(0,0,0,0.96);
+    flex-direction: column;
+}
+.event-gallery-overlay.active { display: flex; }
+.event-gallery-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(16px + env(safe-area-inset-top)) 16px 10px 16px;
+}
+.event-gallery-title { color: var(--accent-color); font-size: 1.2rem; letter-spacing: 1px; text-shadow: 0 1px 3px #000; }
+.event-gallery-close {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+#event-gallery-carousel { flex: 1; align-items: center; }
+.event-gallery-card { cursor: pointer; }
+.event-gallery-card img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+    display: block;
+}
+.event-gallery-hint {
+    text-align: center;
+    color: #999;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 4px 0 calc(20px + env(safe-area-inset-bottom)) 0;
+}
+
 /* ===== VIAC ===== */
 .more-grid { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 #app-version-footer { text-align: center; color: #777; font-size: 0.75rem; padding: 18px 0 calc(90px + env(safe-area-inset-bottom)) 0; letter-spacing: 0.5px; }
@@ -1000,13 +1045,13 @@
     background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/796742-removebg-preview.png');
     background-size: 100% 100%;
     background-position: center;
-    padding: 22px 18px 18px 18px;
+    padding: 34px 18px 22px 18px;
 }
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-    padding: 12px;
+    padding: 4px 8px 8px 8px;
 }
 .gallery-item { border-radius: 10px;
     aspect-ratio: 1 / 1;
@@ -1052,7 +1097,7 @@
     text-shadow: 0 1px 3px #000;
 }
 .gallery-section-title {
-    padding: 0 8px 14px 8px;
+    padding: 0 8px 6px 8px;
     font-size: 1rem;
     color: #fff;
     text-align: center;
@@ -1696,6 +1741,15 @@
 
     <div id="swipe-gesture-hint" class="swipe-gesture-hint">
         <div class="swipe-gesture-hand"><i class="fas fa-hand-pointer"></i></div>
+    </div>
+
+    <div id="event-gallery-overlay" class="event-gallery-overlay">
+        <div class="event-gallery-header">
+            <div class="event-gallery-title" id="event-gallery-title"></div>
+            <div role="button" tabindex="0" class="event-gallery-close" onclick="closeEventGalleryCarousel()"><i class="fas fa-times"></i></div>
+        </div>
+        <div id="event-gallery-carousel" class="carousel-container"></div>
+        <div class="event-gallery-hint"><i class="fas fa-hand-pointer"></i> POSUŇ NA ĎALŠIU · ŤUKNI PRE ZVÄČŠENIE</div>
     </div>
 
     <script>
@@ -2438,13 +2492,13 @@ initCarouselObserver();
                     const poster = key && window.eventPosterByDate ? window.eventPosterByDate[key] : null;
                     if (poster && safeUrl(poster)) {
                         // Plagát ako prvá dlaždica + max. 2 fotky vedľa neho, zvyšok sa pozerá cez tlačidlo nižšie.
-                        html += `<div class="gallery-item gallery-poster-tile" onclick="openLightbox('${gid}', 0)"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
+                        html += `<div class="gallery-item gallery-poster-tile" onclick="openEventGalleryCarousel('${gid}')"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
                         photos.slice(0, 2).forEach((p, idx) => {
                             html += `<div class="gallery-item" data-group="${gid}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
                         });
                         html += `</div>`;
                         if (photos.length > 0) {
-                            html += `<div role="button" tabindex="0" class="gallery-view-all-btn" onclick="openLightbox('${gid}', 0)"><i class="fas fa-images"></i> POZRIEŤ CELÚ GALÉRIU (${photos.length})</div>`;
+                            html += `<div role="button" tabindex="0" class="gallery-view-all-btn" onclick="openEventGalleryCarousel('${gid}')"><i class="fas fa-images"></i> POZRIEŤ CELÚ GALÉRIU (${photos.length})</div>`;
                         }
                     } else {
                         photos.forEach((p, idx) => {
@@ -2816,6 +2870,28 @@ window.addEventListener("popstate", function(event) {
 });
 
 // ===== LIGHTBOX (zväčšenie fotky priamo v appke + posúvanie na ďalšie fotky z toho istého koncertu) =====
+// ===== POSÚVATEĽNÁ GALÉRIA KONCERTU (klik na "POZRIEŤ CELÚ GALÉRIU") =====
+// Ukáže všetky fotky daného koncertu ako posúvateľné karty (rovnaký efekt ako plagáty v archíve).
+// Klik na konkrétnu fotku potom otvorí zväčšený lightbox (s priblížením/posúvaním) presne na tej fotke.
+function openEventGalleryCarousel(gid) {
+    const photos = (window.galleryGroups && window.galleryGroups[gid]) || [];
+    if (!photos.length) return;
+    const carousel = document.getElementById('event-gallery-carousel');
+    const title = document.getElementById('event-gallery-title');
+    title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || 'GALÉRIA';
+    carousel.innerHTML = '<div style="flex: 0 0 17.5%;"></div>' + photos.map((p, idx) =>
+        `<div class="carousel-card event-gallery-card" onclick="closeEventGalleryCarousel(); openLightbox('${gid}', ${idx});">
+            <img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
+        </div>`
+    ).join('') + '<div style="flex: 0 0 17.5%;"></div>';
+    document.getElementById('event-gallery-overlay').classList.add('active');
+    carousel.scrollLeft = 0;
+    setTimeout(initCarouselObserver, 50);
+}
+function closeEventGalleryCarousel() {
+    document.getElementById('event-gallery-overlay').classList.remove('active');
+}
+
 function openLightbox(group, index) {
     const photos = (window.galleryGroups && window.galleryGroups[group]) || [];
     if (!photos.length) return;
