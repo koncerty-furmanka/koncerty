@@ -1050,16 +1050,16 @@
     background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/galeriakontajner.png');
     background-size: 100% 100%;
     background-position: center;
-    padding: 38px 28px 30px 28px;
+    padding: 30px 18px 30px 18px;
 }
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    padding: 4px 8px 8px 8px;
+    gap: 3px;
+    padding: 2px 2px 4px 2px;
 }
 .gallery-item { border-radius: 0;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 /1.414;
     overflow: hidden;
     border: 1px solid rgba(255,255,255,0.15);
     background: rgba(0,0,0,0.5);
@@ -1072,11 +1072,12 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    object-position: center;
     pointer-events: none;
 }
 .gallery-poster-tile { border-color: rgba(255,204,0,0.5); }
 .gallery-view-all-btn {
-    margin: 6px auto 0 auto;
+    margin: 16px auto 0 auto;
     width: 88%;
     padding: 18px 12px;
     background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/celagaleria.png');
@@ -1104,14 +1105,15 @@
     text-shadow: 0 1px 3px #000;
 }
 .gallery-section-title {
-    padding: 0 8px 6px 8px;
-    font-size: 1rem;
+    padding: 0 8px 3px 8px;
+    font-size: 1.25rem;
+    line-height: 1.05;
     color: #fff;
     text-align: center;
     letter-spacing: 1px;
     text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
 }
-.gallery-section-title .sub { display: block; color: #fff; opacity: 0.85; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
+.gallery-section-title .sub { display: block; color: #fff; opacity: 0.85; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 1px; }
 
 /* ===== GALÉRIA KONCERTU (v detaile / archíve) ===== */
 .event-gallery-wrap {
