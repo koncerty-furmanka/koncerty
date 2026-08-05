@@ -40,7 +40,12 @@
                 appId: "354e9b76-b089-4dbc-beaa-79d26da33787",
                 safari_web_id: "web.onesignal.auto.062d21d9-5bd4-46cb-a28c-e44e38d1b29c",
                 serviceWorkerParam: { scope: "/koncerty/onesignal/" },
-                serviceWorkerPath: "/koncerty/onesignal/OneSignalSDKWorker.js"
+                serviceWorkerPath: "/koncerty/onesignal/OneSignalSDKWorker.js",
+                welcomeNotification: {
+                    title: "Kôňcerty 🤘",
+                    message: "Si v tom! Odteraz ti neujde žiaden koncert vo Furmanke.",
+                    url: "https://koncerty-furmanka.github.io/koncerty/"
+                }
             });
 
             try {
@@ -858,16 +863,20 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-left: 5px solid var(--accent-color);
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbuton.png');
+    background-size: 100% 100%;
+    background-position: center;
+    border: none;
     margin-bottom: 9px;
     padding: 10px 12px;
     cursor: pointer;
     transition: transform 0.1s ease;
 }
 .cal-row:active { transform: scale(0.98); }
-.cal-row.past-row { border-left-color: rgba(255,255,255,0.3); opacity: 0.85; }
+.cal-row.past-row {
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbuton.png');
+    opacity: 0.85;
+}
 .cal-date {
     flex: 0 0 auto;
     text-align: center;
@@ -909,9 +918,11 @@
 /* ===== KAPELY ===== */
 .bands-list { padding: 10px 14px 20px 14px; }
 .band-row {
-    border-radius: 12px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0;
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbuton.png');
+    background-size: 100% 100%;
+    background-position: center;
+    border: none;
     margin-bottom: 9px;
     overflow: hidden;
 }
@@ -1010,21 +1021,23 @@
 .more-grid { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 #app-version-footer { text-align: center; color: #777; font-size: 0.75rem; padding: 18px 0 calc(90px + env(safe-area-inset-bottom)) 0; letter-spacing: 0.5px; }
 .more-btn {
-    border-radius: 14px;
+    border-radius: 0;
     display: flex;
     align-items: center;
     gap: 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbuton.png');
+    background-size: 100% 100%;
+    background-position: center;
+    border: none;
     padding: 13px 16px;
     color: #f2f2f2;
     font-size: 1.05rem;
     letter-spacing: 0.8px;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.15s ease, transform 0.1s ease;
+    transition: transform 0.1s ease;
 }
-.more-btn:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
+.more-btn:active { transform: scale(0.98); }
 .more-btn i {
     width: 38px;
     height: 38px;
@@ -1042,22 +1055,25 @@
 /* ===== FOTOGALÉRIA ===== */
 .gallery-sections { padding: 14px 14px 30px 14px; display: flex; flex-direction: column; gap: 18px; }
 .gallery-section {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/796742-removebg-preview.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/galeriakontajner.png');
     background-size: 100% 100%;
     background-position: center;
-    padding: 34px 18px 22px 18px;
+    padding: 20px 10px 14px 10px;
 }
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    padding: 4px 8px 8px 8px;
+    gap: 0px;
+    padding: 2px 0 4px 0;
 }
-.gallery-item { border-radius: 10px;
-    aspect-ratio: 1 / 1;
+.gallery-item { border-radius: 0;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(0,0,0,0.5);
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/whiteback.png');
+    background-size: 100% 100%;
+    background-position: center;
+    padding: 5px 8px;
+    box-sizing: border-box;
     cursor: pointer;
     transition: transform 0.1s ease;
 }
@@ -1067,15 +1083,18 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    object-position: center;
     pointer-events: none;
 }
-.gallery-poster-tile { border-color: rgba(255,204,0,0.5); }
+.gallery-poster-tile img { object-fit: contain; }
 .gallery-view-all-btn {
-    margin: 4px 4px 0 4px;
+    margin: 8px auto 0 auto;
+    width: 88%;
     padding: 18px 12px;
     background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/celagaleria.png');
     background-size: 100% 100%;
     background-position: center;
+    box-sizing: border-box;
     color: #fff;
     text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     text-align: center;
@@ -1097,14 +1116,15 @@
     text-shadow: 0 1px 3px #000;
 }
 .gallery-section-title {
-    padding: 0 8px 6px 8px;
-    font-size: 1rem;
+    padding: 0 8px 3px 8px;
+    font-size: 1.25rem;
+    line-height: 1.05;
     color: #fff;
     text-align: center;
     letter-spacing: 1px;
     text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
 }
-.gallery-section-title .sub { display: block; color: #fff; opacity: 0.85; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
+.gallery-section-title .sub { display: block; color: #fff; opacity: 0.85; font-size: 0.75rem; text-transform: none; letter-spacing: 0.5px; margin-top: 1px; }
 
 /* ===== GALÉRIA KONCERTU (v detaile / archíve) ===== */
 .event-gallery-wrap {
@@ -1303,7 +1323,7 @@
 #app-splash {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 11000;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1528,10 +1548,8 @@
         <div class="notif-cats-panel">
             <div class="notif-cats-title">UPOZORNENIA ZAPNUTÉ ✓</div>
             <div class="notif-cats-sub">Vyber si, o čom chceš vedieť:</div>
-            <label class="notif-cat"><input type="checkbox" value="novy_koncert" checked> NOVÝ KONCERT</label>
-            <label class="notif-cat"><input type="checkbox" value="update_koncertu" checked> ZMENA KONCERTU</label>
+            <label class="notif-cat"><input type="checkbox" value="koncerty_novinky" checked> NOVÉ KONCERTY A NOVINKY</label>
             <label class="notif-cat"><input type="checkbox" value="den_pred" checked> PRIPOMIENKA DEŇ PRED</label>
-            <label class="notif-cat"><input type="checkbox" value="ostatne" checked> OSTATNÉ NOVINKY</label>
             <div role="button" tabindex="0" class="notif-cats-save" onclick="saveNotifCats()">ULOŽIŤ</div>
         </div>
     </div>
@@ -1773,6 +1791,30 @@ function safeUrl(str) {
 
 function buzz(ms) {
     if (navigator.vibrate) { try { navigator.vibrate(ms || 12); } catch(e) {} }
+}
+
+function showToast(msg, duration) {
+    let t = document.getElementById('app-toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'app-toast';
+        t.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);' +
+            'background:rgba(20,20,20,0.95);color:#fff;padding:10px 18px;border-radius:20px;' +
+            'font-size:14px;font-weight:600;z-index:99999;max-width:85vw;text-align:center;' +
+            'box-shadow:0 4px 16px rgba(0,0,0,0.4);opacity:0;transition:opacity .2s ease, transform .2s ease;' +
+            'pointer-events:none;';
+        document.body.appendChild(t);
+    }
+    if (t._hideTimeout) clearTimeout(t._hideTimeout);
+    t.textContent = msg;
+    requestAnimationFrame(() => {
+        t.style.opacity = '1';
+        t.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    t._hideTimeout = setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, duration || 2200);
 }
 
 let activeScreenId = 'screen-home';
@@ -2233,7 +2275,7 @@ const clean = cols.map(c =>
                     }
                     const mainTitle = event.bands.map(b => b.name).join(' & ');
                     const eventDataObj = { title: mainTitle, date: event.dateRaw, time: event.time, place: event.place, price: event.price, poster: event.poster, fb_event: event.fbEvent, bands: event.bands };
-                    const eventDataEncoded = encodeURIComponent(JSON.stringify(eventDataObj));
+                    const eventDataEncoded = encodeURIComponent(JSON.stringify(eventDataObj)).replace(/'/g, '%27');
 
                     // Uložíme si názov koncertu aj plagát podľa dátumu — použije sa v galérii aj v detaile na priradenie fotiek
                     window.eventTitleByDate = window.eventTitleByDate || {};
@@ -2758,6 +2800,7 @@ initCarouselObserver();
 
             modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>${eventGalleryHtml}`;
             document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('modal-overlay').scrollTop = 0;
             history.pushState({ screen: activeScreenId, modal: true }, "", "#detail");
         }
 
