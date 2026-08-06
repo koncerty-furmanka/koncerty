@@ -1518,6 +1518,7 @@
         <div class="more-grid">
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-about')"><i class="fas fa-record-vinyl"></i> O NÁS</div>
             <div role="button" tabindex="0" id="push-btn" class="more-btn" onclick="handlePushButtonClick()"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
+            <div role="button" tabindex="0" class="more-btn" onclick="loadApp()"><i class="fas fa-rotate"></i> OBNOVIŤ DÁTA</div>
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-gallery')"><i class="fas fa-images"></i> FOTOGALÉRIA</div>
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-merch')"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
             <div role="button" tabindex="0" class="more-btn msg" onclick="handleButtonClick('screen-message')"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
@@ -2125,10 +2126,27 @@ async function loadApp() {
         return semi > comma ? ';' : ',';
     }
     function splitCsvRow(row, delimiter) {
-        const re = delimiter === ';'
-            ? /;(?=(?:(?:[^"]*"){2})*[^"]*$)/
-            : /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-        return row.split(re);
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < row.length; i++) {
+            const char = row[i];
+            if (char === '"') {
+                if (inQuotes && row[i + 1] === '"') {
+                    current += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === delimiter && !inQuotes) {
+                result.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        result.push(current.trim());
+        return result;
     }
 
 document.getElementById('countdown-bar').innerHTML = `
@@ -2438,6 +2456,11 @@ initCarouselObserver();
                 if (uc) uc.innerHTML = `<div class="error-box">
                         <p>DÁTA SA NENAČÍTALI.<br>SKONTROLUJ NET A SKÚS ZNOVA.</p>
                         <button class="retry-btn" onclick="loadApp()">SKÚSIŤ ZNOVA</button>
+                        <p style="font-size:0.8rem; color:#888; margin-top:15px;">
+                            Posledná aktualizácia: ${localStorage.getItem('koncerty_cache_data_time') ?
+                                new Date(parseInt(localStorage.getItem('koncerty_cache_data_time'))).toLocaleString() :
+                                'nikdy'}
+                        </p>
                     </div>`;
                 const pc = document.getElementById('carousel-past');
                 if (pc) pc.innerHTML = `<div class="error-box"><p>ARCHÍV SA NENAČÍTAL.</p></div>`;
