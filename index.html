@@ -1923,6 +1923,23 @@ function handleButtonClick(screenId) {
             if (e.target.closest('#modal-content-body') || e.target.closest('.modal-close-btn')) return;
             closeModal();
         }
+        // Doplnkové, spoľahlivejšie zatvorenie ťuknutím na tmavú plochu mimo obsahu (na dotykových zariadeniach
+        // môže scroll gesto niekedy potlačiť syntetický 'click', preto to istíme aj cez touchend).
+        (function() {
+            const ov = document.getElementById('modal-overlay');
+            let tsX = 0, tsY = 0, tsTarget = null;
+            ov.addEventListener('touchstart', function(e) {
+                tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; tsTarget = e.target;
+            }, { passive: true });
+            ov.addEventListener('touchend', function(e) {
+                if (tsTarget && (tsTarget.closest('#modal-content-body') || tsTarget.closest('.modal-close-btn'))) return;
+                const t = e.changedTouches[0];
+                if (Math.hypot(t.clientX - tsX, t.clientY - tsY) < 10) {
+                    e.preventDefault(); // potlačí následný "duch" click, aby sa modal nezatváral dvakrát
+                    closeModal();
+                }
+            }, { passive: false });
+        })();
         // Klávesnicová prístupnosť: Enter/Medzera aktivuje prvky s role="button"
         document.addEventListener('keydown', function(e) {
             if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('role') === 'button') {
@@ -3065,21 +3082,32 @@ function flashLightboxArrows() {
         if (nextBtn) nextBtn.classList.add('faded');
     }, 1600);
 }
+// Jednotný "slide" prechod medzi fotkami — používajú ho šípky AJ swipe prstom, takže je to
+// vždy rovnaký pocit nech fotku otvoríš odkiaľkoľvek (plagát, galéria, jednotlivá fotka).
+function lightboxSwapTo(dir, fromX) {
+    const photos = (window.galleryGroups && window.galleryGroups[window.lightboxGroup]) || [];
+    if (!photos.length) return;
+    const img = document.getElementById('lightbox-img');
+    window.lightboxIndex = ((window.lightboxIndex + dir) % photos.length + photos.length) % photos.length;
+    if (window.resetLightboxZoom) window.resetLightboxZoom();
+    img.style.transition = 'none';
+    img.style.transform = `translateX(${fromX}px)`;
+    img.style.opacity = '0';
+    renderLightbox();
+    requestAnimationFrame(() => {
+        img.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+        img.style.transform = 'translateX(0px)';
+        img.style.opacity = '1';
+    });
+}
 function lightboxStep(dir) {
     const photos = (window.galleryGroups && window.galleryGroups[window.lightboxGroup]) || [];
     if (!photos.length) return;
     const img = document.getElementById('lightbox-img');
-    img.style.transition = 'opacity 0.15s ease';
+    img.style.transition = 'transform 0.18s ease, opacity 0.18s ease';
+    img.style.transform = `translateX(${dir * -60}px)`;
     img.style.opacity = '0';
-    setTimeout(() => {
-        window.lightboxIndex = ((window.lightboxIndex + dir) % photos.length + photos.length) % photos.length;
-        if (window.resetLightboxZoom) window.resetLightboxZoom();
-        renderLightbox();
-        requestAnimationFrame(() => {
-            img.style.transition = 'opacity 0.15s ease';
-            img.style.opacity = '1';
-        });
-    }, 150);
+    setTimeout(() => lightboxSwapTo(dir, dir * 60), 180);
 }
 function hideLightboxNow() {
     const overlay = document.getElementById('lightbox-overlay');
@@ -3103,7 +3131,7 @@ document.getElementById('lightbox-overlay').addEventListener('click', function(e
     let scale = 1, panX = 0, panY = 0;
     let startDist = 0, startScale = 1;
     let startPanX = 0, startPanY = 0, startTouchX = 0, startTouchY = 0;
-    let isPinching = false, isPanning = false;
+    let isPinching = false, isPanning = false, isSwiping = false;
     let swipeStartX = 0, swipeStartY = 0;
     let lastTapTime = 0;
 
@@ -3113,6 +3141,8 @@ document.getElementById('lightbox-overlay').addEventListener('click', function(e
     window.resetLightboxZoom = function() {
         scale = 1; panX = 0; panY = 0;
         img.style.transition = 'none';
+        img.style.transform = '';
+        img.style.opacity = '1';
         applyTransform();
     };
 
@@ -3130,12 +3160,13 @@ document.getElementById('lightbox-overlay').addEventListener('click', function(e
     overlay.addEventListener('touchstart', function(e) {
         img.style.transition = 'none';
         if (e.touches.length === 2) {
-            isPinching = true; isPanning = false;
+            isPinching = true; isPanning = false; isSwiping = false;
             startDist = dist(e.touches[0], e.touches[1]);
             startScale = scale;
         } else if (e.touches.length === 1) {
-            swipeStartX = e.touches[0].screenX;
-            swipeStartY = e.touches[0].screenY;
+            swipeStartX = e.touches[0].clientX;
+            swipeStartY = e.touches[0].clientY;
+            isSwiping = false;
             if (scale > 1) {
                 isPanning = true;
                 startTouchX = e.touches[0].clientX;
@@ -3158,25 +3189,43 @@ document.getElementById('lightbox-overlay').addEventListener('click', function(e
             panY = startPanY + (e.touches[0].clientY - startTouchY);
             clampPan();
             applyTransform();
+        } else if (scale === 1 && e.touches.length === 1) {
+            // Fotka sa naživo posúva s prstom — rovnaký pocit pri swipe odkiaľkoľvek (plagát/galéria/fotka).
+            const dx = e.touches[0].clientX - swipeStartX;
+            const dy = e.touches[0].clientY - swipeStartY;
+            if (isSwiping || Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+                isSwiping = true;
+                e.preventDefault();
+                img.style.transform = `translateX(${dx}px)`;
+                img.style.opacity = String(Math.max(0.35, 1 - Math.abs(dx) / 350));
+            }
         }
     }, { passive: false });
 
     overlay.addEventListener('touchend', function(e) {
         img.style.transition = 'transform 0.2s ease';
-        if (scale < 1.02) { scale = 1; panX = 0; panY = 0; applyTransform(); }
+        if (scale < 1.02) { scale = 1; panX = 0; panY = 0; }
 
         if (isPinching || isPanning) {
             isPinching = false; isPanning = false;
+            applyTransform();
             return;
         }
-        // Swipe na ďalšiu/predchádzajúcu fotku - iba keď fotka nie je priblížená.
-        if (scale === 1) {
-            const dx = e.changedTouches[0].screenX - swipeStartX;
-            const dy = e.changedTouches[0].screenY - swipeStartY;
-            if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
-                lightboxStep(dx < 0 ? 1 : -1);
-                return;
+        // Swipe na ďalšiu/predchádzajúcu fotku — dokončí sa buď posunom preč, alebo pružinou naspäť.
+        if (isSwiping) {
+            isSwiping = false;
+            const dx = e.changedTouches[0].clientX - swipeStartX;
+            img.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+            if (Math.abs(dx) > 60) {
+                const dir = dx < 0 ? 1 : -1;
+                img.style.transform = `translateX(${dir * -160}px)`;
+                img.style.opacity = '0';
+                setTimeout(() => lightboxSwapTo(dir, dir * 160), 190);
+            } else {
+                img.style.transform = 'translateX(0px)';
+                img.style.opacity = '1';
             }
+            return;
         }
         // Dvojité ťuknutie = rýchle priblíženie/oddialenie
         const now = Date.now();
