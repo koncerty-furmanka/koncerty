@@ -9,11 +9,11 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
     <meta property="og:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
-    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png?v=1">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
     <meta name="twitter:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
-    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png">
+    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png?v=1">
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
@@ -182,7 +182,7 @@
             z-index: -1;
             background-image: 
                 linear-gradient(to bottom, rgba(10,10,12,0.55), rgba(10,10,12,0.8)), 
-                url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png');
+                url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png?v=1');
             background-position: top center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -835,7 +835,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -846,7 +846,7 @@
 }
 .cal-row:active { transform: scale(0.98); }
 .cal-row.past-row {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png?v=1');
     opacity: 0.85;
 }
 .cal-date {
@@ -892,7 +892,7 @@
 .bands-list { padding: 10px 14px 20px 14px; }
 .band-row {
     border-radius: 0;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -900,7 +900,7 @@
     overflow: hidden;
 }
 .band-row-upcoming {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png?v=1');
 }
 .band-row-upcoming .band-head-name { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
 .band-row-upcoming .band-head-sub { color: #f2f2f2; }
@@ -976,36 +976,20 @@
     font-size: 1.2rem;
     cursor: pointer;
 }
-.event-gallery-overlay .gallery-grid {
+.event-gallery-scroll {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 4px 12px calc(20px + env(safe-area-inset-bottom)) 12px;
+}
+.event-gallery-overlay .gallery-grid {
+    padding: 4px 12px 4px 12px;
     align-content: start;
 }
-/* ===== OPRAVA: CELÁ GALÉRIA KONCERTU - FOTKY BEZ OREZANIA ===== */
-.event-gallery-overlay .gallery-item {
-    aspect-ratio: auto !important;
-    background: transparent !important;
-    padding: 4px !important;
-}
-.event-gallery-overlay .gallery-item img {
-    object-fit: contain !important;
-    background: #0d0a08;
-}
-/* Hlavná galéria - orezané fotky na 3:4 */
-.gallery-grid:not(.event-gallery-overlay .gallery-grid) .gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    object-position: center;
-    pointer-events: none;
-}
-/* Východiskové pravidlo - platí pre všetky .gallery-item img, pokiaľ nie je prepísané vyššie */
 .gallery-item img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
     display: block;
     object-position: center;
     pointer-events: none;
@@ -1033,7 +1017,7 @@ body.gallery-open {
     display: flex;
     align-items: center;
     gap: 14px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1060,23 +1044,81 @@ body.gallery-open {
 }
 .more-btn.msg i { color: #fff; background: none; }
 
-.gallery-sections { padding: 14px 14px 30px 14px; display: flex; flex-direction: column; gap: 18px; }
+/* ===== OPRAVA: FOTOGALÉRIA - KONTRAJNERY NA CELÚ ŠÍRKU ===== */
+.gallery-sections {
+    padding: 14px 0px 30px 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 .gallery-section {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/galeriakontajner.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/galeriakontajner.png?v=1');
     background-size: 100% 100%;
     background-position: center;
-    padding: 26px 16px 20px 16px;
+    background-repeat: no-repeat;
+    padding: 26px 10px 20px 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border-radius: 0;
+    margin: 0;
 }
+.gallery-section .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0px;
+    padding: 2px 0 4px 0;
+    width: 100%;
+}
+.gallery-view-all-btn {
+    margin: 8px auto 0 auto;
+    width: 94%;
+    padding: 18px 12px;
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png?v=1');
+    background-size: 100% 100%;
+    background-position: center;
+    box-sizing: border-box;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    text-align: center;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+.gallery-section-title {
+    padding: 0 4px 6px 4px;
+    font-size: 1.25rem;
+    line-height: 1.05;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
+}
+.gallery-section-title .sub { 
+    display: block; 
+    color: #fff; 
+    opacity: 0.85; 
+    font-size: 0.75rem; 
+    text-transform: none; 
+    letter-spacing: 0.5px; 
+    margin-top: 1px; 
+}
+
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0px;
     padding: 2px 0 4px 0;
 }
-.gallery-item { border-radius: 0;
+.gallery-item { 
+    border-radius: 0;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/whitebackr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/whitebackr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     padding: 5px 8px;
@@ -1098,7 +1140,7 @@ body.gallery-open {
     margin: 8px auto 0 auto;
     width: 88%;
     padding: 18px 12px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     box-sizing: border-box;
@@ -1351,7 +1393,7 @@ body.gallery-open {
     justify-content: center;
     background-image:
         linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
-        url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png');
+        url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png?v=1');
     background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -1545,7 +1587,7 @@ body.gallery-open {
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
             <div role="button" tabindex="0" class="more-btn" onclick="shareApp()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
-        <div id="app-version-footer">Verzia: 2.1.3</div>
+        <div id="app-version-footer">Verzia: 2.1.5</div>
     </div>
 
     <nav id="bottom-nav">
@@ -1576,7 +1618,7 @@ body.gallery-open {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.png" class="main-logo" alt="Logo">
+<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.png?v=1" class="main-logo" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -1590,28 +1632,28 @@ body.gallery-open {
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-past')">
-                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp" class="btn-image" alt="Archív">
+                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1" class="btn-image" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
                     <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="handleButtonClick('screen-about')">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/onas.png" class="small-btn-img" alt="O Nás">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/onas.png?v=1" class="small-btn-img" alt="O Nás">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2" onclick="handleButtonClick('screen-merch')">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch.png" class="small-btn-img" alt="Náš Mech">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch.png?v=1" class="small-btn-img" alt="Náš Mech">
                     </div>
                 </div>
                 <div class="right-col">
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="handleButtonClick('screen-contact')">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.png" class="small-btn-img" alt="Kontakt">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.png?v=1" class="small-btn-img" alt="Kontakt">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="handleButtonClick('screen-map')">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.png" class="small-btn-img" alt="Mapa">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.png?v=1" class="small-btn-img" alt="Mapa">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="handleButtonClick('screen-social')">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.png" class="small-btn-img" alt="Social">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.png?v=1" class="small-btn-img" alt="Social">
                     </div>
                 </div>
             </div>
@@ -1785,8 +1827,10 @@ body.gallery-open {
             <div class="event-gallery-title" id="event-gallery-title"></div>
             <div role="button" tabindex="0" class="event-gallery-close" onclick="closeEventGalleryCarousel()"><i class="fas fa-times"></i></div>
         </div>
-        <div id="event-gallery-carousel" class="gallery-grid"></div>
-        <div class="event-gallery-hint"><i class="fas fa-hand-pointer"></i> ŤUKNI NA FOTKU PRE ZVÄČŠENIE</div>
+        <div class="event-gallery-scroll">
+            <div id="event-gallery-carousel" class="gallery-grid"></div>
+            <div class="event-gallery-hint"><i class="fas fa-hand-pointer"></i> ŤUKNI NA FOTKU PRE ZVÄČŠENIE</div>
+        </div>
     </div>
 
     <script>
@@ -2094,7 +2138,7 @@ const spotifyPlaylistUrl = "";
 const aboutUrl = "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/onas.csv"; 
 const gistUrl = "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/data.csv";
 const galleryUrl = "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/galeria.csv";
-const defaultUpcomingImg = "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp";
+const defaultUpcomingImg = "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp?v=1";
         
 let updateTimer = null;
 
@@ -2434,17 +2478,10 @@ const clean = cols.map(c =>
             const pastBands = bands.filter(b => !b.hasUpcoming);
             const bandRow = (b, upcoming) => `
                 <div class="band-row ${upcoming ? 'band-row-upcoming' : 'band-row-past'}">
-                    <div role="button" tabindex="0" class="band-head" onclick="toggleBand(this)">
+                    <div role="button" tabindex="0" class="band-head" onclick="openBandDetail('${escapeHtml(b.name)}', '${escapeHtml(b.city)}', '${escapeHtml(b.style)}', '${escapeHtml(b.bio)}', '${escapeHtml(b.spotify)}', '${escapeHtml(b.facebook)}')">
                         <div class="band-head-info">
                             <div class="band-head-name">${escapeHtml(b.name)}</div>
                             <div class="band-head-sub">${escapeHtml([b.city, b.style].filter(Boolean).join(' • '))}</div>
-                        </div>
-                    </div>
-                    <div class="band-body" onclick="closeBandBodyIfPlain(event, this)">
-                        ${b.bio ? `<div class="band-bio">${escapeHtml(b.bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
-                        <div class="band-links">
-                            ${safeUrl(b.spotify) ? `<a class="band-link-btn spotify" href="${safeUrl(b.spotify)}" target="_blank"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
-                            ${safeUrl(b.facebook) ? `<a class="band-link-btn fb" href="${safeUrl(b.facebook)}" target="_blank"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -2586,9 +2623,9 @@ initCarouselObserver();
             html += `</div>`;
         });
 
-        galleryGrid.innerHTML = html
-            ? `<div class="gallery-sections">${html}</div>`
-            : `<div class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>`;
+        galleryGrid.outerHTML = html
+            ? `<div id="gallery-grid" class="gallery-sections">${html}</div>`
+            : `<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>`;
     } catch (e) {
         if (galleryGrid) galleryGrid.outerHTML = '<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>';
     }
@@ -2606,6 +2643,42 @@ function initCarouselObserver() {
         });
     }, options);
     document.querySelectorAll('.carousel-card').forEach(card => observer.observe(card));
+}
+
+// ===== NOVÁ FUNKCIA: OTVORENIE DETAILU KAPELY V MODALE =====
+function openBandDetail(name, city, style, bio, spotify, facebook) {
+    buzz();
+    const modalBody = document.getElementById('modal-content-body');
+    
+    let html = `
+        <div class="modal-title">${escapeHtml(name)}</div>
+        ${city || style ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(city || '')} ${style ? '• ' + escapeHtml(style) : ''}</div>` : ''}
+        <div class="modal-desc">
+            ${bio ? `<div class="band-bio">${escapeHtml(bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
+            <div class="band-links" style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center;">
+                ${safeUrl(spotify) ? `<a href="${safeUrl(spotify)}" target="_blank" class="band-link-btn spotify" style="display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border:1px solid #1DB954; color:#1DB954; text-decoration:none; font-size:0.9rem; background:rgba(0,0,0,0.5); border-radius:4px;"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
+                ${safeUrl(facebook) ? `<a href="${safeUrl(facebook)}" target="_blank" class="band-link-btn fb" style="display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border:1px solid #1877F2; color:#6ea8ff; text-decoration:none; font-size:0.9rem; background:rgba(0,0,0,0.5); border-radius:4px;"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-share" onclick="shareBand('${escapeHtml(name)}')"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>
+        </div>
+    `;
+    
+    modalBody.innerHTML = html;
+    document.getElementById('modal-overlay').style.display = 'flex';
+    document.getElementById('modal-overlay').scrollTop = 0;
+    history.pushState({ screen: activeScreenId, modal: true }, "", "#band-detail");
+}
+
+// ===== ZDIEĽANIE KAPELY =====
+async function shareBand(name) {
+    const txt = '🎸 ' + name + ' • Kôňcerty vo Furmanke';
+    const url = location.href.split('#')[0];
+    try {
+        if (navigator.share) { await navigator.share({ title: 'Kôňcerty', text: txt, url: url }); }
+        else { await navigator.clipboard.writeText(txt + ' ' + url); alert('Skopírované do schránky!'); }
+    } catch (err) {}
 }
 
 function toggleBand(head) {
@@ -2917,7 +2990,6 @@ function startCountdown(queue, index) {
 }
 
 window.addEventListener("popstate", function(event) {
-    // Ak je otvorená galéria, zatvoríme ju pri stlačení späť
     if (isGalleryOpen) {
         closeEventGalleryCarousel();
         return;
@@ -2933,7 +3005,6 @@ function openEventGalleryCarousel(gid) {
     const photos = (window.galleryGroups && window.galleryGroups[gid]) || [];
     if (!photos.length) return;
     
-    // Zapamätáme si aktuálnu obrazovku a zablokujeme scroll pozadia
     previousScreenForGallery = activeScreenId;
     isGalleryOpen = true;
     document.body.classList.add('gallery-open');
@@ -2949,7 +3020,6 @@ function openEventGalleryCarousel(gid) {
     document.getElementById('event-gallery-overlay').classList.add('active');
     grid.scrollTop = 0;
     
-    // Pridáme stav do histórie pre tlačidlo späť
     history.pushState({ screen: activeScreenId, gallery: true }, "", "#gallery");
 }
 
@@ -2958,7 +3028,6 @@ function closeEventGalleryCarousel() {
     isGalleryOpen = false;
     document.body.classList.remove('gallery-open');
     
-    // Ak sme mali uloženú predchádzajúcu obrazovku, vrátime sa na ňu
     if (previousScreenForGallery && previousScreenForGallery !== activeScreenId) {
         showScreen(previousScreenForGallery);
     }
@@ -2975,6 +3044,7 @@ function openLightbox(group, index) {
     track.innerHTML = photos.map(p =>
         `<div class="lightbox-slide"><img src="${safeUrl(p.url)}" alt="Fotka z koncertu"></div>`
     ).join('');
+    document.body.classList.add('gallery-open');
     document.getElementById('lightbox-overlay').classList.add('active');
     track.scrollLeft = window.lightboxIndex * track.clientWidth;
     renderLightboxMeta();
@@ -3023,6 +3093,7 @@ function closeLightbox() {
     overlay.classList.remove('active');
     document.getElementById('lightbox-track').innerHTML = '';
     if (window.resetLightboxZoom) window.resetLightboxZoom();
+    if (!isGalleryOpen) document.body.classList.remove('gallery-open');
 }
 
 document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
