@@ -1,7 +1,7 @@
 // Kôňcerty – service worker
 // Zabezpečuje: rýchlejší štart, offline shell, vždy čerstvé dáta z Gistu, vždy čerstvý HTML shell.
 
-const CACHE = 'koncerty-v12';
+const CACHE = 'koncerty-v13';
 const SHELL = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
