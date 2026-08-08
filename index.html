@@ -935,6 +935,11 @@
     margin-bottom: 9px;
     overflow: hidden;
 }
+.band-row-upcoming {
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png');
+}
+.band-row-upcoming .band-head-name { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+.band-row-upcoming .band-head-sub { color: #f2f2f2; }
 .band-head {
     display: flex;
     align-items: center;
@@ -981,7 +986,7 @@
 .band-link-btn.spotify { border-color: #1DB954; color: #1DB954; }
 .band-link-btn.fb { border-color: #1877F2; color: #6ea8ff; }
 
-/* ===== POSÚVATEĽNÁ GALÉRIA KONCERTU (rovnaký efekt ako plagáty v archíve) ===== */
+/* ===== NÁHĽAD CELEJ GALÉRIE KONCERTU — názov + mriežka náhľadov všetkých fotiek a plagátu ===== */
 .event-gallery-overlay {
     display: none;
     position: fixed;
@@ -1008,16 +1013,14 @@
     font-size: 1.2rem;
     cursor: pointer;
 }
-#event-gallery-carousel { flex: 1; align-items: center; }
-.event-gallery-card { cursor: pointer; }
-.event-gallery-card img {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.8);
-    display: block;
+.event-gallery-overlay .gallery-grid {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 12px calc(20px + env(safe-area-inset-bottom)) 12px;
+    align-content: start;
 }
+.event-gallery-overlay .gallery-item img { object-fit: contain; }
 .event-gallery-hint {
     text-align: center;
     color: #999;
@@ -1534,7 +1537,6 @@
         <div class="page-header">
             <div class="page-title">KAPELY</div>
         </div>
-        <div class="page-subtitle" style="margin-top:-8px; margin-bottom: 6px;">HRALI U NÁS VO FURMANKE</div>
         <div id="bands-list" class="bands-list">
             <div class="loading">NAČÍTAVAM...</div>
         </div>
@@ -1796,8 +1798,8 @@
             <div class="event-gallery-title" id="event-gallery-title"></div>
             <div role="button" tabindex="0" class="event-gallery-close" onclick="closeEventGalleryCarousel()"><i class="fas fa-times"></i></div>
         </div>
-        <div id="event-gallery-carousel" class="carousel-container"></div>
-        <div class="event-gallery-hint"><i class="fas fa-hand-pointer"></i> POSUŇ NA ĎALŠIU · ŤUKNI PRE ZVÄČŠENIE</div>
+        <div id="event-gallery-carousel" class="gallery-grid"></div>
+        <div class="event-gallery-hint"><i class="fas fa-hand-pointer"></i> ŤUKNI NA FOTKU PRE ZVÄČŠENIE</div>
     </div>
 
     <script>
@@ -1960,9 +1962,9 @@ function handleButtonClick(screenId) {
             if (e.target.closest('.modal-close-btn, .btn, a, button, .gallery-item, .gallery-poster-tile, .gallery-view-all-btn, .gallery-more-tile, .strip-photo')) return;
             closeModal();
         }
-        // Zatvorenie galérie fotiek ťuknutím kdekoľvek mimo konkrétnej fotky (tá sa otvorí do zväčšenia).
+        // Zatvorenie náhľadu galérie ťuknutím kdekoľvek mimo konkrétnej fotky (tá sa otvorí do zväčšenia).
         function eventGalleryOverlayClick(e) {
-            if (e.target.closest('.carousel-card, .event-gallery-close')) return;
+            if (e.target.closest('.gallery-item, .event-gallery-close')) return;
             closeEventGalleryCarousel();
         }
         // Klávesnicová prístupnosť: Enter/Medzera aktivuje prvky s role="button"
@@ -2379,10 +2381,11 @@ const clean = cols.map(c =>
                         if (!b.name) return;
                         const key = b.name.trim().toLowerCase();
                         if (!bandsDir.has(key)) {
-                            bandsDir.set(key, { name: b.name.trim(), city: b.city, style: b.style, bio: b.bio, spotify: b.spotify, facebook: b.facebook, count: 0 });
+                            bandsDir.set(key, { name: b.name.trim(), city: b.city, style: b.style, bio: b.bio, spotify: b.spotify, facebook: b.facebook, count: 0, hasUpcoming: false });
                         }
                         const entry = bandsDir.get(key);
                         entry.count++;
+                        if (eventDateObj >= today) entry.hasUpcoming = true;
                         if (!entry.bio && b.bio) entry.bio = b.bio;
                         if (!entry.city && b.city) entry.city = b.city;
                         if (!entry.style && b.style) entry.style = b.style;
@@ -2458,12 +2461,14 @@ const clean = cols.map(c =>
                     calEl.innerHTML = calHtml;
                 }
 
-                // ===== KAPELY (A-Z) =====
+                // ===== KAPELY (A-Z, rozdelené na tie čo u nás ešte len zahrajú / tie čo už hrali) =====
                 const bandsEl = document.getElementById('bands-list');
                 if (bandsEl) {
                     const bands = [...bandsDir.values()].sort((a, b) => a.name.localeCompare(b.name, 'sk'));
-                    bandsEl.innerHTML = bands.map(b => `
-                        <div class="band-row">
+                    const upcomingBands = bands.filter(b => b.hasUpcoming);
+                    const pastBands = bands.filter(b => !b.hasUpcoming);
+                    const bandRow = (b, upcoming) => `
+                        <div class="band-row ${upcoming ? 'band-row-upcoming' : 'band-row-past'}">
                             <div role="button" tabindex="0" class="band-head" onclick="toggleBand(this)">
                                 <div class="band-head-info">
                                     <div class="band-head-name">${escapeHtml(b.name)}</div>
@@ -2477,7 +2482,12 @@ const clean = cols.map(c =>
                                     ${safeUrl(b.facebook) ? `<a class="band-link-btn fb" href="${safeUrl(b.facebook)}" target="_blank"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}
                                 </div>
                             </div>
-                        </div>`).join('') || '<p style="text-align:center; padding-top:40px;">ZATIAĽ PRÁZDNO...</p>';
+                        </div>`;
+                    let bandsHtmlOut = '<div class="cal-section-title">KAPELY, KTORÉ U NÁS ZAHRAJÚ</div>';
+                    bandsHtmlOut += upcomingBands.length ? upcomingBands.map(b => bandRow(b, true)).join('') : '<div class="cal-empty">Zatiaľ nie sú naplánované žiadne koncerty.</div>';
+                    bandsHtmlOut += '<div class="cal-section-title">KAPELY, KTORÉ U NÁS HRALI</div>';
+                    bandsHtmlOut += pastBands.length ? pastBands.map(b => bandRow(b, false)).join('') : '<div class="cal-empty">Zatiaľ prázdno...</div>';
+                    bandsEl.innerHTML = bandsHtmlOut;
                 }
 
                 upcomingContainer.innerHTML += '<div style="flex: 0 0 17.5%;"></div>';
@@ -2583,18 +2593,26 @@ initCarouselObserver();
                 orderedKeys.forEach(key => {
                     const photos = groups.get(key);
                     const gid = key || '__other__';
-                    window.galleryGroups[gid] = photos;
                     const heading = key
                         ? `${escapeHtml(window.eventTitleByDate && window.eventTitleByDate[key] ? window.eventTitleByDate[key] : 'KONCERT')}<span class="sub">${escapeHtml(key)}</span>`
                         : `OSTATNÉ FOTKY`;
                     html += `<div class="gallery-section"><div class="gallery-section-title">${heading}</div><div class="gallery-grid">`;
 
                     const poster = key && window.eventPosterByDate ? window.eventPosterByDate[key] : null;
-                    if (poster && safeUrl(poster)) {
-                        // Plagát ako prvá dlaždica + max. 2 fotky vedľa neho, zvyšok sa pozerá cez tlačidlo nižšie.
-                        html += `<div class="gallery-item gallery-poster-tile" onclick="openEventGalleryCarousel('${gid}')"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
-                        photos.slice(0, 2).forEach((p, idx) => {
-                            html += `<div class="gallery-item" data-group="${gid}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
+                    const hasPoster = !!(poster && safeUrl(poster));
+                    // Plagát je teraz súčasťou tej istej posúvateľnej galérie ako fotky (vždy ako prvá položka),
+                    // takže nech sa otvorí cez plagát alebo cez ktorúkoľvek fotku, skončí sa vždy v tom istom prehliadači fotiek.
+                    const gPhotos = hasPoster
+                        ? [{ url: poster, popis: (window.eventTitleByDate && window.eventTitleByDate[key]) || 'Plagát koncertu', isPoster: true }, ...photos]
+                        : photos;
+                    window.galleryGroups[gid] = gPhotos;
+
+                    if (hasPoster) {
+                        // Plagát je teraz rovnocenná položka galérie ako fotky — klik naň otvorí rovno
+                        // zväčšený prehliadač (presne ako klik na fotku), swipe-om sa dá prejsť na ďalšie.
+                        html += `<div class="gallery-item gallery-poster-tile" onclick="openLightbox('${gid}', 0)"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
+                        gPhotos.slice(1, 3).forEach((p, idx) => {
+                            html += `<div class="gallery-item" data-group="${gid}" data-index="${idx + 1}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
                         });
                         html += `</div>`;
                         if (photos.length > 0) {
@@ -2976,24 +2994,22 @@ window.addEventListener("popstate", function(event) {
     }
 });
 
-// ===== LIGHTBOX (zväčšenie fotky priamo v appke + posúvanie na ďalšie fotky z toho istého koncertu) =====
-// ===== POSÚVATEĽNÁ GALÉRIA KONCERTU (klik na "POZRIEŤ CELÚ GALÉRIU") =====
-// Ukáže všetky fotky daného koncertu ako posúvateľné karty (rovnaký efekt ako plagáty v archíve).
-// Klik na konkrétnu fotku potom otvorí zväčšený lightbox (s priblížením/posúvaním) presne na tej fotke.
+// ===== LIGHTBOX (zväčšenie fotky priamo v appke + posúvanie na ďalšie fotky z toho istého koncertu, vrátane plagátu ako prvej položky) =====
+// ===== NÁHĽAD CELEJ GALÉRIE KONCERTU (názov koncertu + mriežka náhľadov plagátu a všetkých fotiek) =====
+// Klik na konkrétnu dlaždicu potom otvorí zväčšený lightbox (s priblížením/posúvaním) presne na tej fotke/plagáte.
 function openEventGalleryCarousel(gid) {
     const photos = (window.galleryGroups && window.galleryGroups[gid]) || [];
     if (!photos.length) return;
-    const carousel = document.getElementById('event-gallery-carousel');
+    const grid = document.getElementById('event-gallery-carousel');
     const title = document.getElementById('event-gallery-title');
     title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || 'GALÉRIA';
-    carousel.innerHTML = '<div style="flex: 0 0 17.5%;"></div>' + photos.map((p, idx) =>
-        `<div class="carousel-card event-gallery-card" onclick="closeEventGalleryCarousel(); openLightbox('${gid}', ${idx});">
+    grid.innerHTML = photos.map((p, idx) =>
+        `<div class="gallery-item${p.isPoster ? ' gallery-poster-tile' : ''}" onclick="closeEventGalleryCarousel(); openLightbox('${gid}', ${idx});">
             <img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
         </div>`
-    ).join('') + '<div style="flex: 0 0 17.5%;"></div>';
+    ).join('');
     document.getElementById('event-gallery-overlay').classList.add('active');
-    carousel.scrollLeft = 0;
-    setTimeout(initCarouselObserver, 50);
+    grid.scrollTop = 0;
 }
 function closeEventGalleryCarousel() {
     document.getElementById('event-gallery-overlay').classList.remove('active');
