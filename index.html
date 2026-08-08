@@ -1018,6 +1018,14 @@
     padding: 4px 0 calc(20px + env(safe-area-inset-bottom)) 0;
 }
 
+/* ===== ZABRÁNENIE SCROLLU POZADIA PRI OTVORENEJ GALÉRII ===== */
+body.gallery-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
 .more-grid { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 #app-version-footer { text-align: center; color: #777; font-size: 0.75rem; padding: 18px 0 calc(90px + env(safe-area-inset-bottom)) 0; letter-spacing: 0.5px; }
 .more-btn {
@@ -1537,7 +1545,7 @@
             <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
             <div role="button" tabindex="0" class="more-btn" onclick="shareApp()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
-        <div id="app-version-footer">Verzia: 2.1.2</div>
+        <div id="app-version-footer">Verzia: 2.1.3</div>
     </div>
 
     <nav id="bottom-nav">
@@ -1829,6 +1837,8 @@ function showToast(msg, duration) {
 }
 
 let activeScreenId = 'screen-home';
+let isGalleryOpen = false;
+let previousScreenForGallery = null;
 
 function handleButtonClick(screenId) {
     buzz();
@@ -1950,7 +1960,13 @@ document.addEventListener('keydown', function(e) {
 });
 
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') { closeModal(); }
+    if (e.key === 'Escape') { 
+        if (isGalleryOpen) {
+            closeEventGalleryCarousel();
+        } else {
+            closeModal(); 
+        }
+    }
 });
 
 function parseEventDate(dateStr, timeStr) {
@@ -2901,6 +2917,11 @@ function startCountdown(queue, index) {
 }
 
 window.addEventListener("popstate", function(event) {
+    // Ak je otvorená galéria, zatvoríme ju pri stlačení späť
+    if (isGalleryOpen) {
+        closeEventGalleryCarousel();
+        return;
+    }
     hideModalNow();
     const targetScreen = (event.state && event.state.screen) ? event.state.screen : 'screen-home';
     if (targetScreen !== activeScreenId) {
@@ -2911,6 +2932,12 @@ window.addEventListener("popstate", function(event) {
 function openEventGalleryCarousel(gid) {
     const photos = (window.galleryGroups && window.galleryGroups[gid]) || [];
     if (!photos.length) return;
+    
+    // Zapamätáme si aktuálnu obrazovku a zablokujeme scroll pozadia
+    previousScreenForGallery = activeScreenId;
+    isGalleryOpen = true;
+    document.body.classList.add('gallery-open');
+    
     const grid = document.getElementById('event-gallery-carousel');
     const title = document.getElementById('event-gallery-title');
     title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || 'GALÉRIA';
@@ -2921,10 +2948,21 @@ function openEventGalleryCarousel(gid) {
     ).join('');
     document.getElementById('event-gallery-overlay').classList.add('active');
     grid.scrollTop = 0;
+    
+    // Pridáme stav do histórie pre tlačidlo späť
+    history.pushState({ screen: activeScreenId, gallery: true }, "", "#gallery");
 }
 
 function closeEventGalleryCarousel() {
     document.getElementById('event-gallery-overlay').classList.remove('active');
+    isGalleryOpen = false;
+    document.body.classList.remove('gallery-open');
+    
+    // Ak sme mali uloženú predchádzajúcu obrazovku, vrátime sa na ňu
+    if (previousScreenForGallery && previousScreenForGallery !== activeScreenId) {
+        showScreen(previousScreenForGallery);
+    }
+    previousScreenForGallery = null;
 }
 
 function openLightbox(group, index) {
