@@ -1118,10 +1118,6 @@ body.gallery-open {
     border-radius: 0;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/whitebackround.png?v=1');
-    background-size: 100% 100%;
-    background-position: center;
-    padding: 5px 8px;
     box-sizing: border-box;
     cursor: pointer;
     transition: transform 0.1s ease;
@@ -1883,6 +1879,26 @@ function showToast(msg, duration) {
 let activeScreenId = 'screen-home';
 let isGalleryOpen = false;
 let previousScreenForGallery = null;
+
+let savedBodyScrollY = 0;
+let bodyScrollLockCount = 0;
+function lockBodyScroll() {
+    if (bodyScrollLockCount === 0) {
+        savedBodyScrollY = window.scrollY || window.pageYOffset || 0;
+        document.body.style.top = (-savedBodyScrollY) + 'px';
+        document.body.classList.add('gallery-open');
+    }
+    bodyScrollLockCount++;
+}
+function unlockBodyScroll() {
+    if (bodyScrollLockCount === 0) return;
+    bodyScrollLockCount--;
+    if (bodyScrollLockCount === 0) {
+        document.body.classList.remove('gallery-open');
+        document.body.style.top = '';
+        window.scrollTo(0, savedBodyScrollY);
+    }
+}
 
 function handleButtonClick(screenId) {
     buzz();
@@ -3007,7 +3023,7 @@ function openEventGalleryCarousel(gid) {
     
     previousScreenForGallery = activeScreenId;
     isGalleryOpen = true;
-    document.body.classList.add('gallery-open');
+    lockBodyScroll();
     
     const grid = document.getElementById('event-gallery-carousel');
     const title = document.getElementById('event-gallery-title');
@@ -3026,7 +3042,7 @@ function openEventGalleryCarousel(gid) {
 function closeEventGalleryCarousel() {
     document.getElementById('event-gallery-overlay').classList.remove('active');
     isGalleryOpen = false;
-    document.body.classList.remove('gallery-open');
+    unlockBodyScroll();
     
     if (previousScreenForGallery && previousScreenForGallery !== activeScreenId) {
         showScreen(previousScreenForGallery);
@@ -3044,7 +3060,7 @@ function openLightbox(group, index) {
     track.innerHTML = photos.map(p =>
         `<div class="lightbox-slide"><img src="${safeUrl(p.url)}" alt="Fotka z koncertu"></div>`
     ).join('');
-    document.body.classList.add('gallery-open');
+    lockBodyScroll();
     document.getElementById('lightbox-overlay').classList.add('active');
     track.scrollLeft = window.lightboxIndex * track.clientWidth;
     renderLightboxMeta();
@@ -3093,7 +3109,7 @@ function closeLightbox() {
     overlay.classList.remove('active');
     document.getElementById('lightbox-track').innerHTML = '';
     if (window.resetLightboxZoom) window.resetLightboxZoom();
-    if (!isGalleryOpen) document.body.classList.remove('gallery-open');
+    unlockBodyScroll();
 }
 
 document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
