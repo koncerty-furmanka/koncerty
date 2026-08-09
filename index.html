@@ -543,6 +543,504 @@
     letter-spacing: 1px;
 }
 
+
+
+.google-map-wrap {
+    width: 100%;
+    height: 360px;
+    overflow: hidden;
+    background: #f3f3f3;
+}
+.google-map-embed {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.location-card,
+.parking-card {
+    margin: 14px 12px 0;
+    padding: 16px;
+    border: 1px solid rgba(249,165,9,.55);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 4px;
+    background: linear-gradient(145deg, rgba(24,19,14,.98), rgba(7,7,7,.98));
+    box-shadow: 0 8px 22px rgba(0,0,0,.55);
+}
+.location-card-title,
+.parking-card-title {
+    color: var(--accent-color);
+    font-weight: 900;
+    font-size: 1.08rem;
+    letter-spacing: 1px;
+}
+.location-address {
+    margin-top: 7px;
+    color: #eee;
+    font-size: .95rem;
+}
+.location-coordinates {
+    margin-top: 5px;
+    color: #aaa;
+    font-family: monospace;
+    font-size: .82rem;
+}
+.parking-card {
+    margin-top: 12px;
+    border-left-color: #4da3ff;
+}
+.parking-card-title {
+    color: #4da3ff;
+}
+.parking-card-text {
+    margin-top: 8px;
+    color: #ccc;
+    font-size: .88rem;
+    line-height: 1.45;
+}
+.parking-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 48px;
+    margin-top: 14px;
+    padding: 0 14px;
+    border: 1px solid rgba(77,163,255,.75);
+    border-radius: 3px;
+    background: rgba(77,163,255,.12);
+    color: #fff !important;
+    font-weight: 900;
+    letter-spacing: .6px;
+    text-decoration: none;
+}
+.parking-google-btn:hover {
+    background: rgba(77,163,255,.22);
+}
+
+@media (min-width: 700px) {
+    .google-map-wrap {
+        max-width: 900px;
+        height: 460px;
+        margin: 0 auto;
+    }
+    .location-card,
+    .arrival-guide,
+    .parking-card {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+
+
+
+.map-info-card {
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.map-info-card:hover {
+    transform: translateY(-2px);
+    background: rgba(20,20,20,.96);
+}
+.map-info-card:active {
+    transform: translateY(0);
+}
+
+/* ===== MAPA / INFO / NAVIGÁCIA – CLEAN LAYOUT ===== */
+.map-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 12px 12px 0;
+}
+.map-info-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px 15px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 4px;
+    background: rgba(8,8,8,.88);
+}
+.parking-info {
+    border-left-color: #4da3ff;
+}
+.map-info-dot {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(249,165,9,.12);
+}
+.parking-info .map-info-dot {
+    background: #4da3ff;
+    box-shadow: 0 0 0 4px rgba(77,163,255,.12);
+}
+.map-info-title {
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+}
+.parking-info .map-info-title {
+    color: #4da3ff;
+}
+.map-info-text {
+    margin-top: 2px;
+    color: #ddd;
+    font-size: .85rem;
+    line-height: 1.3;
+}
+
+.navigation-section,
+.parking-navigation {
+    margin: 12px 12px 0;
+    padding: 16px;
+    border: 1px solid rgba(249,165,9,.55);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 4px;
+    background: linear-gradient(145deg, rgba(24,19,14,.98), rgba(7,7,7,.98));
+    box-shadow: 0 8px 22px rgba(0,0,0,.45);
+}
+.parking-navigation {
+    border-left-color: #4da3ff;
+    margin-bottom: 30px;
+}
+.navigation-section-title {
+    color: var(--accent-color);
+    font-weight: 900;
+    font-size: 1.08rem;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+.navigation-subtitle {
+    color: #fff;
+    font-weight: 900;
+    font-size: .94rem;
+    letter-spacing: .8px;
+    margin-bottom: 10px;
+}
+.navigation-subtitle i {
+    color: var(--accent-color);
+    margin-right: 6px;
+}
+.parking-title i,
+.parking-title {
+    color: #4da3ff;
+}
+.arrival-guide-warning {
+    margin: 10px 0 13px;
+}
+.navigation-text {
+    color: #ccc;
+    font-size: .86rem;
+    line-height: 1.48;
+}
+.navigation-text strong {
+    color: #fff;
+}
+
+.navigation-route-text {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.10);
+}
+.navigation-route-text strong:first-child {
+    color: var(--accent-color);
+    letter-spacing: .6px;
+}
+
+.arrival-google-btn,
+.parking-google-btn {
+    margin-top: 15px;
+}
+
+@media (min-width: 700px) {
+    .map-info-grid {
+        grid-template-columns: 1fr 1fr;
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .navigation-section,
+    .parking-navigation {
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* ===== KÔŇCERTY STYLISH MAP ===== */
+.koncerty-map-shell {
+    position: relative;
+    margin: 0;
+    height: 390px;
+    overflow: hidden;
+    background: #f3f3f3;
+    border-top: 1px solid rgba(249,165,9,.35);
+    border-bottom: 1px solid rgba(249,165,9,.35);
+    box-shadow: inset 0 0 50px rgba(0,0,0,.55);
+}
+#koncerty-map {
+    width: 100%;
+    height: 100%;
+    background: #111;
+}
+#koncerty-map .leaflet-tile-pane {
+    filter: saturate(.90) contrast(1.02);
+}
+#koncerty-map .leaflet-control-zoom {
+    margin: 12px !important;
+    border: 1px solid rgba(249,165,9,.55) !important;
+    box-shadow: 0 5px 18px rgba(0,0,0,.7) !important;
+}
+#koncerty-map .leaflet-control-zoom a {
+    width: 34px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    background: rgba(9,8,7,.92) !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,.12) !important;
+}
+#koncerty-map .leaflet-control-zoom a:hover {
+    color: var(--accent-color) !important;
+}
+#koncerty-map .leaflet-control-attribution {
+    display: none;
+}
+.map-badge {
+    position: absolute;
+    z-index: 500;
+    top: 13px;
+    padding: 8px 11px;
+    border-radius: 3px;
+    background: rgba(7,6,5,.9);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 16px rgba(0,0,0,.65);
+    pointer-events: none;
+}
+.map-badge i { margin-right: 5px; }
+.map-badge-venue {
+    left: 12px;
+    border-left: 3px solid var(--accent-color);
+}
+.map-badge-parking {
+    right: 12px;
+    border-left: 3px solid #4da3ff;
+}
+.map-credit {
+    position: absolute;
+    z-index: 500;
+    right: 8px;
+    bottom: 6px;
+    padding: 3px 6px;
+    background: rgba(0,0,0,.62);
+    color: #aaa;
+    font-size: 9px;
+    pointer-events: none;
+}
+.koncerty-map-marker {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 2px solid #050505;
+    border-radius: 50% 50% 50% 8%;
+    transform: rotate(-45deg);
+    box-shadow: 0 5px 14px rgba(0,0,0,.85), 0 0 0 4px rgba(249,165,9,.14);
+}
+.koncerty-map-marker i {
+    transform: rotate(45deg);
+    color: #050505;
+    font-size: 17px;
+}
+.koncerty-map-marker.venue {
+    background: var(--accent-color);
+}
+.koncerty-map-marker.parking {
+    background: #4da3ff;
+    box-shadow: 0 5px 14px rgba(0,0,0,.85), 0 0 0 4px rgba(77,163,255,.15);
+}
+.koncerty-map-popup {
+    min-width: 170px;
+    font-family: inherit;
+}
+.koncerty-map-popup strong {
+    display: block;
+    color: var(--accent-color);
+    font-size: 1rem;
+    letter-spacing: .8px;
+    margin-bottom: 4px;
+}
+.koncerty-map-popup span {
+    color: #ccc;
+    font-size: .78rem;
+}
+.koncerty-map-popup a {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--accent-color) !important;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.location-card,
+.arrival-guide,
+.parking-card {
+    position: relative;
+}
+.location-card-title i,
+.parking-card-title i {
+    margin-right: 5px;
+}
+@media (min-width: 700px) {
+    .koncerty-map-shell {
+        max-width: 1100px;
+        height: 500px;
+        margin: 0 auto;
+        border-left: 1px solid rgba(249,165,9,.35);
+        border-right: 1px solid rgba(249,165,9,.35);
+    }
+}
+
+/* ===== PRÍCHOD AUTOM NA KÔŇCERT ===== */
+
+.arrival-guide-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 12px 0;
+    padding: 12px;
+    border: 1px solid rgba(242,210,75,.45);
+    border-left: 3px solid #f2d24b;
+    background: rgba(242,210,75,.08);
+    color: #eee;
+    line-height: 1.35;
+    font-size: .86rem;
+}
+.arrival-guide-warning > i {
+    color: #f2d24b;
+    margin-top: 2px;
+}
+.arrival-guide-warning strong {
+    display: block;
+    color: #f2d24b;
+    letter-spacing: .7px;
+    margin-bottom: 3px;
+}
+.arrival-guide-warning span { color: #ccc; }
+
+.arrival-guide-car-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 14px;
+    padding: 11px 12px;
+    border: 1px solid rgba(249,165,9,.3);
+    background: rgba(249,165,9,.06);
+    color: #ccc;
+    font-size: .82rem;
+    line-height: 1.4;
+}
+.arrival-guide-car-note i {
+    color: var(--accent-color);
+    margin-top: 2px;
+}
+.arrival-guide-car-note strong { color: #fff; }
+
+.arrival-guide {
+    margin: 14px 12px 0;
+    padding: 16px;
+    border: 1px solid rgba(249,165,9,.55);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 4px;
+    background: linear-gradient(145deg, rgba(24,19,14,.98), rgba(7,7,7,.98));
+    box-shadow: 0 8px 22px rgba(0,0,0,.55);
+}
+.arrival-guide-title {
+    color: var(--accent-color);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: 1.1px;
+    margin-bottom: 8px;
+}
+.arrival-guide-title i { margin-right: 6px; }
+.arrival-guide-text {
+    color: #ddd;
+    font-size: .88rem;
+    line-height: 1.45;
+    margin-bottom: 15px;
+}
+.arrival-guide-text strong { color: #fff; }
+.arrival-route {
+    display: flex;
+    flex-direction: column;
+}
+.arrival-route-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #eee;
+    font-size: .83rem;
+    line-height: 1.35;
+}
+.arrival-route-step strong { color: #fff; letter-spacing: .5px; }
+.arrival-route-step span span { color: #bbb; }
+.arrival-route-icon {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #000;
+    background: var(--accent-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,.6);
+}
+.arrival-zone {
+    color: #000;
+    background: #f2d24b;
+}
+.arrival-target {
+    color: #000;
+    background: #fff;
+}
+.arrival-route-line {
+    width: 2px;
+    height: 16px;
+    margin: 1px 0 1px 16px;
+    background: repeating-linear-gradient(to bottom, rgba(249,165,9,.75) 0 4px, transparent 4px 8px);
+}
+.arrival-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 48px;
+    margin-top: 16px;
+    padding: 0 14px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    background: var(--accent-color);
+    color: #000 !important;
+    font-weight: 900;
+    letter-spacing: .7px;
+    text-decoration: none;
+    box-shadow: 0 5px 14px rgba(0,0,0,.65);
+}
+.arrival-google-btn:hover { filter: brightness(1.08); }
+@media (min-width: 700px) {
+    .arrival-guide { max-width: 900px; margin-left: auto; margin-right: auto; }
+}
+
 #leaflet-map {
     width: 100%;
     height: 340px;
@@ -565,7 +1063,7 @@
 .map-marker-pin i { transform: rotate(45deg); font-size: 0.85rem; color: #000; }
 .map-marker-venue { background: var(--accent-color); }
 .map-marker-parking { background: #4da3ff; }
-.map-legend {
+.map-legend { display:none !important; display:none; /* legacy */
     padding: 14px 15px 4px 15px;
     display: flex;
     flex-direction: column;
@@ -1517,6 +2015,284 @@ body.gallery-open {
 }
     </style>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+<style>
+
+/* ===== OPRAVENÁ SEKCIA MAPA ===== */
+.map-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 12px;
+}
+
+.map-info-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 5px;
+    background: rgba(8,8,8,.92);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+}
+
+.map-info-card:hover {
+    transform: translateY(-2px);
+    background: rgba(20,20,20,.98);
+}
+
+.map-info-card:active {
+    transform: translateY(0);
+}
+
+.map-info-content {
+    display: block;
+    min-width: 0;
+}
+
+.map-info-title {
+    display: block;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+}
+
+.map-info-text {
+    display: block;
+    margin-top: 2px;
+    color: #ddd;
+    font-size: .85rem;
+    line-height: 1.35;
+}
+
+.map-info-dot {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(249,165,9,.12);
+}
+
+.parking-info {
+    border-left-color: #4da3ff;
+}
+
+.parking-info .map-info-dot {
+    background: #4da3ff;
+    box-shadow: 0 0 0 4px rgba(77,163,255,.12);
+}
+
+.parking-info .map-info-title {
+    color: #4da3ff;
+}
+
+.koncerty-map-shell {
+    position: relative;
+    width: 100%;
+    height: 390px;
+    overflow: hidden;
+    background: #f3f3f3;
+    border-top: 1px solid rgba(249,165,9,.45);
+    border-bottom: 1px solid rgba(249,165,9,.45);
+}
+
+#koncerty-map {
+    width: 100%;
+    height: 100%;
+    background: #f3f3f3;
+}
+
+#koncerty-map .leaflet-tile-pane {
+    filter: saturate(.90) contrast(1.02);
+}
+
+#koncerty-map .leaflet-control-zoom {
+    margin: 12px !important;
+    border: 1px solid rgba(249,165,9,.7) !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,.35) !important;
+}
+
+#koncerty-map .leaflet-control-zoom a {
+    width: 34px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    background: rgba(10,10,10,.94) !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,.12) !important;
+}
+
+#koncerty-map .leaflet-control-attribution {
+    display: none;
+}
+
+.map-badge,
+.map-badge-venue,
+.map-badge-parking {
+    display: none !important;
+}
+
+.map-credit {
+    position: absolute;
+    z-index: 500;
+    right: 8px;
+    bottom: 6px;
+    padding: 3px 6px;
+    background: rgba(0,0,0,.62);
+    color: #aaa;
+    font-size: 9px;
+    pointer-events: none;
+}
+
+.navigation-section,
+.parking-navigation {
+    margin: 12px;
+    padding: 16px;
+    border: 1px solid rgba(249,165,9,.55);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 5px;
+    background: linear-gradient(145deg, rgba(24,19,14,.98), rgba(7,7,7,.98));
+    box-shadow: 0 8px 22px rgba(0,0,0,.45);
+}
+
+.parking-navigation {
+    border-left-color: #4da3ff;
+    margin-bottom: 30px;
+}
+
+.navigation-section-title {
+    color: var(--accent-color);
+    font-weight: 900;
+    font-size: 1.08rem;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.navigation-subtitle {
+    color: #fff;
+    font-weight: 900;
+    font-size: .94rem;
+    letter-spacing: .8px;
+    margin-bottom: 10px;
+}
+
+.navigation-subtitle i {
+    color: var(--accent-color);
+    margin-right: 6px;
+}
+
+.parking-title,
+.parking-title i {
+    color: #4da3ff;
+}
+
+.navigation-text {
+    color: #ccc;
+    font-size: .86rem;
+    line-height: 1.48;
+}
+
+.navigation-text strong {
+    color: #fff;
+}
+
+.arrival-guide-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 10px 0 13px;
+    padding: 12px;
+    border: 1px solid rgba(242,210,75,.45);
+    border-left: 3px solid #f2d24b;
+    background: rgba(242,210,75,.08);
+    color: #eee;
+    line-height: 1.4;
+    font-size: .86rem;
+}
+
+.arrival-guide-warning > i {
+    color: #f2d24b;
+    margin-top: 2px;
+}
+
+.arrival-guide-warning strong {
+    display: block;
+    color: #f2d24b;
+    margin-bottom: 3px;
+}
+
+.arrival-google-btn,
+.parking-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    margin-top: 15px;
+    padding: 0 14px;
+    box-sizing: border-box;
+    border-radius: 3px;
+    text-decoration: none;
+    font-weight: 900;
+    letter-spacing: .7px;
+}
+
+.arrival-google-btn {
+    background: var(--accent-color);
+    color: #000 !important;
+}
+
+.parking-google-btn {
+    border: 1px solid rgba(77,163,255,.75);
+    background: rgba(77,163,255,.12);
+    color: #fff !important;
+}
+
+@media (min-width: 700px) {
+    .map-info-grid {
+        grid-template-columns: 1fr 1fr;
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .navigation-section,
+    .parking-navigation {
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .koncerty-map-shell {
+        max-width: 1100px;
+        height: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+</style>
+<style>
+
+.current-location-nav {
+    width: 100%;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+}
+.current-location-nav:disabled {
+    opacity: .75;
+    cursor: wait;
+}
+
+</style>
 </head>
 <body>
 
@@ -1749,21 +2525,82 @@ body.gallery-open {
         <div class="page-header">
             <div class="page-title">MAPA</div>
         </div>
-        <div id="leaflet-map"></div>
-        <div class="map-legend">
-            <div class="map-legend-item">
-                <span class="map-legend-dot map-legend-dot-venue"></span>
-                <div><strong>FURMANKA</strong><br>Hviezdoslavova 54, Námestovo — tu vykladáme aj hráme</div>
-            </div>
-            <div class="map-legend-item">
-                <span class="map-legend-dot map-legend-dot-parking"></span>
-                <div><strong>PARKOVISKO</strong><br>Tu môžeš nechať auto na celý večer</div>
-            </div>
+
+        <div class="koncerty-map-shell">
+            <div id="koncerty-map"></div>
+            <div class="map-credit">© CARTO · © OpenStreetMap prispievatelia</div>
         </div>
-        <div class="map-nav-buttons">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=49.4046478,19.4791651&travelmode=driving" target="_blank" class="btn btn-map-nav"><i class="fas fa-diamond-turn-right"></i> NAVIGOVAŤ NA PARKOVISKO</a>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=49.4042671,19.4790494&travelmode=driving" target="_blank" class="btn btn-map-nav"><i class="fas fa-diamond-turn-right"></i> NAVIGOVAŤ NA VYLOŽENIE / FURMANKA</a>
+
+        <!-- Klikateľné body pod mapou -->
+        <div class="map-info-grid">
+
+            <a href="#furmanka-navigation"
+               class="map-info-card venue-info"
+               aria-label="Zobraziť Furmanku na mape">
+                <span class="map-info-dot"></span>
+                <span class="map-info-content">
+                    <span class="map-info-title">FURMANKA</span>
+                    <span class="map-info-text">Tu vykladáme aparát a tu hráme.</span>
+                </span>
+            </a>
+
+            <a href="#koncerty-map"
+               class="map-info-card parking-info"
+               aria-label="Zobraziť parkovisko na mape">
+                <span class="map-info-dot"></span>
+                <span class="map-info-content">
+                    <span class="map-info-title">PARKOVISKO</span>
+                    <span class="map-info-text">Tu môžeš nechať auto celý večer.</span>
+                </span>
+            </a>
+
         </div>
+
+        <!-- FURMANKA + VYKLADANIE -->
+        <div class="navigation-section" id="furmanka-navigation">
+
+            <div class="navigation-section-title">
+                <i class="fas fa-route"></i>
+                NAVIGÁCIA FURMANKA / KÔŇCERTY
+            </div>
+
+            <div class="navigation-subtitle">
+                <i class="fas fa-truck"></i>
+                VYKLADANIE APARATÚRY PRE KAPELY
+            </div>
+
+            <div class="arrival-guide-warning">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                    <strong>V GOOGLE MAPS NECHAJTE TRASU PEŠO</strong>
+                    <span>
+                        Keďže Furmanka sa nachádza v pešej zóne, auto-navigácia by vás bez tohto
+                        nastavenia neviedla správne.
+                    </span>
+                </div>
+            </div>
+
+            <div class="navigation-text">
+                Vjazd do pešej zóny je povolený na <strong>naloženie a vyloženie aparatúry.</strong>
+                Potom treba preparkovať auto na parkovisko za Furmankou.
+            </div>
+
+            <div class="navigation-text navigation-route-text">
+                <strong>TRASA:</strong> Navigácia vás od vašej aktuálnej polohy navedie cez pripravené body:
+                <strong>kruhový objazd → okolo cintorína → pešia zóna → priamo pred Furmanku.</strong>
+            </div>
+
+            <button type="button"
+                    class="arrival-google-btn current-location-nav"
+                    data-destination="49.4043245,19.4789378">
+                <i class="fas fa-location-arrow"></i>
+                NAVIGOVAŤ NA VYKLADANIE
+            </button>
+
+        </div>
+
+        <!-- PARKOVANIE -->
+        
     </div>
 
     <div id="screen-social" class="screen">
@@ -2794,43 +3631,82 @@ function playSwipeGesture(containerId) {
     container.addEventListener('mousedown', stop, { once: true });
 }
 
-const MAP_VENUE = { lat: 49.4042671, lng: 19.4790494 };
+const MAP_VENUE = { lat: 49.4043245, lng: 19.4789378 };
 const MAP_PARKING = { lat: 49.4046478, lng: 19.4791651 };
 let furmankaMapInstance = null;
 
 function initFurmankaMap() {
-    const el = document.getElementById('leaflet-map');
-    if (!el || furmankaMapInstance || typeof L === 'undefined') return;
+    const el = document.getElementById('koncerty-map');
+    if (!el || el.dataset.initialized || typeof L === 'undefined') return;
+    el.dataset.initialized = '1';
+
+    const venue = { lat: 49.4043245, lng: 19.4789378 };
+    // Existing parking point used by the original Kôňcerty map.
+    const parking = { lat: 49.4046478, lng: 19.4791651 };
+
+    const map = L.map('koncerty-map', {
+        zoomControl: true,
+        scrollWheelZoom: false,
+        dragging: true,
+        tap: true
+    }).setView([49.40448, 19.47902], 17);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        subdomains: 'abcd',
+        attribution: '© CARTO · © OpenStreetMap'
+    }).addTo(map);
 
     const venueIcon = L.divIcon({
         className: '',
-        html: '<div class="map-marker-pin map-marker-venue"><i class="fas fa-chess-knight"></i></div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-        popupAnchor: [0, -28]
+        html: '<div class="koncerty-map-marker venue"><i class="fas fa-horse"></i></div>',
+        iconSize: [42, 42],
+        iconAnchor: [21, 42],
+        popupAnchor: [0, -38]
     });
+
     const parkingIcon = L.divIcon({
         className: '',
-        html: '<div class="map-marker-pin map-marker-parking"><i class="fas fa-square-parking"></i></div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-        popupAnchor: [0, -28]
+        html: '<div class="koncerty-map-marker parking"><i class="fas fa-square-parking"></i></div>',
+        iconSize: [42, 42],
+        iconAnchor: [21, 42],
+        popupAnchor: [0, -38]
     });
 
-    furmankaMapInstance = L.map('leaflet-map', { scrollWheelZoom: false }).setView(
-        [(MAP_VENUE.lat + MAP_PARKING.lat) / 2, (MAP_VENUE.lng + MAP_PARKING.lng) / 2], 17
-    );
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap prispievatelia'
-    }).addTo(furmankaMapInstance);
+    const venueMarker = L.marker([venue.lat, venue.lng], { icon: venueIcon })
+        .addTo(map)
+        .bindPopup(
+            '<div class="koncerty-map-popup">' +
+            '<strong>FURMANKA / KÔŇCERTY</strong>' +
+            '<span>Hviezdoslavova 54, Námestovo</span><br>' +
+            '<span>49.4043245, 19.4789378</span><br>' +
+            '<a href="https://maps.app.goo.gl/PCacdZ3zcd9UuGXBA" target="_blank" rel="noopener">NAVIGOVAŤ KU FURMANKE →</a>' +
+            '</div>'
+        );
 
-    L.marker([MAP_VENUE.lat, MAP_VENUE.lng], { icon: venueIcon }).addTo(furmankaMapInstance)
-        .bindPopup('<strong>FURMANKA</strong><br>Vchod / vyloženie vecí');
-    L.marker([MAP_PARKING.lat, MAP_PARKING.lng], { icon: parkingIcon }).addTo(furmankaMapInstance)
-        .bindPopup('<strong>PARKOVISKO</strong>');
+    const parkingMarker = L.marker([parking.lat, parking.lng], { icon: parkingIcon })
+        .addTo(map)
+        .bindPopup(
+            '<div class="koncerty-map-popup">' +
+            '<strong style="color:#4da3ff">PARKOVISKO</strong>' +
+            '<span>Tu môžeš nechať auto na celý večer.</span><br>' +
+            '<a href="https://maps.app.goo.gl/5YYhUB1SsPeXv6Yq6" target="_blank" rel="noopener" style="color:#4da3ff !important;">NAVIGOVAŤ NA PARKOVISKO →</a>' +
+            '</div>'
+        );
 
-    setTimeout(() => { if (furmankaMapInstance) furmankaMapInstance.invalidateSize(); }, 200);
+    document.querySelector('.venue-info')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        map.setView([venue.lat, venue.lng], 18, { animate: true });
+        venueMarker.openPopup();
+    });
+
+    document.querySelector('.parking-info')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        map.setView([parking.lat, parking.lng], 18, { animate: true });
+        parkingMarker.openPopup();
+    });
+
+    setTimeout(() => map.invalidateSize(), 250);
 }
 
 function setupArchiveScrollTracking() {
@@ -3291,5 +4167,57 @@ if (spotifyPlaylistUrl) {
         `<a href="${spotifyPlaylistUrl}" target="_blank" class="social-link" style="border-color:#1DB954;"><i class="fab fa-spotify" style="color:#1DB954;"></i> PLAYLIST</a>`);
 }
 </script>
+
+<script>
+(function () {
+    function openCurrentLocationNavigation(button) {
+        const waypoint1 = '49.4022634,19.4739724';
+        const waypoint2 = '49.4036682,19.4769023';
+        const destination = '49.4042435,19.4789971';
+
+        if (!navigator.geolocation) {
+            alert('Tento telefón nepodporuje získanie aktuálnej polohy.');
+            return;
+        }
+
+        const originalHTML = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-location-crosshairs"></i> ZISŤUJEM POLOHU...';
+
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const origin = position.coords.latitude + ',' + position.coords.longitude;
+
+                const url =
+                    'https://www.google.com/maps/dir/?api=1' +
+                    '&origin=' + encodeURIComponent(origin) +
+                    '&destination=' + encodeURIComponent(destination) +
+                    '&waypoints=' + encodeURIComponent(waypoint1 + '|' + waypoint2) +
+                    '&travelmode=walking';
+
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+                window.open(url, '_blank');
+            },
+            function () {
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+                alert('Nepodarilo sa zistiť tvoju aktuálnu polohu. Povoľ prehliadaču prístup k polohe a skús to znova.');
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('.current-location-nav');
+        if (button) openCurrentLocationNavigation(button);
+    });
+})();
+</script>
+
 </body>
 </html>
