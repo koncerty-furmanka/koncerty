@@ -1069,13 +1069,14 @@ body.gallery-open {
 .gallery-section .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0px;
-    padding: 2px 0 4px 0;
+    gap: 4px;
+    padding: 2px 14px 4px 14px;
     width: 100%;
+    box-sizing: border-box;
 }
 .gallery-view-all-btn {
-    margin: 8px auto 0 auto;
-    width: 94%;
+    margin: 8px 14px 0 14px;
+    width: auto;
     padding: 18px 12px;
     background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png?v=1');
     background-size: 100% 100%;
@@ -1111,8 +1112,9 @@ body.gallery-open {
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0px;
+    gap: 4px;
     padding: 2px 0 4px 0;
+    box-sizing: border-box;
 }
 .gallery-item { 
     border-radius: 0;
@@ -1131,23 +1133,7 @@ body.gallery-open {
     object-position: center;
     pointer-events: none;
 }
-.gallery-poster-tile img { object-fit: contain; }
-.gallery-view-all-btn {
-    margin: 8px auto 0 auto;
-    width: 88%;
-    padding: 18px 12px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png?v=1');
-    background-size: 100% 100%;
-    background-position: center;
-    box-sizing: border-box;
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-    text-align: center;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: transform 0.1s ease;
-}
+.gallery-poster-tile img { object-fit: cover; }
 .gallery-view-all-btn:active { transform: scale(0.98); }
 .gallery-empty {
     grid-column: 1 / -1;
@@ -1876,8 +1862,11 @@ function showToast(msg, duration) {
     }, duration || 2200);
 }
 
+if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+
 let activeScreenId = 'screen-home';
 let isGalleryOpen = false;
+let isLightboxOpen = false;
 let previousScreenForGallery = null;
 
 let savedBodyScrollY = 0;
@@ -2021,7 +2010,9 @@ document.addEventListener('keydown', function(e) {
 
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') { 
-        if (isGalleryOpen) {
+        if (isLightboxOpen) {
+            closeLightbox();
+        } else if (isGalleryOpen) {
             closeEventGalleryCarousel();
         } else {
             closeModal(); 
@@ -3005,9 +2996,19 @@ function startCountdown(queue, index) {
     }, 1000);
 }
 
+let suppressNextPopstate = false;
+
 window.addEventListener("popstate", function(event) {
+    if (suppressNextPopstate) {
+        suppressNextPopstate = false;
+        return;
+    }
+    if (isLightboxOpen) {
+        closeLightbox(true);
+        return;
+    }
     if (isGalleryOpen) {
-        closeEventGalleryCarousel();
+        closeEventGalleryCarousel(true);
         return;
     }
     hideModalNow();
@@ -3029,17 +3030,18 @@ function openEventGalleryCarousel(gid) {
     const title = document.getElementById('event-gallery-title');
     title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || 'GALÉRIA';
     grid.innerHTML = photos.map((p, idx) =>
-        `<div class="gallery-item${p.isPoster ? ' gallery-poster-tile' : ''}" onclick="closeEventGalleryCarousel(); openLightbox('${gid}', ${idx});">
+        `<div class="gallery-item${p.isPoster ? ' gallery-poster-tile' : ''}" onclick="openLightbox('${gid}', ${idx});">
             <img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
         </div>`
     ).join('');
     document.getElementById('event-gallery-overlay').classList.add('active');
-    grid.scrollTop = 0;
+    const scrollWrap = document.querySelector('.event-gallery-scroll');
+    if (scrollWrap) scrollWrap.scrollTop = 0;
     
     history.pushState({ screen: activeScreenId, gallery: true }, "", "#gallery");
 }
 
-function closeEventGalleryCarousel() {
+function closeEventGalleryCarousel(fromPopstate) {
     document.getElementById('event-gallery-overlay').classList.remove('active');
     isGalleryOpen = false;
     unlockBodyScroll();
@@ -3048,6 +3050,7 @@ function closeEventGalleryCarousel() {
         showScreen(previousScreenForGallery);
     }
     previousScreenForGallery = null;
+    if (!fromPopstate) { suppressNextPopstate = true; history.back(); }
 }
 
 function openLightbox(group, index) {
@@ -3064,6 +3067,8 @@ function openLightbox(group, index) {
     document.getElementById('lightbox-overlay').classList.add('active');
     track.scrollLeft = window.lightboxIndex * track.clientWidth;
     renderLightboxMeta();
+    isLightboxOpen = true;
+    history.pushState({ screen: activeScreenId, lightbox: true }, "", "#foto");
 }
 
 function renderLightboxMeta() {
@@ -3104,12 +3109,14 @@ function lightboxStep(dir) {
     renderLightboxMeta();
 }
 
-function closeLightbox() {
+function closeLightbox(fromPopstate) {
     const overlay = document.getElementById('lightbox-overlay');
     overlay.classList.remove('active');
     document.getElementById('lightbox-track').innerHTML = '';
     if (window.resetLightboxZoom) window.resetLightboxZoom();
+    isLightboxOpen = false;
     unlockBodyScroll();
+    if (!fromPopstate) { suppressNextPopstate = true; history.back(); }
 }
 
 document.getElementById('lightbox-overlay').addEventListener('click', function(e) {
