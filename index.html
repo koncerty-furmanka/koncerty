@@ -690,6 +690,15 @@
 .parking-info .map-info-title {
     color: #4da3ff;
 }
+.parking-csob {
+    border-left-color: #4da3ff;
+}
+.current-location-nav {
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+}
+
 .map-info-text {
     margin-top: 2px;
     color: #ddd;
@@ -904,7 +913,7 @@
 @media (min-width: 700px) {
     .koncerty-map-shell {
         max-width: 1100px;
-        height: 500px;
+        height:320px;
         margin: 0 auto;
         border-left: 1px solid rgba(249,165,9,.35);
         border-right: 1px solid rgba(249,165,9,.35);
@@ -1889,67 +1898,18 @@ body.gallery-open {
     max-height: 230px;
     margin-bottom: 26px;
 }
-.splash-vinyl {
+.splash-vinyl-image {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 35% 32%, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%),
-        repeating-radial-gradient(circle at center, #1c1a18 0px, #1c1a18 2px, #050505 3px, #050505 5px);
-    box-shadow: 0 10px 26px rgba(0,0,0,0.7), inset 0 0 0 3px rgba(255,255,255,0.06);
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 26px rgba(0,0,0,0.7));
     animation: splashSpin 2.6s linear infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 @keyframes splashSpin {
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
-.splash-vinyl-label {
-    width: 40%;
-    height: 40%;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow: 0 0 0 3px var(--accent-color), 0 2px 6px rgba(0,0,0,0.6);
-    position: relative;
-}
-.splash-vinyl-label img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.splash-vinyl-label::after {
-    content: "";
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 10px; height: 10px;
-    background: #000;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
-}
-.splash-tonearm {
-    position: absolute;
-    top: -6%;
-    right: 2%;
-    width: 8%;
-    height: 8%;
-    background: radial-gradient(circle, #ddd 40%, #888 100%);
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-    z-index: 2;
-}
-.splash-tonearm::after {
-    content: "";
-    position: absolute;
-    top: 45%;
-    left: 45%;
-    width: 68%;
-    height: 14%;
-    background: linear-gradient(to right, #ccc, #888);
-    border-radius: 3px;
-    transform-origin: left center;
-    transform: rotate(48deg);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
 .splash-wordmark {
     font-size: clamp(1.8rem, 8vw, 2.4rem);
     color: var(--accent-color);
@@ -2097,7 +2057,7 @@ body.gallery-open {
 .koncerty-map-shell {
     position: relative;
     width: 100%;
-    height: 390px;
+    height:250px;
     overflow: hidden;
     background: #f3f3f3;
     border-top: 1px solid rgba(249,165,9,.45);
@@ -2293,6 +2253,98 @@ body.gallery-open {
 }
 
 </style>
+<style>
+
+/* ===== MAP INFO CARDS – DETAILNÉ ÚPRAVY ===== */
+.map-info-card {
+    justify-content: flex-start;
+    text-align: left;
+}
+.map-info-content {
+    text-align: left;
+    flex: 1;
+}
+.map-info-title,
+.map-info-text {
+    text-align: left;
+}
+
+</style>
+<style>
+
+/* ===== MAPA – VIAC OKRAJOV ===== */
+.koncerty-map-shell {
+    width: calc(100% - 24px) !important;
+    margin: 14px auto 20px !important;
+    border: 1px solid rgba(249,165,9,.45);
+    border-radius: 5px;
+}
+
+</style>
+<style>
+
+/* Compact map attribution: remove the large overlay, keep required attribution. */
+.map-credit {
+    display: none !important;
+}
+#koncerty-map .leaflet-control-attribution {
+    display: block !important;
+    font-size: 8px !important;
+    line-height: 12px !important;
+    padding: 1px 4px !important;
+    background: rgba(255,255,255,.78) !important;
+    color: #555 !important;
+}
+#koncerty-map .leaflet-control-attribution a {
+    color: #444 !important;
+}
+
+</style>
+<style>
+
+/* ===== MAP POPUP NAVIGATION ===== */
+.koncerty-map-popup {
+    min-width: 210px;
+    text-align: center;
+    font-family: inherit;
+}
+.koncerty-map-popup strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.05rem;
+}
+.koncerty-map-popup span {
+    display: block;
+    margin-bottom: 4px;
+}
+.koncerty-map-popup .map-popup-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--accent-color);
+    color: #000 !important;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: .82rem;
+    letter-spacing: 1px;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+.koncerty-map-popup .map-popup-nav.parking {
+    background: #4da3ff;
+}
+.koncerty-map-popup .map-popup-nav:active {
+    transform: scale(.98);
+}
+
+</style>
 </head>
 <body>
 
@@ -2300,11 +2352,10 @@ body.gallery-open {
 
     <div id="app-splash">
         <div class="splash-vinyl-wrap">
-            <div class="splash-vinyl">
-                <div class="splash-vinyl-label">
-                    <img src="vinyl-label.png" alt="">
-                </div>
-            </div>
+            <img
+                class="splash-vinyl-image"
+                src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.png?v=1"
+                alt="Kôňcerty vinyl">
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
         <div class="splash-tagline">PUNK · SKA · ROCK'N'ROLL</div>
@@ -2517,7 +2568,7 @@ body.gallery-open {
         <div style="padding: 20px;">
             <a href="tel:+4219181212128" class="contact-btn"><i class="fas fa-phone"></i> +421 918 121 2128</a>
             <a href="mailto:k0ncerty.furmanka@gmail.com" class="contact-btn contact-btn-email"><i class="fas fa-envelope"></i> k0ncerty.furmanka@gmail.com</a>
-            <p style="text-align:center; margin-top:20px; font-size:1.2rem;">FURMANKA PUB<br>NÁMESTOVO</p>
+            <p style="text-align:center; margin-top:20px; font-size:1.2rem;">Furmanka/Kôňcerty PUB<br>NÁMESTOVO</p>
         </div>
     </div>
 
@@ -2528,31 +2579,43 @@ body.gallery-open {
 
         <div class="koncerty-map-shell">
             <div id="koncerty-map"></div>
-            <div class="map-credit">© CARTO · © OpenStreetMap prispievatelia</div>
         </div>
 
         <!-- Klikateľné body pod mapou -->
         <div class="map-info-grid">
 
-            <a href="#furmanka-navigation"
-               class="map-info-card venue-info"
-               aria-label="Zobraziť Furmanku na mape">
+            <button type="button"
+                class="map-info-card venue-info"
+                onclick="focusFurmankaMapMarker('venue')"
+                aria-label="Zobraziť Furmanku na mape">
                 <span class="map-info-dot"></span>
                 <span class="map-info-content">
-                    <span class="map-info-title">FURMANKA</span>
-                    <span class="map-info-text">Tu vykladáme aparát a tu hráme.</span>
+                    <span class="map-info-title">FURMANKA/KÔŇCERTY</span>
+                    <span class="map-info-text">Tu je koncert a vykladá sa aparát.</span>
                 </span>
-            </a>
+            </button>
 
-            <a href="#koncerty-map"
-               class="map-info-card parking-info"
-               aria-label="Zobraziť parkovisko na mape">
+            <button type="button"
+                    class="map-info-card parking-info"
+                    onclick="focusFurmankaMapMarker('parkingBehind')"
+                    aria-label="Zobraziť parkovanie Za Furmankou na mape">
                 <span class="map-info-dot"></span>
                 <span class="map-info-content">
-                    <span class="map-info-title">PARKOVISKO</span>
-                    <span class="map-info-text">Tu môžeš nechať auto celý večer.</span>
+                    <span class="map-info-title">Parkovisko Za Furmankou</span>
+                    <span class="map-info-text">Zadarmo parkovanie na celý večer</span>
                 </span>
-            </a>
+            </button>
+
+            <button type="button"
+                    class="map-info-card parking-info parking-csob"
+                    onclick="focusFurmankaMapMarker('parkingCsob')"
+                    aria-label="Zobraziť parkovanie pri ČSOB na mape">
+                <span class="map-info-dot"></span>
+                <span class="map-info-content">
+                    <span class="map-info-title">Parkovisko Pri ČSOB</span>
+                    <span class="map-info-text">Parkovanie na celý večer.</span>
+                </span>
+            </button>
 
         </div>
 
@@ -2561,12 +2624,7 @@ body.gallery-open {
 
             <div class="navigation-section-title">
                 <i class="fas fa-route"></i>
-                NAVIGÁCIA FURMANKA / KÔŇCERTY
-            </div>
-
-            <div class="navigation-subtitle">
-                <i class="fas fa-truck"></i>
-                VYKLADANIE APARATÚRY PRE KAPELY
+                NAVIGÁCIA PRE KAPELY<br>NA VYKLADANIE APARATÚRY
             </div>
 
             <div class="arrival-guide-warning">
@@ -2586,13 +2644,13 @@ body.gallery-open {
             </div>
 
             <div class="navigation-text navigation-route-text">
-                <strong>TRASA:</strong> Navigácia vás od vašej aktuálnej polohy navedie cez pripravené body:
-                <strong>kruhový objazd → okolo cintorína → pešia zóna → priamo pred Furmanku.</strong>
+                <strong>TRASA:</strong> Navigácia vás od vašej polohy navedie cez
+                <strong>kruhový objazd, okolo cintorína a ďalej cez pešiu zónu priamo pred Furmanku.</strong>
             </div>
 
             <button type="button"
                     class="arrival-google-btn current-location-nav"
-                    data-destination="49.4043245,19.4789378">
+                    data-destination="Furmanka, Hviezdoslavova 54, 029 01 Námestovo" data-waypoints="49.4022634,19.4739724|49.4036682,19.4769023">
                 <i class="fas fa-location-arrow"></i>
                 NAVIGOVAŤ NA VYKLADANIE
             </button>
@@ -3634,79 +3692,115 @@ function playSwipeGesture(containerId) {
 const MAP_VENUE = { lat: 49.4043245, lng: 19.4789378 };
 const MAP_PARKING = { lat: 49.4046478, lng: 19.4791651 };
 let furmankaMapInstance = null;
+let furmankaMapMarkers = {
+    venue: null,
+    parkingBehind: null,
+    parkingCsob: null
+};
 
 function initFurmankaMap() {
     const el = document.getElementById('koncerty-map');
-    if (!el || el.dataset.initialized || typeof L === 'undefined') return;
-    el.dataset.initialized = '1';
+    if (!el || furmankaMapInstance || typeof L === 'undefined') return;
 
     const venue = { lat: 49.4043245, lng: 19.4789378 };
-    // Existing parking point used by the original Kôňcerty map.
-    const parking = { lat: 49.4046478, lng: 19.4791651 };
-
-    const map = L.map('koncerty-map', {
-        zoomControl: true,
-        scrollWheelZoom: false,
-        dragging: true,
-        tap: true
-    }).setView([49.40448, 19.47902], 17);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        subdomains: 'abcd',
-        attribution: '© CARTO · © OpenStreetMap'
-    }).addTo(map);
+    const parkingBehind = { lat: 49.4046667, lng: 19.4792222 };
+    const parkingCsob = { lat: 49.4031184, lng: 19.4787987 };
 
     const venueIcon = L.divIcon({
         className: '',
-        html: '<div class="koncerty-map-marker venue"><i class="fas fa-horse"></i></div>',
-        iconSize: [42, 42],
-        iconAnchor: [21, 42],
-        popupAnchor: [0, -38]
+        html: '<div class="map-marker-pin map-marker-venue"><i class="fas fa-chess-knight"></i></div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -28]
     });
 
     const parkingIcon = L.divIcon({
         className: '',
-        html: '<div class="koncerty-map-marker parking"><i class="fas fa-square-parking"></i></div>',
-        iconSize: [42, 42],
-        iconAnchor: [21, 42],
-        popupAnchor: [0, -38]
+        html: '<div class="map-marker-pin map-marker-parking"><i class="fas fa-square-parking"></i></div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -28]
     });
 
-    const venueMarker = L.marker([venue.lat, venue.lng], { icon: venueIcon })
-        .addTo(map)
+    furmankaMapInstance = L.map('koncerty-map', {
+        scrollWheelZoom: false
+    }).setView([49.40405, 19.47895], 16);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap prispievatelia'
+    }).addTo(furmankaMapInstance);
+
+    furmankaMapMarkers.venue = L.marker([venue.lat, venue.lng], { icon: venueIcon })
+        .addTo(furmankaMapInstance)
         .bindPopup(
             '<div class="koncerty-map-popup">' +
-            '<strong>FURMANKA / KÔŇCERTY</strong>' +
-            '<span>Hviezdoslavova 54, Námestovo</span><br>' +
-            '<span>49.4043245, 19.4789378</span><br>' +
-            '<a href="https://maps.app.goo.gl/PCacdZ3zcd9UuGXBA" target="_blank" rel="noopener">NAVIGOVAŤ KU FURMANKE →</a>' +
+            '<strong>FURMANKA/KÔŇCERTY</strong>' +
+            '<span>Tu je koncert a vykladá sa aparát.</span>' +
+            '<button type="button" class="map-popup-nav current-location-nav" ' +
+            'data-destination="Furmanka, Hviezdoslavova 54, 029 01 Námestovo">' +
+            '<i class="fas fa-location-arrow"></i> NAVIGOVAŤ KU FURMANKE</button>' +
             '</div>'
         );
 
-    const parkingMarker = L.marker([parking.lat, parking.lng], { icon: parkingIcon })
-        .addTo(map)
+    furmankaMapMarkers.parkingBehind = L.marker(
+        [parkingBehind.lat, parkingBehind.lng],
+        { icon: parkingIcon }
+    ).addTo(furmankaMapInstance)
         .bindPopup(
             '<div class="koncerty-map-popup">' +
-            '<strong style="color:#4da3ff">PARKOVISKO</strong>' +
-            '<span>Tu môžeš nechať auto na celý večer.</span><br>' +
-            '<a href="https://maps.app.goo.gl/5YYhUB1SsPeXv6Yq6" target="_blank" rel="noopener" style="color:#4da3ff !important;">NAVIGOVAŤ NA PARKOVISKO →</a>' +
+            '<strong>PARKOVISKO ZA FURMANKOU</strong>' +
+            '<span>Zadarmo parkovanie na celý večer.</span>' +
+            '<button type="button" class="map-popup-nav parking current-location-nav" ' +
+            'data-destination="49.4046667,19.4792222">' +
+            '<i class="fas fa-location-arrow"></i> NAVIGOVAŤ NA PARKOVANIE</button>' +
             '</div>'
         );
 
-    document.querySelector('.venue-info')?.addEventListener('click', (event) => {
-        event.preventDefault();
-        map.setView([venue.lat, venue.lng], 18, { animate: true });
-        venueMarker.openPopup();
-    });
+    furmankaMapMarkers.parkingCsob = L.marker(
+        [parkingCsob.lat, parkingCsob.lng],
+        { icon: parkingIcon }
+    ).addTo(furmankaMapInstance)
+        .bindPopup(
+            '<div class="koncerty-map-popup">' +
+            '<strong>PARKOVISKO PRI ČSOB</strong>' +
+            '<span>Zadarmo parkovanie na celý večer.</span>' +
+            '<button type="button" class="map-popup-nav parking current-location-nav" ' +
+            'data-destination="49.4031184,19.4787987">' +
+            '<i class="fas fa-location-arrow"></i> NAVIGOVAŤ NA PARKOVANIE</button>' +
+            '</div>'
+        );
 
-    document.querySelector('.parking-info')?.addEventListener('click', (event) => {
-        event.preventDefault();
-        map.setView([parking.lat, parking.lng], 18, { animate: true });
-        parkingMarker.openPopup();
-    });
+    setTimeout(() => {
+        if (furmankaMapInstance) furmankaMapInstance.invalidateSize();
+    }, 200);
+}
 
-    setTimeout(() => map.invalidateSize(), 250);
+function focusFurmankaMapMarker(type) {
+    const marker = furmankaMapMarkers[type];
+
+    if (!marker || !furmankaMapInstance) {
+        initFurmankaMap();
+        setTimeout(() => focusFurmankaMapMarker(type), 150);
+        return;
+    }
+
+    const map = furmankaMapInstance;
+    const point = marker.getLatLng();
+
+    map.setView(point, 18, { animate: true });
+
+    setTimeout(() => {
+        marker.openPopup();
+    }, 250);
+
+    const mapElement = document.getElementById('koncerty-map');
+    if (mapElement) {
+        mapElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }
 }
 
 function setupArchiveScrollTracking() {
@@ -4171,30 +4265,39 @@ if (spotifyPlaylistUrl) {
 <script>
 (function () {
     function openCurrentLocationNavigation(button) {
-        const waypoint1 = '49.4022634,19.4739724';
-        const waypoint2 = '49.4036682,19.4769023';
-        const destination = '49.4042435,19.4789971';
-
-        if (!navigator.geolocation) {
-            alert('Tento telefón nepodporuje získanie aktuálnej polohy.');
-            return;
-        }
+        const destination = button.dataset.destination || 'Furmanka, Hviezdoslavova 54, 029 01 Námestovo';
+        const isFurmanka = destination.toLowerCase().includes('furmanka');
 
         const originalHTML = button.innerHTML;
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-location-crosshairs"></i> ZISŤUJEM POLOHU...';
 
+        // Google Maps can use the device's current location itself.
+        // For Furmanka we explicitly force the two required waypoints.
+        let url =
+            'https://www.google.com/maps/dir/?api=1' +
+            '&destination=' + encodeURIComponent(destination) +
+            '&travelmode=walking' +
+            '&dir_action=navigate';
+
+        if (isFurmanka) {
+            const waypoint1 = '49.4022634,19.4739724';
+            const waypoint2 = '49.4036682,19.4769023';
+
+            url += '&waypoints=' + encodeURIComponent(
+                waypoint1 + '|' + waypoint2
+            );
+        }
+
+        if (!navigator.geolocation) {
+            button.disabled = false;
+            button.innerHTML = originalHTML;
+            window.open(url, '_blank');
+            return;
+        }
+
         navigator.geolocation.getCurrentPosition(
-            function (position) {
-                const origin = position.coords.latitude + ',' + position.coords.longitude;
-
-                const url =
-                    'https://www.google.com/maps/dir/?api=1' +
-                    '&origin=' + encodeURIComponent(origin) +
-                    '&destination=' + encodeURIComponent(destination) +
-                    '&waypoints=' + encodeURIComponent(waypoint1 + '|' + waypoint2) +
-                    '&travelmode=walking';
-
+            function () {
                 button.disabled = false;
                 button.innerHTML = originalHTML;
                 window.open(url, '_blank');
@@ -4202,7 +4305,7 @@ if (spotifyPlaylistUrl) {
             function () {
                 button.disabled = false;
                 button.innerHTML = originalHTML;
-                alert('Nepodarilo sa zistiť tvoju aktuálnu polohu. Povoľ prehliadaču prístup k polohe a skús to znova.');
+                window.open(url, '_blank');
             },
             {
                 enableHighAccuracy: true,
@@ -4211,7 +4314,6 @@ if (spotifyPlaylistUrl) {
             }
         );
     }
-
     document.addEventListener('click', function (event) {
         const button = event.target.closest('.current-location-nav');
         if (button) openCurrentLocationNavigation(button);
