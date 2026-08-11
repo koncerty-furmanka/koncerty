@@ -1,80 +1,208 @@
 // Kôňcerty – service worker
-// Zabezpečuje: rýchlejší štart, offline shell, vždy čerstvé dáta z Gistu, vždy čerstvý HTML shell.
+// Cache: rýchly štart + offline záloha + obrázky podľa potreby.
 
 const CACHE = 'koncerty-v13';
-const SHELL = ['./', './index.html', './manifest.json'];
+const SHELL = ['./', './index.html', './manifest.json', './vinyl.png'];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then((c) => c.addAll(SHELL))
-      .then(() => self.skipWaiting())
-      .catch(() => {})
+const DATA_URLS = [
+  'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/data.csv',
+  'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/onas.csv',
+  'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/galeria.csv'
+];
+
+const START_IMAGES = [
+  'https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+
+    for (const url of SHELL) {
+      try {
+        await cache.add(url);
+      } catch (_) {}
+    }
+
+    for (const url of DATA_URLS) {
+      try {
+        const response = await fetch(url, { cache: 'no-store' });
+        if (response.ok) {
+          await cache.put(url, response);
+        }
+      } catch (_) {}
+    }
+
+    for (const url of START_IMAGES) {
+      try {
+        const response = await fetch(url);
+
+        if (response.ok || response.type === 'opaque') {
+          await cache.put(url, response);
+        }
+      } catch (_) {}
+    }
+
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key =>
+            key.startsWith('koncerty-') &&
+            key !== CACHE
+          )
+          .map(key => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
-});
+self.addEventListener('fetch', event => {
+  const request = event.request;
 
-self.addEventListener('fetch', (e) => {
-  const req = e.request;
-  if (req.method !== 'GET') return;
+  if (request.method !== 'GET') {
+    return;
+  }
 
   let url;
-  try { url = new URL(req.url); } catch (err) { return; }
 
-  // OneSignal má VLASTNÝ service worker na inom scope (/onesignal/) a vlastné
-  // sieťové volania na svoje domény. Do toho nezasahujeme vôbec - necháme to
-  // ísť rovno do siete, aby sme mu nič nekazili/nezdržovali.
-  if (url.pathname.includes('/onesignal/') || url.hostname.includes('onesignal')) {
+  try {
+    url = new URL(request.url);
+  } catch (_) {
     return;
   }
 
-  // HTML stránka (navigácia) – VŽDY najprv zo siete, aby telefón dostal aktuálnu verziu appky
-  // po každom nasadení. Cache slúži len ako záchranná sieť pri výpadku pripojenia.
-  const isNavigation = req.mode === 'navigate' || (req.destination === 'document');
-  if (isNavigation) {
-    e.respondWith(
-      fetch(req)
-        .then((resp) => {
-          const copy = resp.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
-          return resp;
+  // OneSignal nechávame úplne bez zásahu.
+  if (
+    url.pathname.includes('/onesignal/') ||
+    url.hostname.includes('onesignal')
+  ) {
+    return;
+  }
+
+  // HTML:
+  // najprv internet, pri výpadku posledná uložená verzia.
+  if (
+    request.mode === 'navigate' ||
+    request.destination === 'document'
+  ) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          const copy = response.clone();
+
+          caches.open(CACHE)
+            .then(cache => cache.put(request, copy))
+            .catch(() => {});
+
+          return response;
         })
-        .catch(() => caches.match(req).then((cached) => cached || caches.match('./index.html')))
+        .catch(() =>
+          caches.match(request).then(cached =>
+            cached || caches.match('./index.html')
+          )
+        )
     );
+
     return;
   }
 
-  // Dáta o koncertoch / "o nás" – vždy zo siete, pri výpadku skús cache
-  const isLiveData = url.hostname.includes('gist') || url.search.includes('t=');
-  if (isLiveData) {
-    e.respondWith(fetch(req).catch(() => caches.match(req)));
-    return;
-  }
+  // CSV dáta:
+  // najprv aktuálna verzia z GitHubu,
+  // pri výpadku internetu cache.
+  const isData =
+    url.hostname === 'raw.githubusercontent.com' &&
+    (
+      url.pathname.endsWith('/data.csv') ||
+      url.pathname.endsWith('/onas.csv') ||
+      url.pathname.endsWith('/galeria.csv')
+    );
 
-  // Zvyšok (manifest, plagáty, fonty…) – najprv cache, potom sieť, fallback index
-  e.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req)
-        .then((resp) => {
-          // resp.ok platí len pre odpovede z vlastnej domény.
-          // Plagáty z i.postimg.cc sú cudzozemské (cross-origin) -> prehliadač vráti
-          // "opaque" odpoveď (nedá sa jej pozrieť do vnútra), ale STÁLE sa dá uložiť
-          // do cache a nabudúce servírovať okamžite bez sťahovania.
-          if (resp && (resp.ok || resp.type === 'opaque')) {
-            const copy = resp.clone();
-            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+  if (isData) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+
+            caches.open(CACHE)
+              .then(cache => cache.put(request, copy))
+              .catch(() => {});
           }
-          return resp;
+
+          return response;
         })
-        .catch(() => caches.match('./index.html'));
+        .catch(() => caches.match(request))
+    );
+
+    return;
+  }
+
+  // Obrázky:
+  // najprv lokálna cache, až potom internet.
+  const isImage =
+    request.destination === 'image' ||
+    url.hostname === 'cdn.jsdelivr.net' ||
+    /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(url.pathname);
+
+  if (isImage) {
+    event.respondWith(
+      caches.match(request).then(cached => {
+
+        if (cached) {
+          return cached;
+        }
+
+        return fetch(request).then(response => {
+
+          if (
+            response.ok ||
+            response.type === 'opaque'
+          ) {
+            const copy = response.clone();
+
+            caches.open(CACHE)
+              .then(cache => cache.put(request, copy))
+              .catch(() => {});
+          }
+
+          return response;
+        });
+      })
+    );
+
+    return;
+  }
+
+  // Ostatné súbory:
+  // cache → internet.
+  event.respondWith(
+    caches.match(request).then(cached => {
+
+      if (cached) {
+        return cached;
+      }
+
+      return fetch(request).then(response => {
+
+        if (
+          response.ok ||
+          response.type === 'opaque'
+        ) {
+          const copy = response.clone();
+
+          caches.open(CACHE)
+            .then(cache => cache.put(request, copy))
+            .catch(() => {});
+        }
+
+        return response;
+      });
     })
   );
 });
