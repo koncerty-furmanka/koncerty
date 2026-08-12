@@ -1,6 +1,82 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
+    <!-- LOCAL + FILE:// COMPATIBILITY: GitHub Pages uses /https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/, while a standalone downloaded index.html falls back to jsDelivr. -->
+    <script>
+    (function () {
+        const CDN = "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/";
+        function fixFileAssets() {
+            if (location.protocol !== "file:") return;
+            const replace = (value) => {
+                if (!value || value.indexOf("https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/") === -1) return value;
+                return CDN + value.replace(/^\.?\/?/, "");
+            };
+            document.querySelectorAll("img[src], source[src], link[href], [style]").forEach(el => {
+                if (el.hasAttribute("src")) el.setAttribute("src", replace(el.getAttribute("src")));
+                if (el.hasAttribute("href")) el.setAttribute("href", replace(el.getAttribute("href")));
+                if (el.hasAttribute("style")) el.setAttribute("style", el.getAttribute("style").replace(/(?:\.\/)?ikony\//g, CDN + "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/"));
+            });
+            document.querySelectorAll("style").forEach(style => {
+                style.textContent = style.textContent.replace(/(?:\.\/)?ikony\//g, CDN + "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/");
+            });
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fixFileAssets);
+        else fixFileAssets();
+    })();
+    </script>
+    <!-- ROBUST FILE:// ASSET FALLBACK
+         Local HTML cannot read GitHub's /https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/ folder. Failed local images
+         are transparently retried from jsDelivr, including images created later by JS. -->
+    <script>
+    (function () {
+        const CDN = "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/";
+        window.__KONCERTY_ASSET_CDN = CDN;
+
+        function cdnAsset(src) {
+            if (!src || src.indexOf("https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/") === -1) return null;
+            if (/^https?:\/\//i.test(src)) return null;
+            return CDN + src.replace(/^\.?\//, "");
+        }
+
+        // Covers both images already in HTML and images inserted later by JavaScript.
+        document.addEventListener("error", function (event) {
+            const img = event.target;
+            if (!img || img.tagName !== "IMG") return;
+
+            const original = img.getAttribute("src") || "";
+            const fallback = cdnAsset(original);
+            if (!fallback || img.dataset.cdnFallback === "1") return;
+
+            img.dataset.cdnFallback = "1";
+            img.src = fallback;
+        }, true);
+
+        // CSS background images do not fire an <img> error event.
+        if (location.protocol === "file:") {
+            const style = document.createElement("style");
+            style.textContent = `
+                body::before {
+                    background-image:
+                        linear-gradient(to bottom, rgba(10,10,12,0.55), rgba(10,10,12,0.8)),
+                        url("${CDN}https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png") !important;
+                }
+                .gallery-section {
+                    background-image: url("${CDN}https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/galeriakontajner.png") !important;
+                }
+                .gallery-view-all-btn {
+                    background-image: url("${CDN}https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png") !important;
+                }
+                #app-splash {
+                    background-image:
+                        linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
+                        url("${CDN}https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png") !important;
+                }
+            `;
+            (document.head || document.documentElement).appendChild(style);
+        }
+    })();
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kôňcerty</title>
@@ -9,11 +85,11 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
     <meta property="og:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
-    <meta property="og:image" content="ikony/koncertylogo.png">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
     <meta name="twitter:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
-    <meta name="twitter:image" content="ikony/koncertylogo.png">
+    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png">
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
@@ -21,8 +97,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Kôňcerty">
-    <link rel="apple-touch-icon" href="ikony/apple-touch-icon.png">
-    <link rel="icon" href="ikony/favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" href="favicon.png">
 
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
@@ -182,7 +258,7 @@
             z-index: -1;
             background-image: 
                 linear-gradient(to bottom, rgba(10,10,12,0.55), rgba(10,10,12,0.8)), 
-                url('ikony/pozadie.png');
+                url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png');
             background-position: top center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -467,9 +543,7 @@
         .modal-desc { margin-top: 20px; text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; border-top: 1px solid #555; }
         .band-block { margin-bottom: 20px; border-bottom: 1px dashed #555; padding-bottom: 15px; }
         .band-block:last-child { border-bottom: none; }
-        .band-detail-logo { display:flex; justify-content:center; align-items:center; width:100%; margin: 0 auto 14px; }
-.band-detail-logo img { display:block; max-width:min(75%, 300px); max-height:140px; width:auto; height:auto; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,.75)); }
-.band-name-detail { color: var(--accent-color); font-size: 1.5rem; margin-bottom: 5px; }
+        .band-name-detail { color: var(--accent-color); font-size: 1.5rem; margin-bottom: 5px; }
         .band-meta { font-size: 0.9rem; color: #aaa; margin-bottom: 10px; font-style: italic; }
         .band-bio { font-size: 0.95rem; color: #ddd; white-space: pre-line; line-height: 1.45; padding-top: 10px; }
   .band-link {
@@ -1344,7 +1418,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background-image: url('ikony/yellbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1355,7 +1429,7 @@
 }
 .cal-row:active { transform: scale(0.98); }
 .cal-row.past-row {
-    background-image: url('ikony/blackbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png');
     opacity: 0.85;
 }
 .cal-date {
@@ -1401,7 +1475,7 @@
 .bands-list { padding: 10px 14px 20px 14px; }
 .band-row {
     border-radius: 0;
-    background-image: url('ikony/blackbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1409,40 +1483,34 @@
     overflow: hidden;
 }
 .band-row-upcoming {
-    background-image: url('ikony/yellbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png');
 }
 .band-row-upcoming .band-head-name { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
-.band-row-upcoming .band-head-sub { color: #000; }
+.band-row-upcoming .band-head-sub { color: #f2f2f2; }
 .band-head {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
-    gap: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 12px;
+    gap: 10px;
+    padding: 12px 16px;
     cursor: pointer;
 }
 .band-head:active { background: rgba(255,255,255,0.05); }
-.band-head-info {
-    flex: 1;
-    min-width: 0;
-    text-align: left;
+.band-letter {
+    flex: 0 0 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: #000;
+    font-size: 1.4rem;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
-.band-head-name {
-    font-size: 1.15rem;
-    color: #fff;
-    line-height: 1.15;
-    text-shadow: 0 1px 3px #000;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-.band-head-sub { font-size: 0.85rem; color: #000; margin-top: 2px; }
-.band-row-past .band-head-sub { color: #bbb; }
+.band-head-info { flex: 1; min-width: 0; }
+.band-head-name { font-size: 1.25rem; color: #fff; text-shadow: 0 1px 3px #000; line-height: 1.1; }
+.band-head-sub { font-size: 0.85rem; color: #bbb; margin-top: 2px; }
 .band-head-count { flex: 0 0 auto; font-size: 0.8rem; color: var(--accent-color); text-align: right; }
 .band-body {
     display: none;
@@ -1532,7 +1600,7 @@ body.gallery-open {
     display: flex;
     align-items: center;
     gap: 14px;
-    background-image: url('ikony/blackbutonr.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1570,7 +1638,7 @@ body.gallery-open {
     box-sizing: border-box;
 }
 .gallery-section {
-    background-image: url('ikony/galeriakontajner.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/galeriakontajner.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -1593,7 +1661,7 @@ body.gallery-open {
     margin: 8px 14px 0 14px;
     width: auto;
     padding: 18px 12px;
-    background-image: url('ikony/celagaleria.png');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png');
     background-size: 100% 100%;
     background-position: center;
     box-sizing: border-box;
@@ -1890,7 +1958,7 @@ body.gallery-open {
     justify-content: center;
     background-image:
         linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
-        url('ikony/pozadie.png');
+        url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png');
     background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -2353,276 +2421,37 @@ body.gallery-open {
 }
 
 </style>
-
-<style>
-/* Furmanka/Kôňcerty: image button only, without the old card treatment */
-.map-info-card.venue-info {
-    border: 0 !important;
-    box-shadow: none !important;
-    background-color: transparent !important;
-    background-image: url('ikony/blackbuton.png') !important;
-    background-size: 100% 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
-.map-info-card.venue-info::before,
-.map-info-card.venue-info::after {
-    display: none !important;
-}
-</style>
-
-<style>
-/* Parkoviská: bluebut.png bez pôvodného kartového rámika a bez orezania */
-.map-info-card.parking-info,
-.map-info-card.parking-csob {
-    border: 0 !important;
-    box-shadow: none !important;
-    background-color: transparent !important;
-    background-image: url('ikony/bluebut.png') !important;
-    background-size: 100% 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
-.map-info-card.parking-info::before,
-.map-info-card.parking-info::after,
-.map-info-card.parking-csob::before,
-.map-info-card.parking-csob::after {
-    display: none !important;
-}
-</style>
-
-<style>
-/* Celé ohraničenie navigácie pre kapely – vrátane tlačidla */
-#furmanka-navigation {
-    background-image: url('ikony/blacklong.png') !important;
-    background-size: 100% 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
-</style>
-
-<style>
-/* Odstránenie pôvodného okraja navigačného panelu */
-#furmanka-navigation {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-</style>
-
-<style>
-/* Svetlá mapa v štýle Google Maps */
-#koncerty-map {
-    background: #f2f2f2;
-}
-#koncerty-map .leaflet-control-zoom {
-    border: 1px solid rgba(0,0,0,.18) !important;
-    border-radius: 4px !important;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,.22) !important;
-}
-#koncerty-map .leaflet-control-zoom a {
-    width: 34px !important;
-    height: 34px !important;
-    line-height: 34px !important;
-    color: #333 !important;
-    background: #fff !important;
-    border: 0 !important;
-}
-#koncerty-map .leaflet-control-attribution {
-    font-size: 8px !important;
-    line-height: 11px !important;
-    padding: 1px 4px !important;
-    background: rgba(255,255,255,.82) !important;
-    color: #555 !important;
-}
-</style>
-
-<style>
-/* Nadchádzajúce kapely – názov biely, druhý riadok čierny */
-.band-row-upcoming .band-head-name {
-    color: #fff !important;
-}
-.band-row-upcoming .band-head-sub {
-    color: #000 !important;
-}
-</style>
-
-<style>
-/* Sociálne tlačidlá pri kapelách – používajú celé grafické tlačidlá */
-.band-links .band-image-btn {
-    display: block !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    line-height: 0 !important;
-    overflow: hidden;
-    text-decoration: none;
-}
-.band-links .band-image-btn img {
-    display: block;
-    width: 150px;
-    height: auto;
-    max-width: 150px;
-}
-</style>
-
-<style>
-/* Spotify a Facebook v detaile koncertu / archíve */
-.band-links .band-image-btn,
-.band-info .band-image-btn {
-    display: inline-block !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    line-height: 0 !important;
-    text-decoration: none;
-    overflow: hidden;
-}
-.band-links .band-image-btn img,
-.band-info .band-image-btn img {
-    display: block;
-    width: 150px;
-    height: auto;
-    max-width: 150px;
-}
-</style>
-
-<style>
-/* Kompaktné grafické tlačidlá Facebook / Spotify */
-a.band-image-btn {
-    display: inline-flex !important;
-    width: 110px !important;
-    max-width: 110px !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 6px 6px 0 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    line-height: 0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-}
-a.band-image-btn img {
-    display: block !important;
-    width: 110px !important;
-    max-width: 110px !important;
-    height: auto !important;
-    object-fit: contain !important;
-}
-</style>
-
-<style>
-/* Malé grafické tlačidlá Facebook / Spotify aj v sekcii Kapely */
-a.band-image-btn {
-    display: inline-flex !important;
-    width: 110px !important;
-    max-width: 110px !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 6px 6px 0 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    line-height: 0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-}
-a.band-image-btn img {
-    display: block !important;
-    width: 110px !important;
-    max-width: 110px !important;
-    height: auto !important;
-    object-fit: contain !important;
-}
-</style>
-
-<style>
-/* Facebook v detaile kapely – rovnaká veľkosť ako Spotify */
-.band-links a.band-image-btn {
-    display: inline-flex !important;
-    width: 110px !important;
-    max-width: 110px !important;
-    padding: 0 !important;
-    margin: 6px 6px 0 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    line-height: 0 !important;
-}
-.band-links a.band-image-btn img {
-    display: block !important;
-    width: 110px !important;
-    max-width: 110px !important;
-    height: auto !important;
-}
-</style>
-
-<style>
-/* Modal musí zostať nad stránkou – stránka v pozadí sa nesmie scrollovať */
-html.modal-scroll-locked,
-body.modal-scroll-locked {
-    overflow: hidden !important;
-    overscroll-behavior: none !important;
-}
-body.modal-scroll-locked {
-    position: fixed !important;
-    width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-}
-</style>
-
-<style>
-/* Kalendár – mierne predĺžený efekt stlačenia */
-.calendar-event-btn,
-.calendar-event-btn:active,
-.calendar-card button,
-.calendar-card .btn {
-    transition-duration: 0.28s !important;
-}
-.calendar-event-btn:active,
-.calendar-card button:active,
-.calendar-card .btn:active {
-    transform: scale(0.97) !important;
-}
-</style>
-
-<style>
-/* Kalendár – tlačidlo ostane vizuálne stlačené pred otvorením detailu */
-.cal-row {
-    transition: transform 0.2s ease, filter 0.2s ease !important;
-}
-.cal-row.cal-row-pressed {
-    transform: scale(0.97) !important;
-    filter: brightness(0.72) !important;
-}
-</style>
-
-<style>
-/* Kapely – rovnaký viditeľný efekt stlačenia ako v Kalendári */
-.band-row {
-    transition: transform 0.2s ease, filter 0.2s ease !important;
-}
-.band-row.band-row-pressed {
-    transform: scale(0.97) !important;
-    filter: brightness(0.72) !important;
-}
-</style>
-
-
-<style>
-.more-btn {
-    transition: transform .2s ease, filter .2s ease !important;
-}
-.more-btn.more-btn-pressed {
-    transform: scale(.97) !important;
-    filter: brightness(.72) !important;
-}
-</style>
 </head>
+<script>
+// Záloha obrázkov pre samostatné otvorenie index.html.
+// Ak lokálny súbor z priečinka ikony neexistuje, automaticky sa použije GitHub CDN.
+(function () {
+    const CDN = 'https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/';
+
+    function cdnFallback(img) {
+        if (!img || img.dataset.cdnFallback === '1') return;
+        const src = img.getAttribute('src') || '';
+        if (!src || src.startsWith('data:') || src.startsWith('http://') || src.startsWith('https://')) return;
+
+        let path = src;
+        if (path.startsWith('./')) path = path.slice(2);
+        if (path.startsWith('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/')) path = path.slice(6);
+        if (path.includes('/')) return;
+
+        img.dataset.cdnFallback = '1';
+        img.src = CDN + encodeURIComponent(path).replace(/%2F/g, '/') + '?v=2';
+    }
+
+    document.addEventListener('error', function (event) {
+        if (event.target && event.target.tagName === 'IMG') cdnFallback(event.target);
+    }, true);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('img').forEach(cdnFallback);
+    });
+})();
+</script>
+
 <body>
 
     <div id="offline-banner"><i class="fas fa-wifi"></i> <span id="offline-banner-text">OFFLINE — ZOBRAZUJEM POSLEDNÉ ULOŽENÉ DÁTA</span></div>
@@ -2631,7 +2460,7 @@ body.modal-scroll-locked {
         <div class="splash-vinyl-wrap">
             <img
                 class="splash-vinyl-image"
-                src="ikony/vinyl.png"
+                src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.png"
                 alt="Kôňcerty vinyl">
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
@@ -2662,30 +2491,29 @@ body.modal-scroll-locked {
             <div class="page-title">VIAC</div>
         </div>
         <div class="more-grid">
-            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-about"><i class="fas fa-record-vinyl"></i> O NÁS</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-about')"><i class="fas fa-record-vinyl"></i> O NÁS</div>
             <div role="button" tabindex="0" id="push-btn" class="more-btn" onclick="handlePushButtonClick()"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
-            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-gallery"><i class="fas fa-images"></i> FOTOGALÉRIA</div>
-            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-merch"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
-            <div role="button" tabindex="0" class="more-btn msg" data-more-screen="screen-message"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
-            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-contact"><i class="fas fa-phone"></i> KONTAKT</div>
-            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-map"><i class="fas fa-map-marker-alt"></i> MAPA</div>
-            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-social"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
-            <div role="button" tabindex="0" class="more-btn" data-more-share="1"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-gallery')"><i class="fas fa-images"></i> FOTOGALÉRIA</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-merch')"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-contact')"><i class="fas fa-phone"></i> KONTAKT</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-map')"><i class="fas fa-map-marker-alt"></i> MAPA</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="handleButtonClick('screen-social')"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
+            <div role="button" tabindex="0" class="more-btn" onclick="shareApp()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
-        <div id="app-version-footer">Verzia: 2.1.6</div>
+        <div id="app-version-footer">Verzia: 2.1.5</div>
     </div>
 
     <nav id="bottom-nav">
-        <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-home');},200)">
+        <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="handleButtonClick('screen-home')">
             <i class="fas fa-house"></i><span>DOMOV</span>
         </div>
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-calendar" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-calendar');},200)">
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-calendar" onclick="handleButtonClick('screen-calendar')">
             <i class="fas fa-calendar-days"></i><span>KALENDÁR</span>
         </div>
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-bands" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-bands');},200)">
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-bands" onclick="handleButtonClick('screen-bands')">
             <i class="fas fa-guitar"></i><span>KAPELY</span>
         </div>
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-more');},200)">
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="handleButtonClick('screen-more')">
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
     </nav>
@@ -2703,7 +2531,7 @@ body.modal-scroll-locked {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.png?v=1" class="main-logo" alt="Logo">
+<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.png" class="main-logo" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -2711,34 +2539,34 @@ body.modal-scroll-locked {
             <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
             
             <div class="menu-grid">
-                <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-upcoming');},200)">
+                <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-upcoming')">
 <img id="dynamic-upcoming-img"
      class="btn-image"
      alt="Najbližšie">
                 </div>
-                <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
-                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1" class="btn-image" alt="Archív">
+                <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="handleButtonClick('screen-past')">
+                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp" class="btn-image" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
-                    <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-about');},200)">
-                        <img src="ikony/onas.png" class="small-btn-img" alt="O Nás">
+                    <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="handleButtonClick('screen-about')">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/onas.png" class="small-btn-img" alt="O Nás">
                     </div>
-                    <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="ikony/nasmerch.png" class="small-btn-img" alt="Náš Merch">
+                    <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2" onclick="handleButtonClick('screen-merch')">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch.png" class="small-btn-img" alt="Náš Mech">
                     </div>
                 </div>
                 <div class="right-col">
-                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-contact');},200)">
-                        <img src="ikony/kontakty.png" class="small-btn-img" alt="Kontakt">
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="handleButtonClick('screen-contact')">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.png" class="small-btn-img" alt="Kontakt">
                     </div>
-                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
-                        <img src="ikony/mapa.png" class="small-btn-img" alt="Mapa">
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="handleButtonClick('screen-map')">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.png" class="small-btn-img" alt="Mapa">
                     </div>
-                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-social');},200)">
-                        <img src="ikony/socialnesiete.png" class="small-btn-img" alt="Social">
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="handleButtonClick('screen-social')">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.png" class="small-btn-img" alt="Social">
                     </div>
                 </div>
             </div>
@@ -2819,7 +2647,10 @@ body.modal-scroll-locked {
         </div>
     </div>
 
-    <div id="screen-message" class="screen">
+    <div id="screen-contact" class="screen">
+        <div class="page-header">
+            <div class="page-title">KONTAKT</div>
+        </div>
         <div class="page-header">
             <div class="page-title">NAPÍŠ NÁM</div>
         </div>
@@ -2835,17 +2666,7 @@ body.modal-scroll-locked {
             <button type="submit" class="msg-submit-btn"><i class="fas fa-paper-plane"></i> ODOSLAŤ</button>
             <div id="msg-status"></div>
         </form>
-    </div>
-
-    <div id="screen-contact" class="screen">
-        <div class="page-header">
-            <div class="page-title">KONTAKT</div>
-        </div>
-        <div style="padding: 20px;">
-            <a href="tel:+4219181212128" class="contact-btn"><i class="fas fa-phone"></i> +421 918 121 2128</a>
-            <a href="mailto:k0ncerty.furmanka@gmail.com" class="contact-btn contact-btn-email"><i class="fas fa-envelope"></i> k0ncerty.furmanka@gmail.com</a>
-            <p style="text-align:center; margin-top:20px; font-size:1.2rem;">Furmanka/Kôňcerty PUB<br>NÁMESTOVO</p>
-        </div>
+    
     </div>
 
     <div id="screen-map" class="screen">
@@ -2860,7 +2681,8 @@ body.modal-scroll-locked {
         <!-- Klikateľné body pod mapou -->
         <div class="map-info-grid">
 
-            <button type="button" style="background-image:url('ikony/blackbuton.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card venue-info"
+            <button type="button"
+                class="map-info-card venue-info"
                 onclick="focusFurmankaMapMarker('venue')"
                 aria-label="Zobraziť Furmanku na mape">
                 <span class="map-info-dot"></span>
@@ -2871,7 +2693,7 @@ body.modal-scroll-locked {
             </button>
 
             <button type="button"
-                    style="background-image:url('ikony/bluebut.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card parking-info"
+                    class="map-info-card parking-info"
                     onclick="focusFurmankaMapMarker('parkingBehind')"
                     aria-label="Zobraziť parkovanie Za Furmankou na mape">
                 <span class="map-info-dot"></span>
@@ -2882,7 +2704,7 @@ body.modal-scroll-locked {
             </button>
 
             <button type="button"
-                    style="background-image:url('ikony/bluebut.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card parking-info parking-csob"
+                    class="map-info-card parking-info parking-csob"
                     onclick="focusFurmankaMapMarker('parkingCsob')"
                     aria-label="Zobraziť parkovanie pri ČSOB na mape">
                 <span class="map-info-dot"></span>
@@ -3004,16 +2826,6 @@ function safeUrl(str) {
     return '';
 }
 
-function safeSocialUrl(str) {
-    if (!str) return '';
-    let s = String(str).trim();
-    if (!s) return '';
-    if (/^https?:\/\//i.test(s)) return escapeHtml(s);
-    if (/^(www\.)?(facebook\.com|fb\.com)\//i.test(s)) return escapeHtml('https://' + s);
-    if (/^(www\.)?open\.spotify\.com\//i.test(s)) return escapeHtml('https://' + s);
-    return '';
-}
-
 function buzz(ms) {
     if (navigator.vibrate) { try { navigator.vibrate(ms || 12); } catch(e) {} }
 }
@@ -3105,7 +2917,6 @@ function showScreen(screenId) {
         'screen-calendar': 'screen-calendar',
         'screen-bands': 'screen-bands',
         'screen-more': 'screen-more',
-        'screen-message': 'screen-more',
         'screen-gallery': 'screen-more',
         'screen-about': 'screen-more',
         'screen-merch': 'screen-more',
@@ -3124,11 +2935,6 @@ function showScreen(screenId) {
 
 function hideModalNow() {
     document.getElementById('modal-overlay').style.display = 'none';
-
-    document.documentElement.classList.remove('modal-scroll-locked');
-    document.body.classList.remove('modal-scroll-locked');
-    document.body.style.top = '';
-    window.scrollTo(0, window.__modalScrollY || 0);
 }
 
 async function submitMessageForm(e) {
@@ -3321,7 +3127,7 @@ window.addEventListener('appinstalled', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=14').catch(() => {});
+        navigator.serviceWorker.register('sw.js').catch(() => {});
     });
 }
 
@@ -3330,7 +3136,7 @@ const spotifyPlaylistUrl = "";
 const aboutUrl = "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/onas.csv"; 
 const gistUrl = "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/data.csv";
 const galleryUrl = "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/galeria.csv";
-const defaultUpcomingImg = "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp?v=1";
+const defaultUpcomingImg = (location.protocol === "file:" ? window.__KONCERTY_ASSET_CDN : "") + "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp";
         
 let updateTimer = null;
 
@@ -3503,7 +3309,7 @@ const clean = cols.map(c =>
             style: k_styl,
             bio: k_bio,
             spotify: k_spotify,
-            facebook: k_fb
+            fb: k_fb
         });
     }
 }
@@ -3588,79 +3394,16 @@ const clean = cols.map(c =>
                 if (!b.name) return;
                 const key = b.name.trim().toLowerCase();
                 if (!bandsDir.has(key)) {
-                    bandsDir.set(key, {
-                        name: b.name.trim(),
-                        city: b.city,
-                        style: b.style,
-                        bio: b.bio,
-                        spotify: b.spotify,
-                        facebook: b.facebook,
-                        logo: '',
-                        count: 0,
-                        hasUpcoming: false,
-                        nextDate: null,
-                        lastDate: null
-                    });
+                    bandsDir.set(key, { name: b.name.trim(), city: b.city, style: b.style, bio: b.bio, spotify: b.spotify, facebook: b.facebook, count: 0, hasUpcoming: false });
                 }
                 const entry = bandsDir.get(key);
                 entry.count++;
-                if (eventDateObj >= today) {
-                    entry.hasUpcoming = true;
-                    if (!entry.nextDate || eventDateObj < entry.nextDate) {
-                        entry.nextDate = eventDateObj;
-                    }
-                } else {
-                    if (!entry.lastDate || eventDateObj > entry.lastDate) {
-                        entry.lastDate = eventDateObj;
-                    }
-                }
+                if (eventDateObj >= today) entry.hasUpcoming = true;
                 if (!entry.bio && b.bio) entry.bio = b.bio;
                 if (!entry.city && b.city) entry.city = b.city;
                 if (!entry.style && b.style) entry.style = b.style;
                 if (!entry.spotify && b.spotify) entry.spotify = b.spotify;
                 if (!entry.facebook && b.facebook) entry.facebook = b.facebook;
-
-                // ===== AUTOMATICKÉ LOGÁ KAPIEL =====
-                // Stačí nahrať logo do GitHubu do priečinka /logo/
-                // a pomenovať ho podľa názvu kapely:
-                // napr. Kuca-Paca -> kuca-paca.png
-                //      Skacowani -> skacowani.png
-                //      Cascabel -> cascabel.png
-                //
-                // Diakritika, medzery a bežné špeciálne znaky sa automaticky
-                // prevedú na jednoduchý názov súboru.
-                const bandLogoMap = {
-                    // Tu môžeš mať výnimky, ak názov súboru nechceš podľa názvu kapely.
-                    'cascabel': 'cascabel.png'
-                };
-
-                function makeBandLogoFileName(bandName) {
-                    return bandName
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                        // NFD neprevedie napr. Ø, preto ho prevedieme ručne.
-                        .replace(/ø/g, 'o')
-                        .replace(/đ/g, 'd')
-                        .replace(/ð/g, 'd')
-                        .replace(/þ/g, 'th')
-                        .replace(/ł/g, 'l')
-                        .replace(/æ/g, 'ae')
-                        .replace(/œ/g, 'oe')
-                        .replace(/&/g, 'and')
-                        .replace(/[’']/g, '')
-                        // Názvy log sú bez medzier, pomlčiek a ostatných znakov:
-                        // "The Plan C" -> "theplanc.png"
-                        // "Mr. Teddy & Sidekicks" -> "mrteddyandsidekicks.png"
-                        .replace(/[^a-z0-9]/g, '') + '.png';
-                }
-
-                const logoFile = bandLogoMap[key] || makeBandLogoFileName(b.name.trim());
-
-                // Logo sa pripraví pre každú kapelu automaticky.
-                // Ak súbor v /logo/ ešte nie je, obrázok sa pri otvorení
-                // detailu jednoducho nezobrazí.
-                entry.logo = 'https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/logo/' + logoFile + '?v=1';
             });
         });
 
@@ -3709,7 +3452,7 @@ const clean = cols.map(c =>
                 const dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
                 const dayName = dayNames[ev.date.getDay()];
                 return `
-                <div role="button" tabindex="0" class="cal-row ${ev.isUpcoming ? '' : 'past-row'}" onclick="this.classList.add('cal-row-pressed'); setTimeout(() => { this.classList.remove('cal-row-pressed'); openDetailData('${ev.encoded}'); }, 200)">
+                <div role="button" tabindex="0" class="cal-row ${ev.isUpcoming ? '' : 'past-row'}" onclick="openDetailData('${ev.encoded}')">
                     <div class="cal-date"><span class="d">${dm}</span><span class="y">${parts[2] || ''}</span></div>
                     <div class="cal-info">
                         <div class="cal-title">${escapeHtml(ev.title)}</div>
@@ -3728,28 +3471,12 @@ const clean = cols.map(c =>
 
         const bandsEl = document.getElementById('bands-list');
         if (bandsEl) {
-            const bands = [...bandsDir.values()];
-            const upcomingBands = bands
-                .filter(b => b.hasUpcoming)
-                .sort((a, b) => {
-                    const dateDiff = a.nextDate - b.nextDate;
-                    return dateDiff !== 0
-                        ? dateDiff
-                        : a.name.localeCompare(b.name, 'sk');
-                });
-
-            const pastBands = bands
-                .filter(b => !b.hasUpcoming)
-                .sort((a, b) => {
-                    const dateA = a.lastDate ? a.lastDate.getTime() : 0;
-                    const dateB = b.lastDate ? b.lastDate.getTime() : 0;
-                    return dateB !== dateA
-                        ? dateB - dateA
-                        : a.name.localeCompare(b.name, 'sk');
-                });
+            const bands = [...bandsDir.values()].sort((a, b) => a.name.localeCompare(b.name, 'sk'));
+            const upcomingBands = bands.filter(b => b.hasUpcoming);
+            const pastBands = bands.filter(b => !b.hasUpcoming);
             const bandRow = (b, upcoming) => `
                 <div class="band-row ${upcoming ? 'band-row-upcoming' : 'band-row-past'}">
-                    <div role="button" tabindex="0" class="band-head" onclick='this.parentElement.classList.add("band-row-pressed"); setTimeout(() => { this.parentElement.classList.remove("band-row-pressed"); openBandDetail(${JSON.stringify(b.name).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.city).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.style).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.bio).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.spotify).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.facebook).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.logo).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}); }, 200)'>
+                    <div role="button" tabindex="0" class="band-head" onclick="openBandDetail('${escapeHtml(b.name)}', '${escapeHtml(b.city)}', '${escapeHtml(b.style)}', '${escapeHtml(b.bio)}', '${escapeHtml(b.spotify)}', '${escapeHtml(b.facebook)}')">
                         <div class="band-head-info">
                             <div class="band-head-name">${escapeHtml(b.name)}</div>
                             <div class="band-head-sub">${escapeHtml([b.city, b.style].filter(Boolean).join(' • '))}</div>
@@ -3917,19 +3644,18 @@ function initCarouselObserver() {
 }
 
 // ===== NOVÁ FUNKCIA: OTVORENIE DETAILU KAPELY V MODALE =====
-function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
+function openBandDetail(name, city, style, bio, spotify, facebook) {
     buzz();
     const modalBody = document.getElementById('modal-content-body');
     
     let html = `
-        ${logo ? `<div class="band-detail-logo"><img src="${safeUrl(logo)}" alt="Logo ${escapeHtml(name)}" loading="eager" onerror="this.parentElement.remove()"></div>` : ''}
         <div class="modal-title">${escapeHtml(name)}</div>
         ${city || style ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(city || '')} ${style ? '• ' + escapeHtml(style) : ''}</div>` : ''}
         <div class="modal-desc">
             ${bio ? `<div class="band-bio">${escapeHtml(bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
             <div class="band-links" style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center;">
-                ${safeSocialUrl(spotify) ? `<a href="${safeSocialUrl(spotify)}" target="_blank" rel="noopener noreferrer" class="band-link-btn spotify band-image-btn"><img src="ikony/spotbut.png" alt="Spotify"></a>` : ''}
-                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="ikony/fbbut.png" alt="Facebook" onerror="this.onerror=null;this.src='ikony/fb.png';"></a>` : ''}
+                ${safeUrl(spotify) ? `<a href="${safeUrl(spotify)}" target="_blank" class="band-link-btn spotify" style="display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border:1px solid #1DB954; color:#1DB954; text-decoration:none; font-size:0.9rem; background:rgba(0,0,0,0.5); border-radius:4px;"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
+                ${safeUrl(facebook) ? `<a href="${safeUrl(facebook)}" target="_blank" class="band-link-btn fb" style="display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border:1px solid #1877F2; color:#6ea8ff; text-decoration:none; font-size:0.9rem; background:rgba(0,0,0,0.5); border-radius:4px;"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}
             </div>
         </div>
         <div class="modal-buttons">
@@ -3938,13 +3664,6 @@ function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
     `;
     
     modalBody.innerHTML = html;
-
-    // Zamkni scroll hlavnej stránky, ale samotný modal nechaj scrollovateľný.
-    window.__modalScrollY = window.scrollY || window.pageYOffset || 0;
-    document.documentElement.classList.add('modal-scroll-locked');
-    document.body.classList.add('modal-scroll-locked');
-    document.body.style.top = `-${window.__modalScrollY}px`;
-
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('modal-overlay').scrollTop = 0;
     history.pushState({ screen: activeScreenId, modal: true }, "", "#band-detail");
@@ -4103,10 +3822,9 @@ function initFurmankaMap() {
         scrollWheelZoom: false
     }).setView([49.40405, 19.47895], 16);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap prispievatelia'
     }).addTo(furmankaMapInstance);
 
     furmankaMapMarkers.venue = L.marker([venue.lat, venue.lng], { icon: venueIcon })
@@ -4231,8 +3949,8 @@ function openDetailData(encodedData) {
     if (data.bands && data.bands.length > 0) {
         bandsHtml = `<div class="modal-desc">`;
         data.bands.forEach(band => {
-            bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="ikony/spotbut.png" alt="Spotify"></a>` : ''}
-${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="ikony/fbbut.png" alt="Facebook"></a>` : ''}</div>`;
+            bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeUrl(band.spotify) ? `<a href="${safeUrl(band.spotify)}" target="_blank" class="band-link"><i class="fab fa-spotify"></i> SPOTIFY</a>` : ''}
+${safeUrl(band.fb) ? `<a href="${safeUrl(band.fb)}" target="_blank" class="band-link" style="border-color:#1877F2; color:#1877F2;"><i class="fab fa-facebook"></i> FACEBOOK</a>` : ''}</div>`;
         });
         bandsHtml += `</div>`;
     }
@@ -4696,60 +4414,6 @@ if (spotifyPlaylistUrl) {
         const button = event.target.closest('.current-location-nav');
         if (button) openCurrentLocationNavigation(button);
     });
-})();
-</script>
-
-
-<script>
-(function () {
-    // VIAC: navigation is handled centrally so the whole button is clickable,
-    // including its text and icon. Capture phase also avoids interference from
-    // other page click handlers.
-    function activateMoreButton(button) {
-        if (!button) return;
-        const target = button.getAttribute('data-more-screen');
-
-        button.classList.add('more-btn-pressed');
-
-        setTimeout(function () {
-            button.classList.remove('more-btn-pressed');
-
-            if (button.getAttribute('data-more-share') === '1') {
-                if (typeof shareApp === 'function') shareApp();
-                return;
-            }
-
-            if (!target) return;
-
-            // VIAC navigácia ide priamo cez showScreen().
-            // Týmto obchádzame pôvodný dvojitý setTimeout/onclick mechanizmus,
-            // ktorý bol príčinou nefunkčných tlačidiel.
-            try {
-                if (typeof showScreen === 'function') {
-                    showScreen(target);
-                    history.pushState({ screen: target }, "", "#" + target);
-                }
-            } catch (error) {
-                console.error('VIAC navigácia:', error);
-            }
-        }, 200);
-    }
-
-    document.addEventListener('click', function (event) {
-        const button = event.target.closest('#screen-more .more-btn[data-more-screen], #screen-more .more-btn[data-more-share]');
-        if (!button || button.id === 'push-btn') return;
-        event.preventDefault();
-        event.stopPropagation();
-        activateMoreButton(button);
-    }, true);
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        const button = event.target.closest('#screen-more .more-btn[data-more-screen], #screen-more .more-btn[data-more-share]');
-        if (!button || button.id === 'push-btn') return;
-        event.preventDefault();
-        activateMoreButton(button);
-    }, true);
 })();
 </script>
 
