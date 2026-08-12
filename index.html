@@ -425,6 +425,12 @@
         .merch-img { width: 100%; height: 150px; flex: 0 0 150px; background: transparent; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: white; border-bottom: 1px solid #555; overflow: hidden; }
         .merch-name { font-size: 1.25rem; line-height: 1.12; min-height: 48px; display: flex; align-items: center; justify-content: center; color: var(--accent-color); margin-bottom: 8px; }
         .merch-price { width: 100%; min-height: 54px; box-sizing: border-box; border-radius: 6px; font-size: 1.05rem; line-height: 1.15; color: white; background: #c62828; padding: 7px 5px; display: flex; align-items: center; justify-content: center; }
+        .merch-buy-row { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:7px; margin-top:8px; width:100%; }
+        .merch-choose-qty { display:flex; align-items:center; justify-content:center; height:42px; width:100%; max-width:150px; border:1px solid rgba(255,255,255,.2); background:rgba(0,0,0,.55); border-radius:6px; overflow:hidden; }
+        .merch-product-qty-btn { width:34px; height:42px; border:0; background:transparent; color:var(--accent-color); font-size:1.35rem; font-weight:600; cursor:pointer; }
+        .merch-product-qty { width:32px; text-align:center; color:#fff; font-size:1.05rem; font-weight:600; }
+        .merch-add-btn { flex:0 0 42px; width:100%; min-width:0; height:42px; border:1px solid var(--accent-color); border-radius:6px; background:var(--accent-color); color:#000; font-family:var(--primary-font); font-size:.82rem; font-weight:600; letter-spacing:.5px; cursor:pointer; padding:0 7px; }
+        .merch-add-btn:active, .merch-product-qty-btn:active { transform:scale(.94); }
 
         .merch-product-icon {
             height: 150px;
@@ -2135,6 +2141,60 @@ body.gallery-open {
 }
 .msg-submit-btn:active { transform: translate(2px, 2px); box-shadow: 0 2px 6px rgba(0,0,0,0.9); }
 .msg-submit-btn:disabled { opacity: 0.6; }
+
+.merch-success-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: rgba(0,0,0,0.82);
+}
+.merch-success-overlay.visible { display: flex; }
+.merch-success-card {
+    width: min(100%, 460px);
+    box-sizing: border-box;
+    padding: 34px 24px 28px;
+    text-align: center;
+    border: 1px solid rgba(249,165,9,0.7);
+    background: linear-gradient(to bottom, rgba(20,16,13,0.98), rgba(8,7,6,0.98));
+    box-shadow: 0 15px 50px rgba(0,0,0,0.9);
+}
+.merch-success-icon {
+    color: var(--accent-color);
+    font-size: 3.2rem;
+    margin-bottom: 14px;
+}
+.merch-success-title {
+    color: var(--accent-color);
+    font-size: 2rem;
+    line-height: 1.05;
+    margin-bottom: 18px;
+}
+.merch-success-text {
+    color: #fff;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    letter-spacing: 1px;
+    margin-bottom: 26px;
+}
+.merch-success-home-btn {
+    width: 100%;
+    border: 1px solid #000;
+    background: var(--accent-color);
+    color: #000;
+    padding: 15px 18px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+.merch-success-home-btn:active { transform: translate(2px,2px); }
+
 #msg-status {
     margin-top: 16px;
     text-align: center;
@@ -3234,6 +3294,16 @@ body.modal-scroll-locked {
         </form>
     </div>
 
+
+    <div id="merch-success-overlay" class="merch-success-overlay" aria-hidden="true">
+        <div class="merch-success-card">
+            <div class="merch-success-icon"><i class="fas fa-circle-check"></i></div>
+            <div class="merch-success-title">ĎAKUJEME ZA VÁŠ ZÁUJEM!</div>
+            <div class="merch-success-text">VAŠU ŽIADOSŤ O MERCH SME ÚSPEŠNE DOSTALI. ĎAKUJEME ZA PODPORU. OZVEME SA VÁM S ĎALŠÍMI INFORMÁCIAMI.</div>
+            <button type="button" class="merch-success-home-btn" onclick="returnToMerchHome()">NÁVRAT NA HLAVNÚ STRÁNKU</button>
+        </div>
+    </div>
+
     <div id="screen-map" class="screen">
         <div class="page-header">
             <div class="page-title">MAPA</div>
@@ -3423,12 +3493,32 @@ function initMerchCart() {
 
         const name = nameEl.textContent.trim();
         const price = parseFloat(priceEl.textContent.replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'merch-add-btn';
-        btn.textContent = 'PRIDAŤ DO KOŠÍKA';
-        btn.onclick = function () { addToMerchCart(name, price); };
-        item.appendChild(btn);
+        const buyRow = document.createElement('div');
+        buyRow.className = 'merch-buy-row';
+        buyRow.innerHTML = `
+            <div class="merch-choose-qty" aria-label="Počet kusov">
+                <button type="button" class="merch-product-qty-btn" aria-label="Znížiť počet">−</button>
+                <span class="merch-product-qty">1</span>
+                <button type="button" class="merch-product-qty-btn" aria-label="Zvýšiť počet">+</button>
+            </div>
+            <button type="button" class="merch-add-btn">PRIDAŤ DO KOŠÍKA</button>
+        `;
+        const qtyEl = buyRow.querySelector('.merch-product-qty');
+        const [minusBtn, plusBtn] = buyRow.querySelectorAll('.merch-product-qty-btn');
+        const addBtn = buyRow.querySelector('.merch-add-btn');
+        let selectedQty = 1;
+        minusBtn.onclick = function () {
+            selectedQty = Math.max(1, selectedQty - 1);
+            qtyEl.textContent = selectedQty;
+        };
+        plusBtn.onclick = function () {
+            selectedQty = Math.min(99, selectedQty + 1);
+            qtyEl.textContent = selectedQty;
+        };
+        addBtn.onclick = function () {
+            addToMerchCart(name, price, selectedQty);
+        };
+        item.appendChild(buyRow);
     });
 
     renderMerchCart();
@@ -3438,13 +3528,14 @@ function saveMerchCart() {
     localStorage.setItem('koncerty_merch_cart', JSON.stringify(merchCart));
 }
 
-function addToMerchCart(name, price) {
+function addToMerchCart(name, price, quantity = 1) {
     buzz();
+    quantity = Math.max(1, Math.min(99, parseInt(quantity, 10) || 1));
     if (!merchCart[name]) merchCart[name] = { price: price, qty: 0 };
-    merchCart[name].qty++;
+    merchCart[name].qty += quantity;
     saveMerchCart();
     renderMerchCart();
-    showToast(name + ' PRIDANÉ DO KOŠÍKA');
+    showToast(name + ' × ' + quantity + ' PRIDANÉ DO KOŠÍKA');
 }
 
 function changeMerchQty(name, delta) {
@@ -3710,6 +3801,26 @@ function hideModalNow() {
     window.scrollTo(0, window.__modalScrollY || 0);
 }
 
+
+function showMerchSuccess() {
+    const overlay = document.getElementById('merch-success-overlay');
+    if (overlay) {
+        overlay.classList.add('visible');
+        overlay.setAttribute('aria-hidden', 'false');
+    }
+}
+
+function returnToMerchHome() {
+    buzz();
+    const overlay = document.getElementById('merch-success-overlay');
+    if (overlay) {
+        overlay.classList.remove('visible');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+    showScreen('screen-home');
+    history.pushState({ screen: 'screen-home' }, '', '#screen-home');
+}
+
 async function submitMessageForm(e) {
     e.preventDefault();
     const form = e.target;
@@ -3736,9 +3847,13 @@ async function submitMessageForm(e) {
             if (wasMerchRequest) {
                 clearMerchCart();
                 resetMerchCheckoutView();
+                statusEl.textContent = '';
+                statusEl.className = '';
+                showMerchSuccess();
+            } else {
+                statusEl.textContent = 'ĎAKUJEME! ODKAZ SME DOSTALI.';
+                statusEl.className = 'msg-status-ok';
             }
-            statusEl.textContent = wasMerchRequest ? 'ĎAKUJEME! ŽIADOSŤ O MERCH SME DOSTALI.' : 'ĎAKUJEME! ODKAZ SME DOSTALI.';
-            statusEl.className = 'msg-status-ok';
         } else {
             throw new Error(data.message || 'Odoslanie zlyhalo');
         }
