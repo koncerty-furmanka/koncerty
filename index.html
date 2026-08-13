@@ -3118,6 +3118,23 @@ body.modal-scroll-locked {
 
         <div class="merch-grid">
           <div class="merch-item">
+            <div class="merch-img" style="height: 150px; flex-basis: 150px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
+                <model-viewer 
+                    src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb" 
+                    camera-controls 
+                    auto-rotate 
+                    shadow-intensity="1" 
+                    environment-image="neutral" 
+                    exposure="1"
+                    loading="eager"
+                    style="width: 100%; height: 100%; outline: none;">
+                    <div slot="poster" style="color: var(--accent-color); padding-top: 100px;">Načítavam 3D model...</div>
+                </model-viewer>
+            </div>
+            <div class="merch-name">TRIČKO (3D NÁHĽAD)</div>
+            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 15 €</div>
+          </div>
+          <div class="merch-item">
             <div class="merch-img merch-product-image">
                 <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty%20001.webp" alt="ODZNAK 25MM 001" loading="lazy" decoding="async">
             </div>
