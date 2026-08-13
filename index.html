@@ -230,6 +230,7 @@
 #screen-home.active::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 .home-content {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -262,7 +263,7 @@
     flex-direction: row; 
     justify-content: center; 
     align-items: center; 
-    gap: 20px; 
+    gap: 16px; 
     width: 100%; 
     margin: 0; 
     padding: 4px 0;
@@ -271,8 +272,8 @@
 }
 
 .img-btn-wrapper { 
-    width: 42%; 
-    max-width: 230px; 
+    width: 40%; 
+    max-width: 220px; 
     cursor: pointer; 
     z-index: 50; 
     height: 100%;
@@ -2330,7 +2331,11 @@ body.gallery-open {
 
 #install-btn {
     display: none;
-    margin: 2px auto 2px auto;
+    position: absolute;
+    left: 50%;
+    top: 23%;
+    transform: translateX(-50%);
+    margin: 0;
     flex-shrink: 0;
     width: fit-content;
     background: var(--accent-color); color: #000; border: 1px solid #000;
@@ -2342,7 +2347,7 @@ body.gallery-open {
     z-index: 30;
 }
 #install-btn.show { display: inline-flex; }
-#install-btn:active { transform: scale(0.94); animation: none; }
+#install-btn:active { transform: translateX(-50%) scale(0.94); animation: none; }
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
