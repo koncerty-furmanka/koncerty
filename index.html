@@ -297,7 +297,7 @@
 }
 
 #btn-archive { 
-    transform: translateY(6px); z-index: 1; 
+    transform: translateY(0); z-index: 1; 
 }
 
 .bottom-container { 
@@ -2988,6 +2988,14 @@ body.modal-scroll-locked {
     filter: brightness(.72) !important;
 }
 </style>
+
+<style id="logo-left-adjustment">
+/* Jemné posunutie hlavného horného loga doľava */
+.site-logo, .main-logo, .header-logo {
+    transform: translateX(14px);
+}
+</style>
+
 </head>
 <body>
 
@@ -3085,8 +3093,8 @@ body.modal-scroll-locked {
 
             <div class="bottom-container">
                 <div class="left-col">
-                    <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-about');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/onas.webp?v=1" class="small-btn-img" alt="O Nás">
+                    <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-gallery');},200)">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1" class="small-btn-img" alt="Fotogaléria">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
                         <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch.webp?v=1" class="small-btn-img" alt="Náš Merch">
