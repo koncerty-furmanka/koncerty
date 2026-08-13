@@ -2408,6 +2408,43 @@ html.home-uninstalled #screen-home .mech-btn-wrapper {
     transform: scale(0.92);
 }
 
+/* ===== PWA: V NAINŠTALOVANEJ APKE VŽDY PÔVODNÉ ROZLOŽENIE ===== */
+@media (display-mode: standalone) {
+    html.home-uninstalled #screen-home .menu-grid {
+        flex: 1 1 0;
+        min-height: 70px;
+        height: auto;
+        align-items: center;
+        margin: 0;
+        padding: 4px 0;
+        gap: 16px;
+    }
+    html.home-uninstalled #screen-home .img-btn-wrapper {
+        width: 40%;
+        max-width: 220px;
+        height: 100%;
+    }
+    html.home-uninstalled #screen-home .btn-image {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        max-height: 100%;
+    }
+    html.home-uninstalled #screen-home #install-btn {
+        display: none !important;
+    }
+    html.home-uninstalled #screen-home .home-header,
+    html.home-uninstalled #screen-home #countdown-bar,
+    html.home-uninstalled #screen-home .menu-grid,
+    html.home-uninstalled #screen-home .bottom-container {
+        order: initial;
+    }
+    html.home-uninstalled #screen-home .about-btn-wrapper,
+    html.home-uninstalled #screen-home .mech-btn-wrapper {
+        transform: none;
+    }
+}
+
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
@@ -4133,7 +4170,8 @@ let deferredPrompt = null;
 
 function isInstalledApp() {
     return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true;
+        || window.navigator.standalone === true
+        || localStorage.getItem('koncerty_app_installed') === '1';
 }
 
 
@@ -4160,7 +4198,11 @@ async function installApp() {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         deferredPrompt = null;
-        if (b && choice && choice.outcome === 'accepted') b.classList.remove('show');
+        if (b && choice && choice.outcome === 'accepted') {
+            b.classList.remove('show');
+            localStorage.setItem('koncerty_app_installed', '1');
+            updateInstallLayoutState();
+        }
         return;
     }
     alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
@@ -4176,6 +4218,7 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
     if (b) b.classList.remove('show');
+    localStorage.setItem('koncerty_app_installed', '1');
     updateInstallLayoutState();
 });
 
