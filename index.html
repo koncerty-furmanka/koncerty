@@ -4310,18 +4310,39 @@ async function installApp() {
     buzz();
     const b = document.getElementById('install-btn');
     if (deferredPrompt) {
+        // Označíme, že po úspešnej inštalácii má novootvorená PWA
+        // na 5 sekúnd zobraziť inštalačný shader. Ukladáme to ešte
+        // pred otvorením natívneho dialógu, pretože po potvrdení môže
+        // Chrome pôvodnú stránku okamžite zavrieť/prepnúť do PWA.
+        try { localStorage.setItem('koncerty_installing', '1'); } catch (e) {}
+
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         deferredPrompt = null;
-        if (b && choice && choice.outcome === 'accepted') {
-            b.classList.remove('show');
-            // Záložný štart shaderu – appinstalled ho môže spustiť ešte presnejšie.
-            setTimeout(showInstallProgress, 350);
+
+        if (choice && choice.outcome === 'accepted') {
+            if (b) b.classList.remove('show');
+            // Shader sa zobrazí po otvorení nainštalovanej aplikácie.
+            return;
         }
+
+        // Používateľ inštaláciu zrušil – shader už nezobrazuj.
+        try { localStorage.removeItem('koncerty_installing'); } catch (e) {}
         return;
     }
     alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
 }
+
+// Po otvorení nainštalovanej PWA zobrazíme shader na 5 sekúnd.
+(function showInstallShaderAfterLaunch() {
+    if (!isInstalledApp()) return;
+    try {
+        if (localStorage.getItem('koncerty_installing') === '1') {
+            localStorage.removeItem('koncerty_installing');
+            setTimeout(showInstallProgress, 180);
+        }
+    } catch (e) {}
+})();
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMerchCart);
@@ -4333,7 +4354,8 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
     if (b) b.classList.remove('show');
-    showInstallProgress();
+    // Shader sa spúšťa pri štarte nainštalovanej PWA, aby ho Chrome
+    // nestihol prekryť alebo zrušiť pri prechode z webu do aplikácie.
 });
 
 (function iosInstallHint() {
