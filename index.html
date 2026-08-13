@@ -2353,54 +2353,51 @@ body.gallery-open {
     transform: translateX(-5px);
 }
 
-/* Pri zobrazenej instalacii upravujeme iba domovsku plochu.
-   Po nainstalovani aplikacie sa povodny layout nemeni. */
+/* KOMPAKTNY DOMOV PRI ZOBRAZENOM TLACIDLE INSTALACIE
+   Vsetko sa musi zmestit medzi hornu cast a pevnu spodnu navigaciu. */
 #screen-home:has(#install-btn.show) {
     overflow: hidden !important;
 }
 
 #screen-home:has(#install-btn.show) .home-content {
-    justify-content: flex-start;
     height: 100%;
+    min-height: 0;
+    justify-content: flex-start;
     overflow: hidden;
+    padding-top: 4px;
 }
 
-/* Kompaktne rozlozenie iba vtedy, ked je viditelne tlacidlo instalacie.
-   Po nainstalovani aplikacie sa tento blok neuplatni. */
+#screen-home:has(#install-btn.show) .home-header {
+    margin-bottom: 2px;
+}
+
+#screen-home:has(#install-btn.show) .main-logo {
+    width: clamp(170px, 35vw, 250px);
+}
+
+#screen-home:has(#install-btn.show) #countdown-bar {
+    margin-bottom: 1px;
+}
+
+#screen-home:has(#install-btn.show) #install-btn {
+    margin-top: 1px;
+    margin-bottom: 3px;
+    padding: 5px 15px;
+    font-size: .86rem;
+}
+
+/* Plagaty dostanu presne tolko priestoru, kolko zostane pre spodne ikony. */
 #screen-home:has(#install-btn.show) .menu-grid {
-    flex: 0 0 auto;
-    height: clamp(355px, 35vh, 400px);
+    flex: 0 0 36vh;
+    height: 36vh;
     min-height: 0;
-}
-
-#screen-home:has(#install-btn.show) .bottom-container {
-    flex: 0 0 auto;
-    height: clamp(285px, 29vh, 330px);
-    min-height: 0;
-    gap: 10px;
-    padding-bottom: 0;
-    box-sizing: border-box;
-}
-
-#screen-home:has(#install-btn.show) .left-col {
-    flex: 0 0 46%;
-    max-width: 46%;
-    box-sizing: border-box;
-    gap: 5px;
-    padding-left: 0;
-}
-
-#screen-home:has(#install-btn.show) .right-col {
-    flex: 0 0 42%;
-    max-width: 42%;
-    box-sizing: border-box;
-    gap: 3px;
-    padding-right: 0;
+    padding: 2px 0;
+    gap: 4px;
 }
 
 #screen-home:has(#install-btn.show) .menu-grid .img-btn-wrapper {
-    height: 100%;
     width: 46%;
+    height: 100%;
 }
 
 #screen-home:has(#install-btn.show) .menu-grid .btn-image {
@@ -2408,48 +2405,74 @@ body.gallery-open {
     max-height: 100%;
 }
 
-#screen-home:has(#install-btn.show) .left-col .small-btn-img,
-#screen-home:has(#install-btn.show) .right-col .small-btn-img {
-    max-width: 100%;
-    max-height: 100%;
-}
-
-@media (max-height: 720px) {
-    #screen-home:has(#install-btn.show) .menu-grid { height: 345px; }
-    #screen-home:has(#install-btn.show) .bottom-container { height: 285px; }
+/* Spodna cast sa vzdy zmesti nad navigaciu. */
+#screen-home:has(#install-btn.show) .bottom-container {
+    flex: 0 0 27vh;
+    height: 27vh;
+    min-height: 0;
+    width: 100%;
+    gap: 8px;
+    padding: 2px 0 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 #screen-home:has(#install-btn.show) .left-col {
     flex: 0 0 46%;
     max-width: 46%;
+    height: 100%;
+    padding-left: 0;
+    gap: 4px;
     box-sizing: border-box;
-    gap: 8px;
 }
 
 #screen-home:has(#install-btn.show) .right-col {
     flex: 0 0 42%;
     max-width: 42%;
-    box-sizing: border-box;
-    gap: 5px;
-}
-
-#screen-home:has(#install-btn.show) .menu-grid .img-btn-wrapper {
     height: 100%;
-    width: 46%;
+    padding-right: 0;
+    gap: 3px;
+    box-sizing: border-box;
 }
 
-#screen-home:has(#install-btn.show) .menu-grid .btn-image,
+#screen-home:has(#install-btn.show) .left-col > .action-btn,
+#screen-home:has(#install-btn.show) .right-col > .action-btn {
+    min-height: 0;
+    overflow: hidden;
+}
+
 #screen-home:has(#install-btn.show) .left-col .small-btn-img,
 #screen-home:has(#install-btn.show) .right-col .small-btn-img {
     max-width: 100%;
     max-height: 100%;
+    object-fit: contain;
 }
 
-@media (max-height: 720px) {
-    #screen-home:has(#install-btn.show) .menu-grid { height: 315px; }
-    #screen-home:has(#install-btn.show) .bottom-container { height: 270px; }
+/* Na nizkych displejoch este trochu uberieme, aby nic nebolo odrezane. */
+@media (max-height: 760px) {
+    #screen-home:has(#install-btn.show) .menu-grid {
+        flex-basis: 33vh;
+        height: 33vh;
+    }
+    #screen-home:has(#install-btn.show) .bottom-container {
+        flex-basis: 25vh;
+        height: 25vh;
+    }
 }
 
+@media (max-height: 680px) {
+    #screen-home:has(#install-btn.show) .main-logo {
+        width: 160px;
+    }
+    #screen-home:has(#install-btn.show) .menu-grid {
+        flex-basis: 31vh;
+        height: 31vh;
+    }
+    #screen-home:has(#install-btn.show) .bottom-container {
+        flex-basis: 24vh;
+        height: 24vh;
+    }
+}
 </style>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
