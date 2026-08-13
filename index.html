@@ -230,7 +230,6 @@
 #screen-home.active::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 .home-content {
-    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -263,7 +262,7 @@
     flex-direction: row; 
     justify-content: center; 
     align-items: center; 
-    gap: 16px; 
+    gap: 20px; 
     width: 100%; 
     margin: 0; 
     padding: 4px 0;
@@ -272,8 +271,8 @@
 }
 
 .img-btn-wrapper { 
-    width: 40%; 
-    max-width: 220px; 
+    width: 42%; 
+    max-width: 230px; 
     cursor: pointer; 
     z-index: 50; 
     height: 100%;
@@ -2331,12 +2330,7 @@ body.gallery-open {
 
 #install-btn {
     display: none;
-    position: absolute;
-    left: 50%;
-    top: 31%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    margin: 0;
+    margin: 2px auto 2px auto;
     flex-shrink: 0;
     width: fit-content;
     background: var(--accent-color); color: #000; border: 1px solid #000;
@@ -2348,103 +2342,7 @@ body.gallery-open {
     z-index: 30;
 }
 #install-btn.show { display: inline-flex; }
-#install-btn:active { transform: translateX(-50%) scale(0.94); animation: none; }
-
-/* ===== DOMOVSKÁ OBRAZOVKA – REŽIM BEZ NAINŠTALOVANEJ APKY ===== */
-/* Pri webovej verzii zmenšíme iba horné dva plagáty a vložíme inštalačné tlačidlo
-   do normálneho toku medzi plagáty a spodné tlačidlá. Režim nainštalovanej apky
-   zostáva bez zmeny. */
-html.home-uninstalled #screen-home .menu-grid {
-    flex: 0 0 auto;
-    min-height: 0;
-    height: auto;
-    align-items: flex-start;
-    margin: 2px 0 4px;
-    padding: 0;
-    gap: 12px;
-}
-html.home-uninstalled #screen-home .img-btn-wrapper {
-    width: 36%;
-    max-width: 190px;
-    height: auto;
-}
-html.home-uninstalled #screen-home .btn-image {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    max-height: none;
-}
-html.home-uninstalled #screen-home #install-btn {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
-    z-index: 1000;
-    order: 2;
-    align-self: center;
-    display: none;
-    width: min(72%, 330px);
-    box-sizing: border-box;
-    justify-content: center;
-    margin: 5px auto 7px;
-    padding: 8px 14px;
-}
-html.home-uninstalled #screen-home #install-btn.show {
-    display: inline-flex;
-}
-html.home-uninstalled #screen-home #install-btn:active {
-    transform: scale(0.94);
-}
-html.home-uninstalled #screen-home .home-header { order: 0; }
-html.home-uninstalled #screen-home #countdown-bar { order: 1; }
-html.home-uninstalled #screen-home .menu-grid { order: 3; }
-html.home-uninstalled #screen-home .bottom-container { order: 4; }
-
-/* Jemné doladenie spodných ikon iba pre web bez nainštalovanej aplikácie. */
-html.home-uninstalled #screen-home .about-btn-wrapper {
-    transform: translateX(8px);
-}
-html.home-uninstalled #screen-home .mech-btn-wrapper {
-    transform: scale(0.92);
-}
-
-/* ===== PWA: V NAINŠTALOVANEJ APKE VŽDY PÔVODNÉ ROZLOŽENIE ===== */
-@media (display-mode: standalone) {
-    html.home-uninstalled #screen-home .menu-grid {
-        flex: 1 1 0;
-        min-height: 70px;
-        height: auto;
-        align-items: center;
-        margin: 0;
-        padding: 4px 0;
-        gap: 16px;
-    }
-    html.home-uninstalled #screen-home .img-btn-wrapper {
-        width: 44%;
-        max-width: 240px;
-        height: 100%;
-    }
-    html.home-uninstalled #screen-home .btn-image {
-        width: auto;
-        max-width: 100%;
-        height: auto;
-        max-height: 100%;
-    }
-    html.home-uninstalled #screen-home #install-btn {
-        display: none !important;
-    }
-    html.home-uninstalled #screen-home .home-header,
-    html.home-uninstalled #screen-home #countdown-bar,
-    html.home-uninstalled #screen-home .menu-grid,
-    html.home-uninstalled #screen-home .bottom-container {
-        order: initial;
-    }
-    html.home-uninstalled #screen-home .about-btn-wrapper,
-    html.home-uninstalled #screen-home .mech-btn-wrapper {
-        transform: none;
-    }
-}
-
+#install-btn:active { transform: scale(0.94); animation: none; }
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
@@ -4170,23 +4068,13 @@ let deferredPrompt = null;
 
 function isInstalledApp() {
     return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true
-        || localStorage.getItem('koncerty_app_installed') === '1';
+        || window.navigator.standalone === true;
 }
-
-
-function updateInstallLayoutState() {
-    document.documentElement.classList.toggle('home-uninstalled', !isInstalledApp());
-}
-
-updateInstallLayoutState();
-window.addEventListener('pageshow', updateInstallLayoutState);
 
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     if (isInstalledApp()) return;
     deferredPrompt = e;
-    updateInstallLayoutState();
     const b = document.getElementById('install-btn');
     if (b) b.classList.add('show');
 });
@@ -4198,11 +4086,7 @@ async function installApp() {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         deferredPrompt = null;
-        if (b && choice && choice.outcome === 'accepted') {
-            b.classList.remove('show');
-            localStorage.setItem('koncerty_app_installed', '1');
-            updateInstallLayoutState();
-        }
+        if (b && choice && choice.outcome === 'accepted') b.classList.remove('show');
         return;
     }
     alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
@@ -4218,8 +4102,6 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
     if (b) b.classList.remove('show');
-    localStorage.setItem('koncerty_app_installed', '1');
-    updateInstallLayoutState();
 });
 
 (function iosInstallHint() {
