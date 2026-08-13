@@ -2355,21 +2355,68 @@ body.gallery-open {
 
 /* Pri zobrazenej instalacii upravujeme iba domovsku plochu.
    Po nainstalovani aplikacie sa povodny layout nemeni. */
-#screen-home:has(#install-btn.show) .home-content {
-    justify-content: flex-start;
+#screen-home:has(#install-btn.show) {
+    overflow: hidden !important;
 }
 
+#screen-home:has(#install-btn.show) .home-content {
+    justify-content: flex-start;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Kompaktne rozlozenie iba vtedy, ked je viditelne tlacidlo instalacie.
+   Po nainstalovani aplikacie sa tento blok neuplatni. */
 #screen-home:has(#install-btn.show) .menu-grid {
     flex: 0 0 auto;
-    height: clamp(315px, 37vh, 455px);
+    height: clamp(355px, 35vh, 400px);
     min-height: 0;
 }
 
 #screen-home:has(#install-btn.show) .bottom-container {
     flex: 0 0 auto;
-    height: clamp(270px, 32vh, 395px);
+    height: clamp(285px, 29vh, 330px);
     min-height: 0;
-    gap: 14px;
+    gap: 10px;
+    padding-bottom: 0;
+    box-sizing: border-box;
+}
+
+#screen-home:has(#install-btn.show) .left-col {
+    flex: 0 0 46%;
+    max-width: 46%;
+    box-sizing: border-box;
+    gap: 5px;
+    padding-left: 0;
+}
+
+#screen-home:has(#install-btn.show) .right-col {
+    flex: 0 0 42%;
+    max-width: 42%;
+    box-sizing: border-box;
+    gap: 3px;
+    padding-right: 0;
+}
+
+#screen-home:has(#install-btn.show) .menu-grid .img-btn-wrapper {
+    height: 100%;
+    width: 46%;
+}
+
+#screen-home:has(#install-btn.show) .menu-grid .btn-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#screen-home:has(#install-btn.show) .left-col .small-btn-img,
+#screen-home:has(#install-btn.show) .right-col .small-btn-img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+@media (max-height: 720px) {
+    #screen-home:has(#install-btn.show) .menu-grid { height: 345px; }
+    #screen-home:has(#install-btn.show) .bottom-container { height: 285px; }
 }
 
 #screen-home:has(#install-btn.show) .left-col {
