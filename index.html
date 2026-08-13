@@ -2349,6 +2349,57 @@ body.gallery-open {
 }
 #install-btn.show { display: inline-flex; }
 #install-btn:active { transform: translateX(-50%) scale(0.94); animation: none; }
+
+/* ===== DOMOVSKÁ OBRAZOVKA – REŽIM BEZ NAINŠTALOVANEJ APKY ===== */
+/* Pri webovej verzii zmenšíme iba horné dva plagáty a vložíme inštalačné tlačidlo
+   do normálneho toku medzi plagáty a spodné tlačidlá. Režim nainštalovanej apky
+   zostáva bez zmeny. */
+html.home-uninstalled #screen-home .menu-grid {
+    flex: 0 0 auto;
+    min-height: 0;
+    height: auto;
+    align-items: flex-start;
+    margin: 2px 0 4px;
+    padding: 0;
+    gap: 12px;
+}
+html.home-uninstalled #screen-home .img-btn-wrapper {
+    width: 36%;
+    max-width: 190px;
+    height: auto;
+}
+html.home-uninstalled #screen-home .btn-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+}
+html.home-uninstalled #screen-home #install-btn {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    z-index: 1000;
+    order: 3;
+    align-self: center;
+    display: none;
+    width: min(72%, 330px);
+    box-sizing: border-box;
+    justify-content: center;
+    margin: 5px auto 7px;
+    padding: 8px 14px;
+}
+html.home-uninstalled #screen-home #install-btn.show {
+    display: inline-flex;
+}
+html.home-uninstalled #screen-home #install-btn:active {
+    transform: scale(0.94);
+}
+html.home-uninstalled #screen-home .home-header { order: 0; }
+html.home-uninstalled #screen-home #countdown-bar { order: 1; }
+html.home-uninstalled #screen-home .menu-grid { order: 2; }
+html.home-uninstalled #screen-home .bottom-container { order: 4; }
+
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
@@ -4077,10 +4128,19 @@ function isInstalledApp() {
         || window.navigator.standalone === true;
 }
 
+
+function updateInstallLayoutState() {
+    document.documentElement.classList.toggle('home-uninstalled', !isInstalledApp());
+}
+
+updateInstallLayoutState();
+window.addEventListener('pageshow', updateInstallLayoutState);
+
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     if (isInstalledApp()) return;
     deferredPrompt = e;
+    updateInstallLayoutState();
     const b = document.getElementById('install-btn');
     if (b) b.classList.add('show');
 });
@@ -4108,6 +4168,7 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
     if (b) b.classList.remove('show');
+    updateInstallLayoutState();
 });
 
 (function iosInstallHint() {
