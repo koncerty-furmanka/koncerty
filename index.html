@@ -2343,6 +2343,78 @@ body.gallery-open {
 }
 #install-btn.show { display: inline-flex; }
 #install-btn:active { transform: scale(0.94); animation: none; }
+
+/* ===== PWA INŠTALÁCIA – 5 SEKUNDOVÝ PROGRESS SHADER ===== */
+#install-progress-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: rgba(0,0,0,.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    text-align: center;
+}
+#install-progress-overlay.show {
+    display: flex;
+    animation: installOverlayIn .25s ease-out;
+}
+.install-progress-box {
+    width: min(360px, 88vw);
+    padding: 28px 22px 24px;
+    box-sizing: border-box;
+    background: rgba(12,10,8,.96);
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 12px 45px rgba(0,0,0,.9), 0 0 0 5px rgba(249,165,9,.10);
+}
+.install-progress-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 15px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: #000;
+    font-size: 1.65rem;
+    box-shadow: 0 0 0 8px rgba(249,165,9,.12);
+    animation: installIconPulse 1s infinite alternate;
+}
+.install-progress-title {
+    color: var(--accent-color);
+    font-size: clamp(1.35rem, 6vw, 1.8rem);
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    line-height: 1.05;
+    text-shadow: 0 2px 6px #000;
+}
+.install-progress-text {
+    margin-top: 10px;
+    color: #eee;
+    font-size: .95rem;
+    line-height: 1.35;
+    letter-spacing: .7px;
+}
+.install-progress-dots {
+    margin-top: 15px;
+    color: var(--accent-color);
+    letter-spacing: 5px;
+    font-size: 1.25rem;
+}
+.install-progress-dots span {
+    display: inline-block;
+    animation: installDot 1.2s infinite;
+}
+.install-progress-dots span:nth-child(2) { animation-delay: .2s; }
+.install-progress-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes installOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes installIconPulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+@keyframes installDot { 0%, 60%, 100% { opacity: .25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
@@ -2410,18 +2482,16 @@ body.gallery-open {
     flex: 0 0 27vh;
     height: 27vh;
     min-height: 0;
-    width: 88%;
-    margin: 0 auto;
-    gap: 4px;
+    width: 100%;
+    gap: 8px;
     padding: 2px 0 0;
     box-sizing: border-box;
     overflow: hidden;
-    justify-content: center;
 }
 
 #screen-home:has(#install-btn.show) .left-col {
-    flex: 0 0 44%;
-    max-width: 44%;
+    flex: 0 0 46%;
+    max-width: 46%;
     height: 100%;
     padding-left: 0;
     gap: 4px;
@@ -2429,8 +2499,8 @@ body.gallery-open {
 }
 
 #screen-home:has(#install-btn.show) .right-col {
-    flex: 0 0 44%;
-    max-width: 44%;
+    flex: 0 0 42%;
+    max-width: 42%;
     height: 100%;
     padding-right: 0;
     gap: 3px;
@@ -3195,6 +3265,17 @@ body.modal-scroll-locked {
             <label class="notif-cat"><input type="checkbox" value="koncerty_novinky" checked> NOVÉ KONCERTY A NOVINKY</label>
             <label class="notif-cat"><input type="checkbox" value="den_pred" checked> PRIPOMIENKA DEŇ PRED</label>
             <div role="button" tabindex="0" class="notif-cats-save" onclick="saveNotifCats()">ULOŽIŤ</div>
+        </div>
+    </div>
+
+
+
+    <div id="install-progress-overlay" aria-hidden="true">
+        <div class="install-progress-box">
+            <div class="install-progress-icon"><i class="fas fa-download"></i></div>
+            <div class="install-progress-title">KÔŇCERTY SA INŠTALUJE</div>
+            <div class="install-progress-text">APLIKÁCIA SA PRIDÁVA NA PLOCHU...</div>
+            <div class="install-progress-dots"><span>●</span><span>●</span><span>●</span></div>
         </div>
     </div>
 
@@ -4207,6 +4288,24 @@ window.addEventListener('beforeinstallprompt', (e) => {
     if (b) b.classList.add('show');
 });
 
+let installProgressTimer = null;
+let installProgressShown = false;
+
+function showInstallProgress() {
+    if (installProgressShown) return;
+    installProgressShown = true;
+    const overlay = document.getElementById('install-progress-overlay');
+    if (!overlay) return;
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+    if (installProgressTimer) clearTimeout(installProgressTimer);
+    installProgressTimer = setTimeout(() => {
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+        installProgressShown = false;
+    }, 5000);
+}
+
 async function installApp() {
     buzz();
     const b = document.getElementById('install-btn');
@@ -4214,7 +4313,11 @@ async function installApp() {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         deferredPrompt = null;
-        if (b && choice && choice.outcome === 'accepted') b.classList.remove('show');
+        if (b && choice && choice.outcome === 'accepted') {
+            b.classList.remove('show');
+            // Záložný štart shaderu – appinstalled ho môže spustiť ešte presnejšie.
+            setTimeout(showInstallProgress, 350);
+        }
         return;
     }
     alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
@@ -4230,6 +4333,7 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
     if (b) b.classList.remove('show');
+    showInstallProgress();
 });
 
 (function iosInstallHint() {
