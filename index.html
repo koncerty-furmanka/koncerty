@@ -2483,15 +2483,16 @@ body.gallery-open {
     height: 27vh;
     min-height: 0;
     width: 100%;
-    gap: 8px;
+    gap: 4px;
     padding: 2px 0 0;
     box-sizing: border-box;
     overflow: hidden;
+    justify-content: center;
 }
 
 #screen-home:has(#install-btn.show) .left-col {
-    flex: 0 0 46%;
-    max-width: 46%;
+    flex: 0 0 42%;
+    max-width: 42%;
     height: 100%;
     padding-left: 0;
     gap: 4px;
@@ -4309,12 +4310,16 @@ function showInstallProgress() {
 async function installApp() {
     buzz();
     const b = document.getElementById('install-btn');
+
     if (deferredPrompt) {
-        // Označíme, že po úspešnej inštalácii má novootvorená PWA
-        // na 5 sekúnd zobraziť inštalačný shader. Ukladáme to ešte
-        // pred otvorením natívneho dialógu, pretože po potvrdení môže
-        // Chrome pôvodnú stránku okamžite zavrieť/prepnúť do PWA.
-        try { localStorage.setItem('koncerty_installing', '1'); } catch (e) {}
+        // Shader zobrazíme ešte pred natívnym dialógom. Android Chrome
+        // môže po potvrdení PWA okamžite prepnúť stránku a shader vytvorený
+        // až po userChoice sa preto nemusí vôbec vykresliť.
+        const overlay = document.getElementById('install-progress-overlay');
+        if (overlay) {
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+        }
 
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
@@ -4322,27 +4327,34 @@ async function installApp() {
 
         if (choice && choice.outcome === 'accepted') {
             if (b) b.classList.remove('show');
-            // Shader sa zobrazí po otvorení nainštalovanej aplikácie.
+
+            // Po potvrdení necháme shader viditeľný celých 5 sekúnd.
+            if (installProgressTimer) clearTimeout(installProgressTimer);
+            installProgressShown = true;
+            installProgressTimer = setTimeout(() => {
+                if (overlay) {
+                    overlay.classList.remove('show');
+                    overlay.setAttribute('aria-hidden', 'true');
+                }
+                installProgressShown = false;
+            }, 5000);
             return;
         }
 
-        // Používateľ inštaláciu zrušil – shader už nezobrazuj.
-        try { localStorage.removeItem('koncerty_installing'); } catch (e) {}
+        // Inštalácia bola zrušená – shader okamžite schovaj.
+        if (overlay) {
+            overlay.classList.remove('show');
+            overlay.setAttribute('aria-hidden', 'true');
+        }
+        installProgressShown = false;
         return;
     }
+
     alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
 }
 
-// Po otvorení nainštalovanej PWA zobrazíme shader na 5 sekúnd.
-(function showInstallShaderAfterLaunch() {
-    if (!isInstalledApp()) return;
-    try {
-        if (localStorage.getItem('koncerty_installing') === '1') {
-            localStorage.removeItem('koncerty_installing');
-            setTimeout(showInstallProgress, 180);
-        }
-    } catch (e) {}
-})();
+// Shader sa teraz spúšťa priamo pri kliknutí na inštaláciu.
+
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMerchCart);
