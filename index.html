@@ -9,11 +9,11 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
     <meta property="og:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
-    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.webp?v=1">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png?v=1">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Kôňcerty — Punk, Ska a Rock'n'Roll">
     <meta name="twitter:description" content="Koncerty vo Furmanke, Námestovo. Program, archív, kapely a merch — všetko na jednom mieste.">
-    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.webp?v=1">
+    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertylogo.png?v=1">
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
@@ -182,7 +182,7 @@
             z-index: -1;
             background-image: 
                 linear-gradient(to bottom, rgba(10,10,12,0.55), rgba(10,10,12,0.8)), 
-                url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.webp?v=1');
+                url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png?v=1');
             background-position: top center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -420,291 +420,12 @@
         .contact-btn i { font-size: 0.85rem; margin-right: 6px; }
         .contact-btn-email { font-size: 1.05rem; word-break: break-all; }
         iframe { width: 100%; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; margin-top: 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
-        .merch-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; padding: 10px; align-items: stretch; }
-        .merch-item { min-width: 0; height: 390px; box-sizing: border-box; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); padding: 10px; text-align: center; display: flex; flex-direction: column; overflow: hidden; }
-        .merch-img { width: 100%; height: 150px; flex: 0 0 150px; background: transparent; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: white; border-bottom: 1px solid #555; overflow: hidden; }
-        .merch-name { font-size: 1.25rem; line-height: 1.12; min-height: 48px; display: flex; align-items: center; justify-content: center; color: var(--accent-color); margin-bottom: 8px; }
-        .merch-price { width: 100%; min-height: 54px; box-sizing: border-box; border-radius: 6px; font-size: 1.05rem; line-height: 1.15; color: white; background: #c62828; padding: 7px 5px; display: flex; align-items: center; justify-content: center; }
-        .merch-buy-row { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:7px; margin-top:8px; width:100%; }
-        .merch-choose-qty { display:flex; align-items:center; justify-content:center; height:42px; width:100%; max-width:150px; border:1px solid rgba(255,255,255,.2); background:rgba(0,0,0,.55); border-radius:6px; overflow:hidden; }
-        .merch-product-qty-btn { width:34px; height:42px; border:0; background:transparent; color:var(--accent-color); font-size:1.35rem; font-weight:600; cursor:pointer; }
-        .merch-product-qty { width:32px; text-align:center; color:#fff; font-size:1.05rem; font-weight:600; }
-        .merch-add-btn { flex:0 0 42px; width:100%; min-width:0; height:42px; border:1px solid var(--accent-color); border-radius:6px; background:var(--accent-color); color:#000; font-family:var(--primary-font); font-size:.82rem; font-weight:600; letter-spacing:.5px; cursor:pointer; padding:0 7px; }
-        .merch-add-btn:active, .merch-product-qty-btn:active { transform:scale(.94); }
-
-        .merch-product-image img {
-            max-width: 100%;
-            max-height: 145px;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            display: block;
-        }
-        .merch-product-icon {
-            height: 150px;
-            flex-basis: 150px;
-            color: var(--accent-color);
-            background: rgba(255,255,255,0.03);
-        }
-        .merch-product-icon i {
-            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.7));
-        }
-        .merch-item .merch-name {
-            line-height: 1.15;
-        }
+        .merch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px; }
+        .merch-item { border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); padding: 10px; text-align: center; }
+        .merch-img { width: 100%; height: 150px; background: transparent; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: white; border-bottom: 1px solid #555; }
+        .merch-name { font-size: 1.5rem; color: var(--accent-color); margin-bottom: 5px; }
+        .merch-price { border-radius: 6px; font-size: 2rem; color: white; background: #c62828; padding: 0 10px; display: inline-block; }
         
-        .merch-page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding-right: 12px;
-        }
-        .merch-cart-btn {
-            position: relative;
-            flex: 0 0 auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            min-height: 42px;
-            padding: 8px 12px;
-            border: 1px solid var(--accent-color);
-            background: rgba(0,0,0,.82);
-            color: var(--accent-color);
-            font-size: .9rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,.55);
-        }
-        .merch-cart-btn:active { transform: scale(.94); }
-        .merch-cart-btn b {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 4px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #c62828;
-            color: #fff;
-            font-size: .72rem;
-            line-height: 20px;
-        }
-        .merch-add-btn {
-            width: 100%;
-            margin-top: auto;
-            padding: 11px 8px;
-            border: 1px solid var(--accent-color);
-            background: var(--accent-color);
-            color: #000;
-            font-size: .95rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
-        .merch-add-btn:active { transform: scale(.96); }
-        .merch-cart-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 20000;
-            display: none;
-            align-items: flex-start;
-            justify-content: flex-end;
-            background: rgba(0,0,0,.72);
-            padding: calc(12px + env(safe-area-inset-top)) 12px 12px;
-            box-sizing: border-box;
-        }
-        .merch-cart-overlay.open { display: flex; }
-        .merch-cart-panel {
-            width: min(430px, 100%);
-            max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-            display: flex;
-            flex-direction: column;
-            background: rgba(12,10,8,.98);
-            border: 1px solid var(--accent-color);
-            box-shadow: 0 18px 50px rgba(0,0,0,.8);
-            overflow: hidden;
-        }
-        .merch-cart-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 15px;
-            background: rgba(0,0,0,.55);
-            border-bottom: 1px solid rgba(249,165,9,.35);
-        }
-        .merch-cart-title {
-            color: var(--accent-color);
-            font-size: 1.35rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-        }
-        .merch-cart-close {
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(255,255,255,.25);
-            background: rgba(255,255,255,.06);
-            color: #fff;
-            font-size: 1.15rem;
-            cursor: pointer;
-        }
-        .merch-cart-items {
-            flex: 1 1 auto;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .merch-cart-empty {
-            padding: 35px 12px;
-            text-align: center;
-            color: #aaa;
-            font-size: 1rem;
-        }
-        .merch-cart-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px;
-            align-items: center;
-            padding: 12px 8px;
-            border-bottom: 1px solid rgba(255,255,255,.12);
-        }
-        .merch-cart-row-name {
-            color: #fff;
-            font-size: .95rem;
-            line-height: 1.2;
-        }
-        .merch-cart-row-price {
-            color: var(--accent-color);
-            font-size: .85rem;
-            margin-top: 4px;
-        }
-        .merch-cart-controls {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-        .merch-qty-btn {
-            width: 30px;
-            height: 30px;
-            border: 1px solid rgba(255,255,255,.25);
-            background: rgba(255,255,255,.07);
-            color: #fff;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .merch-qty {
-            min-width: 20px;
-            text-align: center;
-            color: #fff;
-            font-size: .95rem;
-        }
-        .merch-cart-footer {
-            padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
-            border-top: 1px solid rgba(249,165,9,.35);
-            background: rgba(0,0,0,.65);
-        }
-        .merch-cart-total-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            color: #fff;
-            font-size: 1.15rem;
-        }
-        .merch-cart-total-row strong { color: var(--accent-color); font-size: 1.4rem; }
-        .merch-cart-checkout {
-            width: 100%;
-            padding: 12px 10px;
-            margin-bottom: 8px;
-            border: 1px solid var(--accent-color);
-            background: var(--accent-color);
-            color: #000;
-            cursor: pointer;
-            font-size: .95rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-        .merch-cart-checkout:active { transform: scale(.98); }
-        .merch-contribution-note {
-            max-width: 620px;
-            margin: 30px auto 20px;
-            padding: 14px 16px;
-            box-sizing: border-box;
-            text-align: center;
-            color: #ddd;
-            background: rgba(0,0,0,.55);
-            border: 1px solid rgba(249,165,9,.35);
-            font-size: .9rem;
-            line-height: 1.45;
-        }
-        .merch-order-summary {
-            display: none;
-            margin: 0 18px 18px;
-            padding: 14px;
-            background: rgba(0,0,0,.55);
-            border: 1px solid rgba(249,165,9,.4);
-        }
-        .merch-order-summary.visible { display: block; }
-        .merch-order-summary-title {
-            color: var(--accent-color);
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 9px;
-        }
-        .merch-order-summary-items {
-            color: #eee;
-            font-size: .88rem;
-            line-height: 1.55;
-        }
-        .merch-order-summary-total {
-            margin-top: 10px;
-            padding-top: 9px;
-            border-top: 1px solid rgba(255,255,255,.15);
-            color: var(--accent-color);
-            font-size: .95rem;
-        }
-        .merch-order-summary-note {
-            margin-top: 8px;
-            color: #aaa;
-            font-size: .74rem;
-            line-height: 1.35;
-        }
-        .merch-back-to-cart {
-            width: calc(100% - 36px);
-            margin: 0 18px 14px;
-            padding: 9px;
-            border: 1px solid rgba(255,255,255,.25);
-            background: rgba(255,255,255,.04);
-            color: #ddd;
-            cursor: pointer;
-            font-size: .82rem;
-        }
-        .merch-cart-clear {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid rgba(255,255,255,.25);
-            background: transparent;
-            color: #ddd;
-            cursor: pointer;
-            font-size: .9rem;
-        }
-        .merch-cart-note {
-            margin-top: 10px;
-            color: #999;
-            text-align: center;
-            font-size: .72rem;
-            line-height: 1.35;
-        }
-        @media (max-width: 390px) {
-            .merch-page-header { padding-right: 8px; }
-            .merch-cart-btn span { display: none; }
-            .merch-cart-btn { width: 42px; justify-content: center; padding: 8px; }
-        }
-
         .about-container { padding: 20px; max-width: 600px; margin: 0 auto; }
         .about-item { 
             margin-bottom: 30px; 
@@ -1623,7 +1344,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1634,7 +1355,7 @@
 }
 .cal-row:active { transform: scale(0.98); }
 .cal-row.past-row {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png?v=1');
     opacity: 0.85;
 }
 .cal-date {
@@ -1680,7 +1401,7 @@
 .bands-list { padding: 10px 14px 20px 14px; }
 .band-row {
     border-radius: 0;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1688,7 +1409,7 @@
     overflow: hidden;
 }
 .band-row-upcoming {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/yellbutonr.png?v=1');
 }
 .band-row-upcoming .band-head-name { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
 .band-row-upcoming .band-head-sub { color: #000; }
@@ -1811,7 +1532,7 @@ body.gallery-open {
     display: flex;
     align-items: center;
     gap: 14px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbutonr.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     border: none;
@@ -1849,7 +1570,7 @@ body.gallery-open {
     box-sizing: border-box;
 }
 .gallery-section {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/galeriakontajner.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/galeriakontajner.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -1872,7 +1593,7 @@ body.gallery-open {
     margin: 8px 14px 0 14px;
     width: auto;
     padding: 18px 12px;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.webp?v=1');
+    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/celagaleria.png?v=1');
     background-size: 100% 100%;
     background-position: center;
     box-sizing: border-box;
@@ -2149,60 +1870,6 @@ body.gallery-open {
 }
 .msg-submit-btn:active { transform: translate(2px, 2px); box-shadow: 0 2px 6px rgba(0,0,0,0.9); }
 .msg-submit-btn:disabled { opacity: 0.6; }
-
-.merch-success-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 12000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    box-sizing: border-box;
-    background: rgba(0,0,0,0.82);
-}
-.merch-success-overlay.visible { display: flex; }
-.merch-success-card {
-    width: min(100%, 460px);
-    box-sizing: border-box;
-    padding: 34px 24px 28px;
-    text-align: center;
-    border: 1px solid rgba(249,165,9,0.7);
-    background: linear-gradient(to bottom, rgba(20,16,13,0.98), rgba(8,7,6,0.98));
-    box-shadow: 0 15px 50px rgba(0,0,0,0.9);
-}
-.merch-success-icon {
-    color: var(--accent-color);
-    font-size: 3.2rem;
-    margin-bottom: 14px;
-}
-.merch-success-title {
-    color: var(--accent-color);
-    font-size: 2rem;
-    line-height: 1.05;
-    margin-bottom: 18px;
-}
-.merch-success-text {
-    color: #fff;
-    font-size: 1.05rem;
-    line-height: 1.55;
-    letter-spacing: 1px;
-    margin-bottom: 26px;
-}
-.merch-success-home-btn {
-    width: 100%;
-    border: 1px solid #000;
-    background: var(--accent-color);
-    color: #000;
-    padding: 15px 18px;
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-}
-.merch-success-home-btn:active { transform: translate(2px,2px); }
-
 #msg-status {
     margin-top: 16px;
     text-align: center;
@@ -2223,7 +1890,7 @@ body.gallery-open {
     justify-content: center;
     background-image:
         linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.85)),
-        url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.webp?v=1');
+        url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.png?v=1');
     background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -2693,7 +2360,7 @@ body.gallery-open {
     border: 0 !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbuton.webp?v=1') !important;
+    background-image: url('blackbuton.png') !important;
     background-size: 100% 100% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -2705,13 +2372,13 @@ body.gallery-open {
 </style>
 
 <style>
-/* Parkoviská: bluebut.webp bez pôvodného kartového rámika a bez orezania */
+/* Parkoviská: bluebut.png bez pôvodného kartového rámika a bez orezania */
 .map-info-card.parking-info,
 .map-info-card.parking-csob {
     border: 0 !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/bluebut.webp?v=1') !important;
+    background-image: url('bluebut.png') !important;
     background-size: 100% 100% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -2727,7 +2394,7 @@ body.gallery-open {
 <style>
 /* Celé ohraničenie navigácie pre kapely – vrátane tlačidla */
 #furmanka-navigation {
-    background-image: url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blacklong.webp?v=1') !important;
+    background-image: url('blacklong.png') !important;
     background-size: 100% 100% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -2964,7 +2631,7 @@ body.modal-scroll-locked {
         <div class="splash-vinyl-wrap">
             <img
                 class="splash-vinyl-image"
-                src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1"
+                src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.png?v=1"
                 alt="Kôňcerty vinyl">
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
@@ -2998,7 +2665,11 @@ body.modal-scroll-locked {
             <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-about"><i class="fas fa-record-vinyl"></i> O NÁS</div>
             <div role="button" tabindex="0" id="push-btn" class="more-btn" onclick="handlePushButtonClick()"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
             <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-gallery"><i class="fas fa-images"></i> FOTOGALÉRIA</div>
+            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-merch"><i class="fas fa-shirt"></i> NÁŠ MERCH</div>
+            <div role="button" tabindex="0" class="more-btn msg" data-more-screen="screen-message"><i class="fab fa-facebook-messenger"></i> NAPÍŠ NÁM</div>
+            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-contact"><i class="fas fa-phone"></i> KONTAKT</div>
             <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-map"><i class="fas fa-map-marker-alt"></i> MAPA</div>
+            <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-social"><i class="fas fa-thumbs-up"></i> SOCIÁLNE SIETE</div>
             <div role="button" tabindex="0" class="more-btn" data-more-share="1"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
         <div id="app-version-footer">Verzia: 2.1.6</div>
@@ -3032,7 +2703,7 @@ body.modal-scroll-locked {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1" class="main-logo" alt="Logo">
+<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.png?v=1" class="main-logo" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -3053,21 +2724,21 @@ body.modal-scroll-locked {
             <div class="bottom-container">
                 <div class="left-col">
                     <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-about');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/onas.webp?v=1" class="small-btn-img" alt="O Nás">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/onas.png?v=1" class="small-btn-img" alt="O Nás">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch.webp?v=1" class="small-btn-img" alt="Náš Merch">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch.png?v=1" class="small-btn-img" alt="Náš Merch">
                     </div>
                 </div>
                 <div class="right-col">
-                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1" class="small-btn-img" alt="Mapa">
-                    </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-contact');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1" class="small-btn-img" alt="Kontakt">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.png?v=1" class="small-btn-img" alt="Kontakt">
+                    </div>
+                    <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.png?v=1" class="small-btn-img" alt="Mapa">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-social');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1" class="small-btn-img" alt="Social">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.png?v=1" class="small-btn-img" alt="Social">
                     </div>
                 </div>
             </div>
@@ -3107,18 +2778,12 @@ body.modal-scroll-locked {
     </div>
 
     <div id="screen-merch" class="screen">
-        <div class="page-header merch-page-header">
-            <div class="page-title">NÁŠ MERCH</div>
-            <button type="button" class="merch-cart-btn" onclick="openMerchCart()" aria-label="Otvoriť košík">
-                <i class="fas fa-shopping-cart"></i>
-                <span>KOŠÍK</span>
-                <b id="merch-cart-count">0</b>
-            </button>
+        <div class="page-header">
+            <div class="page-title">KÚP SI TO</div>
         </div>
-
         <div class="merch-grid">
           <div class="merch-item">
-            <div class="merch-img" style="height: 150px; flex-basis: 150px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
+            <div class="merch-img" style="height: 250px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
                 <model-viewer 
                     src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb" 
                     camera-controls 
@@ -3132,176 +2797,17 @@ body.modal-scroll-locked {
                 </model-viewer>
             </div>
             <div class="merch-name">TRIČKO (3D NÁHĽAD)</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 15 €</div>
+            <div class="merch-price">15 €</div>
           </div>
           <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty%20001.webp" alt="ODZNAK 25MM 001" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 001</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty002.webp" alt="ODZNAK 25MM 002" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 002</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty003.webp" alt="ODZNAK 25MM 003" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 003</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty004.webp" alt="ODZNAK 25MM 004" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 004</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty005.webp" alt="ODZNAK 25MM 005" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 005</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty006.webp" alt="ODZNAK 25MM 006" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 006</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty007.webp" alt="ODZNAK 25MM 007" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 007</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty008.webp" alt="ODZNAK 25MM 008" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 25MM 008</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty%20001.webp" alt="ODZNAK 37MM 001" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 001</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty002.webp" alt="ODZNAK 37MM 002" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 002</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty003.webp" alt="ODZNAK 37MM 003" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 003</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty004.webp" alt="ODZNAK 37MM 004" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 004</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty005.webp" alt="ODZNAK 37MM 005" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 005</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty006.webp" alt="ODZNAK 37MM 006" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 006</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty007.webp" alt="ODZNAK 37MM 007" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 007</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/koncerty008.webp" alt="ODZNAK 37MM 008" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">ODZNAK 37MM 008</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 1 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/nasivkakoncerty.webp" alt="NÁŠIVKA KÔŇCERTY" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">NÁŠIVKA KÔŇCERTY</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 4 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/nalepkakoncerty.webp" alt="NÁLEPKA KÔŇCERTY" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">NÁLEPKA KÔŇCERTY</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/nalepkakoncertykonska.webp" alt="NÁLEPKA KÔŇCERTY-KONSKÁ" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">NÁLEPKA KÔŇCERTY-KONSKÁ</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
-          </div>
-          <div class="merch-item">
-            <div class="merch-img merch-product-image">
-                <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/merch/nalepkafurmanka.webp" alt="NÁLEPKA FURMANKA" loading="lazy" decoding="async">
-            </div>
-            <div class="merch-name">NÁLEPKA FURMANKA</div>
-            <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 0,50 €</div>
+                <div class="merch-img"><i class="fas fa-hat-cowboy fa-3x"></i></div>
+                <div class="merch-name">ŠILTOVKA</div>
+                <div class="merch-price">12 €</div>
           </div>
         </div>
-
-        <p class="merch-contribution-note">
-            MERCH POSKYTUJEME V RÁMCI DOBROVOĽNÉHO PRÍSPEVKU. UVEDENÉ SUMY SÚ LEN ODPORÚČANÉ VÝŠKY PRÍSPEVKU.
+        <p style="text-align:center; color:#fff; margin-top:30px; font-size: 1.2rem; background: rgba(0,0,0,0.5); padding: 10px;">
+            PÝTAJ SI NA BARE.
         </p>
-    </div>
-
-    <div id="merch-cart-overlay" class="merch-cart-overlay" aria-hidden="true">
-        <div class="merch-cart-panel">
-            <div class="merch-cart-head">
-                <div class="merch-cart-title">TVOJ KOŠÍK</div>
-                <button type="button" class="merch-cart-close" onclick="closeMerchCart()" aria-label="Zavrieť košík">
-                    <i class="fas fa-xmark"></i>
-                </button>
-            </div>
-            <div id="merch-cart-items" class="merch-cart-items">
-                <div class="merch-cart-empty">KOŠÍK JE ZATIAĽ PRÁZDNY.</div>
-            </div>
-            <div class="merch-cart-footer">
-                <div class="merch-cart-total-row">
-                    <span>ODPORÚČANÝ PRÍSPEVOK SPOLU</span>
-                    <strong id="merch-cart-total">0,00 €</strong>
-                </div>
-                <button type="button" class="merch-cart-checkout" onclick="checkoutMerchCart()">POKRAČOVAŤ K ŽIADOSTI</button>
-                <button type="button" class="merch-cart-clear" onclick="clearMerchCart()">VYPRÁZDNIŤ KOŠÍK</button>
-                <div class="merch-cart-note">VÝBER NIE JE KÚPA. IDE O ŽIADOSŤ O MERCH V RÁMCI DOBROVOĽNÉHO PRÍSPEVKU. SUMA JE LEN ODPORÚČANIE.</div>
-            </div>
-        </div>
     </div>
 
     <div id="screen-gallery" class="screen">
@@ -3313,26 +2819,16 @@ body.modal-scroll-locked {
         </div>
     </div>
 
-    <div id="screen-contact" class="screen">
+    <div id="screen-message" class="screen">
         <div class="page-header">
-            <div class="page-title">KONTAKT</div>
+            <div class="page-title">NAPÍŠ NÁM</div>
         </div>
         <form id="message-form" class="msg-form" onsubmit="return submitMessageForm(event)">
-            <p id="contact-intro" class="msg-intro">MÁTE OTÁZKU, TIP, PRIPOMIENKU ALEBO NÁM CHCETE NIEČO OZNÁMIŤ? NAPÍŠTE NÁM. RADI SI PREČÍTAME, ČO MÁTE NA SRDCI.</p>
-            <button type="button" id="merch-back-to-cart" class="merch-back-to-cart" style="display:none" onclick="returnToMerchCart()">SPÄŤ NA KOŠÍK</button>
-            <div id="merch-order-summary" class="merch-order-summary">
-                <div class="merch-order-summary-title">VYBRANÝ MERCH</div>
-                <div id="merch-order-summary-items" class="merch-order-summary-items"></div>
-                <div id="merch-order-summary-total" class="merch-order-summary-total"></div>
-                <div class="merch-order-summary-note">TOTO NIE JE KÚPA ANI OBJEDNÁVKA NA PREDAJ. IDE O ŽIADOSŤ O POSKYTNUTIE MERCHU V RÁMCI DOBROVOĽNÉHO PRÍSPEVKU. UVEDENÁ SUMA JE LEN ODPORÚČANÁ.</div>
-            </div>
+            <p class="msg-intro">Bolo to super na koncerte? Máš tip na kapelu? Napíš nám pár riadkov, príde nám to rovno na mail.</p>
             <input type="hidden" name="access_key" value="098bcd63-5ac7-42d3-b832-16444c07caab">
             <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
-            <input type="hidden" name="subject" id="message-subject" value="Nová správa z appky Kôňcerty">
+            <input type="hidden" name="subject" value="Nová správa z appky Kôňcerty">
             <input type="hidden" name="from_name" value="Kôňcerty appka">
-            <input type="hidden" name="request_type" id="request-type" value="SPRÁVA Z KONTAKTNÉHO FORMULÁRA">
-            <input type="hidden" name="merch_items" id="merch-items-field" value="">
-            <input type="hidden" name="recommended_contribution" id="merch-total-field" value="">
             <input type="text" name="name" class="msg-input" placeholder="Tvoje meno (nepovinné)">
             <input type="email" name="email" class="msg-input" placeholder="Tvoj email (ak chceš odpoveď)">
             <textarea name="message" class="msg-textarea" placeholder="Tvoj odkaz..." required></textarea>
@@ -3341,13 +2837,14 @@ body.modal-scroll-locked {
         </form>
     </div>
 
-
-    <div id="merch-success-overlay" class="merch-success-overlay" aria-hidden="true">
-        <div class="merch-success-card">
-            <div class="merch-success-icon"><i class="fas fa-circle-check"></i></div>
-            <div class="merch-success-title">ĎAKUJEME ZA VÁŠ ZÁUJEM!</div>
-            <div class="merch-success-text">VAŠU ŽIADOSŤ O MERCH SME ÚSPEŠNE DOSTALI. ĎAKUJEME ZA PODPORU. OZVEME SA VÁM S ĎALŠÍMI INFORMÁCIAMI.</div>
-            <button type="button" class="merch-success-home-btn" onclick="returnToMerchHome()">NÁVRAT NA HLAVNÚ STRÁNKU</button>
+    <div id="screen-contact" class="screen">
+        <div class="page-header">
+            <div class="page-title">KONTAKT</div>
+        </div>
+        <div style="padding: 20px;">
+            <a href="tel:+4219181212128" class="contact-btn"><i class="fas fa-phone"></i> +421 918 121 2128</a>
+            <a href="mailto:k0ncerty.furmanka@gmail.com" class="contact-btn contact-btn-email"><i class="fas fa-envelope"></i> k0ncerty.furmanka@gmail.com</a>
+            <p style="text-align:center; margin-top:20px; font-size:1.2rem;">Furmanka/Kôňcerty PUB<br>NÁMESTOVO</p>
         </div>
     </div>
 
@@ -3363,7 +2860,7 @@ body.modal-scroll-locked {
         <!-- Klikateľné body pod mapou -->
         <div class="map-info-grid">
 
-            <button type="button" style="background-image:url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/blackbuton.webp?v=1');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card venue-info"
+            <button type="button" style="background-image:url('blackbuton.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card venue-info"
                 onclick="focusFurmankaMapMarker('venue')"
                 aria-label="Zobraziť Furmanku na mape">
                 <span class="map-info-dot"></span>
@@ -3374,7 +2871,7 @@ body.modal-scroll-locked {
             </button>
 
             <button type="button"
-                    style="background-image:url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/bluebut.webp?v=1');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card parking-info"
+                    style="background-image:url('bluebut.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card parking-info"
                     onclick="focusFurmankaMapMarker('parkingBehind')"
                     aria-label="Zobraziť parkovanie Za Furmankou na mape">
                 <span class="map-info-dot"></span>
@@ -3385,7 +2882,7 @@ body.modal-scroll-locked {
             </button>
 
             <button type="button"
-                    style="background-image:url('https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/bluebut.webp?v=1');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card parking-info parking-csob"
+                    style="background-image:url('bluebut.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;" class="map-info-card parking-info parking-csob"
                     onclick="focusFurmankaMapMarker('parkingCsob')"
                     aria-label="Zobraziť parkovanie pri ČSOB na mape">
                 <span class="map-info-dot"></span>
@@ -3507,6 +3004,21 @@ function safeUrl(str) {
     return '';
 }
 
+// Rovnaký kľúč pre názvy kapiel v data.csv a v názvoch fotiek.
+// Napr. "Tri Groše", "tri-grose" a "TRI-GROSE" sa spoja do jednej kapely.
+function normalizeBandKey(str) {
+    return String(str || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/ø/g, 'o').replace(/đ/g, 'd').replace(/ð/g, 'd')
+        .replace(/þ/g, 'th').replace(/ł/g, 'l')
+        .replace(/æ/g, 'ae').replace(/œ/g, 'oe')
+        .replace(/&/g, 'and')
+        .replace(/[’']/g, '')
+        .replace(/[^a-z0-9]/g, '');
+}
+
 function safeSocialUrl(str) {
     if (!str) return '';
     let s = String(str).trim();
@@ -3516,199 +3028,6 @@ function safeSocialUrl(str) {
     if (/^(www\.)?open\.spotify\.com\//i.test(s)) return escapeHtml('https://' + s);
     return '';
 }
-
-/* ===== MERCH KOŠÍK ===== */
-let merchCart = {};
-let merchCheckoutMode = false;
-
-function merchMoney(value) {
-    return Number(value).toFixed(2).replace('.', ',') + ' €';
-}
-
-function initMerchCart() {
-    try {
-        merchCart = JSON.parse(localStorage.getItem('koncerty_merch_cart') || '{}') || {};
-    } catch (e) {
-        merchCart = {};
-    }
-
-    document.querySelectorAll('#screen-merch .merch-item').forEach((item, index) => {
-        if (item.querySelector('.merch-add-btn')) return;
-        const nameEl = item.querySelector('.merch-name');
-        const priceEl = item.querySelector('.merch-price');
-        if (!nameEl || !priceEl) return;
-
-        const name = nameEl.textContent.trim();
-        const price = parseFloat(priceEl.textContent.replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
-        const buyRow = document.createElement('div');
-        buyRow.className = 'merch-buy-row';
-        buyRow.innerHTML = `
-            <div class="merch-choose-qty" aria-label="Počet kusov">
-                <button type="button" class="merch-product-qty-btn" aria-label="Znížiť počet">−</button>
-                <span class="merch-product-qty">1</span>
-                <button type="button" class="merch-product-qty-btn" aria-label="Zvýšiť počet">+</button>
-            </div>
-            <button type="button" class="merch-add-btn">PRIDAŤ DO KOŠÍKA</button>
-        `;
-        const qtyEl = buyRow.querySelector('.merch-product-qty');
-        const [minusBtn, plusBtn] = buyRow.querySelectorAll('.merch-product-qty-btn');
-        const addBtn = buyRow.querySelector('.merch-add-btn');
-        let selectedQty = 1;
-        minusBtn.onclick = function () {
-            selectedQty = Math.max(1, selectedQty - 1);
-            qtyEl.textContent = selectedQty;
-        };
-        plusBtn.onclick = function () {
-            selectedQty = Math.min(99, selectedQty + 1);
-            qtyEl.textContent = selectedQty;
-        };
-        addBtn.onclick = function () {
-            addToMerchCart(name, price, selectedQty);
-        };
-        item.appendChild(buyRow);
-    });
-
-    renderMerchCart();
-}
-
-function saveMerchCart() {
-    localStorage.setItem('koncerty_merch_cart', JSON.stringify(merchCart));
-}
-
-function addToMerchCart(name, price, quantity = 1) {
-    buzz();
-    quantity = Math.max(1, Math.min(99, parseInt(quantity, 10) || 1));
-    if (!merchCart[name]) merchCart[name] = { price: price, qty: 0 };
-    merchCart[name].qty += quantity;
-    saveMerchCart();
-    renderMerchCart();
-    showToast(name + ' × ' + quantity + ' PRIDANÉ DO KOŠÍKA');
-}
-
-function changeMerchQty(name, delta) {
-    if (!merchCart[name]) return;
-    merchCart[name].qty += delta;
-    if (merchCart[name].qty <= 0) delete merchCart[name];
-    saveMerchCart();
-    renderMerchCart();
-}
-
-function clearMerchCart() {
-    merchCart = {};
-    saveMerchCart();
-    renderMerchCart();
-}
-
-function renderMerchCart() {
-    const itemsEl = document.getElementById('merch-cart-items');
-    const countEl = document.getElementById('merch-cart-count');
-    const totalEl = document.getElementById('merch-cart-total');
-    if (!itemsEl || !countEl || !totalEl) return;
-
-    const entries = Object.entries(merchCart).filter(([, item]) => item && item.qty > 0);
-    const count = entries.reduce((sum, [, item]) => sum + item.qty, 0);
-    const total = entries.reduce((sum, [, item]) => sum + item.price * item.qty, 0);
-    countEl.textContent = count;
-    totalEl.textContent = merchMoney(total);
-
-    if (!entries.length) {
-        itemsEl.innerHTML = '<div class="merch-cart-empty">KOŠÍK JE ZATIAĽ PRÁZDNY.</div>';
-        return;
-    }
-
-    itemsEl.innerHTML = entries.map(([name, item]) => `
-        <div class="merch-cart-row">
-            <div>
-                <div class="merch-cart-row-name">${escapeHtml(name)}</div>
-                <div class="merch-cart-row-price">${merchMoney(item.price)} / KS</div>
-            </div>
-            <div class="merch-cart-controls">
-                <button type="button" class="merch-qty-btn" onclick="changeMerchQty(${JSON.stringify(name)}, -1)">−</button>
-                <span class="merch-qty">${item.qty}</span>
-                <button type="button" class="merch-qty-btn" onclick="changeMerchQty(${JSON.stringify(name)}, 1)">+</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function merchCartSummaryText() {
-    const entries = Object.entries(merchCart).filter(([, item]) => item && item.qty > 0);
-    return entries.map(([name, item]) => `${name} × ${item.qty} = ${merchMoney(item.price * item.qty)}`).join('\n');
-}
-
-function checkoutMerchCart() {
-    const entries = Object.entries(merchCart).filter(([, item]) => item && item.qty > 0);
-    if (!entries.length) {
-        showToast('KOŠÍK JE PRÁZDNY');
-        return;
-    }
-
-    buzz();
-    closeMerchCart();
-    merchCheckoutMode = true;
-
-    const total = entries.reduce((sum, [, item]) => sum + item.price * item.qty, 0);
-    const summary = document.getElementById('merch-order-summary');
-    const summaryItems = document.getElementById('merch-order-summary-items');
-    const summaryTotal = document.getElementById('merch-order-summary-total');
-    const backBtn = document.getElementById('merch-back-to-cart');
-    const intro = document.getElementById('contact-intro');
-    const requestType = document.getElementById('request-type');
-    const merchItemsField = document.getElementById('merch-items-field');
-    const merchTotalField = document.getElementById('merch-total-field');
-
-    if (summary && summaryItems && summaryTotal) {
-        summaryItems.innerHTML = entries.map(([name, item]) =>
-            `<div>${escapeHtml(name)} × ${item.qty} — ${merchMoney(item.price * item.qty)}</div>`
-        ).join('');
-        summaryTotal.textContent = `ODPORÚČANÝ PRÍSPEVOK SPOLU: ${merchMoney(total)}`;
-        summary.classList.add('visible');
-    }
-    if (backBtn) backBtn.style.display = 'block';
-    if (intro) intro.textContent = 'CHCETE SI VYZDVIHNÚŤ NIEKTORÝ Z NÁŠHO MERCHU? VYPLŇTE KONTAKT A POŠLITE NÁM ŽIADOSŤ. OZVEME SA VÁM A DOHODNEME SA NA PREVZATÍ.';
-    if (requestType) requestType.value = 'ŽIADOSŤ O MERCH / DOBROVOĽNÝ PRÍSPEVOK';
-    const subject = document.getElementById('message-subject');
-    if (subject) subject.value = 'Žiadosť o merch z appky Kôňcerty';
-    if (merchItemsField) merchItemsField.value = merchCartSummaryText();
-    if (merchTotalField) merchTotalField.value = merchMoney(total);
-
-    history.pushState({ screen: 'screen-contact', merchCheckout: true }, '', '#screen-contact');
-    showScreen('screen-contact');
-}
-
-function returnToMerchCart() {
-    buzz();
-    openMerchCart();
-}
-
-function openMerchCart() {
-    buzz();
-    const overlay = document.getElementById('merch-cart-overlay');
-    if (!overlay) return;
-    renderMerchCart();
-    overlay.classList.add('open');
-    overlay.setAttribute('aria-hidden', 'false');
-    lockBodyScroll();
-}
-
-function closeMerchCart() {
-    const overlay = document.getElementById('merch-cart-overlay');
-    if (!overlay) return;
-    overlay.classList.remove('open');
-    overlay.setAttribute('aria-hidden', 'true');
-    unlockBodyScroll();
-}
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('merch-cart-overlay')?.classList.contains('open')) {
-        closeMerchCart();
-    }
-});
-
-document.addEventListener('click', function(e) {
-    const overlay = document.getElementById('merch-cart-overlay');
-    if (overlay && e.target === overlay) closeMerchCart();
-});
 
 function buzz(ms) {
     if (navigator.vibrate) { try { navigator.vibrate(ms || 12); } catch(e) {} }
@@ -3767,7 +3086,6 @@ function unlockBodyScroll() {
 
 function handleButtonClick(screenId) {
     buzz();
-    merchCheckoutMode = false;
     const modalOpen = document.getElementById('modal-overlay').style.display === 'flex';
     if (modalOpen) hideModalNow();
     setTimeout(function() {
@@ -3776,28 +3094,7 @@ function handleButtonClick(screenId) {
     }, 200);
 }
 
-function resetMerchCheckoutView() {
-    merchCheckoutMode = false;
-    const summary = document.getElementById('merch-order-summary');
-    const backBtn = document.getElementById('merch-back-to-cart');
-    const intro = document.getElementById('contact-intro');
-    const requestType = document.getElementById('request-type');
-    const merchItemsField = document.getElementById('merch-items-field');
-    const merchTotalField = document.getElementById('merch-total-field');
-    if (summary) summary.classList.remove('visible');
-    if (backBtn) backBtn.style.display = 'none';
-    if (intro) intro.textContent = 'MÁTE OTÁZKU, TIP, PRIPOMIENKU ALEBO NÁM CHCETE NIEČO OZNÁMIŤ? NAPÍŠTE NÁM. RADI SI PREČÍTAME, ČO MÁTE NA SRDCI.';
-    if (requestType) requestType.value = 'SPRÁVA Z KONTAKTNÉHO FORMULÁRA';
-    const subject = document.getElementById('message-subject');
-    if (subject) subject.value = 'Nová správa z appky Kôňcerty';
-    if (merchItemsField) merchItemsField.value = '';
-    if (merchTotalField) merchTotalField.value = '';
-}
-
 function showScreen(screenId) {
-    if (screenId !== 'screen-contact' || !merchCheckoutMode) {
-        resetMerchCheckoutView();
-    }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     activeScreenId = screenId;
@@ -3823,6 +3120,7 @@ function showScreen(screenId) {
         'screen-calendar': 'screen-calendar',
         'screen-bands': 'screen-bands',
         'screen-more': 'screen-more',
+        'screen-message': 'screen-more',
         'screen-gallery': 'screen-more',
         'screen-about': 'screen-more',
         'screen-merch': 'screen-more',
@@ -3848,26 +3146,6 @@ function hideModalNow() {
     window.scrollTo(0, window.__modalScrollY || 0);
 }
 
-
-function showMerchSuccess() {
-    const overlay = document.getElementById('merch-success-overlay');
-    if (overlay) {
-        overlay.classList.add('visible');
-        overlay.setAttribute('aria-hidden', 'false');
-    }
-}
-
-function returnToMerchHome() {
-    buzz();
-    const overlay = document.getElementById('merch-success-overlay');
-    if (overlay) {
-        overlay.classList.remove('visible');
-        overlay.setAttribute('aria-hidden', 'true');
-    }
-    showScreen('screen-home');
-    history.pushState({ screen: 'screen-home' }, '', '#screen-home');
-}
-
 async function submitMessageForm(e) {
     e.preventDefault();
     const form = e.target;
@@ -3889,18 +3167,9 @@ async function submitMessageForm(e) {
         const data = await res.json();
         if (data.success) {
             buzz();
-            const wasMerchRequest = document.getElementById('request-type')?.value === 'ŽIADOSŤ O MERCH / DOBROVOĽNÝ PRÍSPEVOK';
             form.reset();
-            if (wasMerchRequest) {
-                clearMerchCart();
-                resetMerchCheckoutView();
-                statusEl.textContent = '';
-                statusEl.className = '';
-                showMerchSuccess();
-            } else {
-                statusEl.textContent = 'ĎAKUJEME! ODKAZ SME DOSTALI.';
-                statusEl.className = 'msg-status-ok';
-            }
+            statusEl.textContent = 'ĎAKUJEME! ODKAZ SME DOSTALI.';
+            statusEl.className = 'msg-status-ok';
         } else {
             throw new Error(data.message || 'Odoslanie zlyhalo');
         }
@@ -4051,12 +3320,6 @@ async function installApp() {
     alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMerchCart);
-} else {
-    initMerchCart();
-}
-
 window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
@@ -4073,7 +3336,7 @@ window.addEventListener('appinstalled', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=3').catch(() => {});
+        navigator.serviceWorker.register('sw.js').catch(() => {});
     });
 }
 
@@ -4372,47 +3635,13 @@ const clean = cols.map(c =>
                 if (!entry.spotify && b.spotify) entry.spotify = b.spotify;
                 if (!entry.facebook && b.facebook) entry.facebook = b.facebook;
 
-                // ===== AUTOMATICKÉ LOGÁ KAPIEL =====
-                // Stačí nahrať logo do GitHubu do priečinka /logo/
-                // a pomenovať ho podľa názvu kapely:
-                // napr. Kuca-Paca -> kuca-paca.webp
-                //      Skacowani -> skacowani.webp
-                //      Cascabel -> cascabel.webp
-                //
-                // Diakritika, medzery a bežné špeciálne znaky sa automaticky
-                // prevedú na jednoduchý názov súboru.
                 const bandLogoMap = {
-                    // Tu môžeš mať výnimky, ak názov súboru nechceš podľa názvu kapely.
-                    'cascabel': 'cascabel.webp'
+                    'cascabel': 'cascabel.png'
                 };
-
-                function makeBandLogoFileName(bandName) {
-                    return bandName
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                        // NFD neprevedie napr. Ø, preto ho prevedieme ručne.
-                        .replace(/ø/g, 'o')
-                        .replace(/đ/g, 'd')
-                        .replace(/ð/g, 'd')
-                        .replace(/þ/g, 'th')
-                        .replace(/ł/g, 'l')
-                        .replace(/æ/g, 'ae')
-                        .replace(/œ/g, 'oe')
-                        .replace(/&/g, 'and')
-                        .replace(/[’']/g, '')
-                        // Názvy log sú bez medzier, pomlčiek a ostatných znakov:
-                        // "The Plan C" -> "theplanc.webp"
-                        // "Mr. Teddy & Sidekicks" -> "mrteddyandsidekicks.webp"
-                        .replace(/[^a-z0-9]/g, '') + '.png';
+                const logoFile = bandLogoMap[key];
+                if (logoFile) {
+                    entry.logo = 'https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/logo/' + logoFile + '?v=1';
                 }
-
-                const logoFile = bandLogoMap[key] || makeBandLogoFileName(b.name.trim());
-
-                // Logo sa pripraví pre každú kapelu automaticky.
-                // Ak súbor v /logo/ ešte nie je, obrázok sa pri otvorení
-                // detailu jednoducho nezobrazí.
-                entry.logo = 'https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/logo/' + logoFile + '?v=1';
             });
         });
 
@@ -4568,53 +3797,79 @@ initCarouselObserver();
     const GALLERY_PREVIEW_LIMIT = 3;
     const galleryGrid = document.getElementById('gallery-grid');
     window.galleryGroups = {};
-    try {
-        let txt;
+    window.bandGalleryGroups = {};
+
+    // FOTOGALÉRIA SA UŽ NEOPIERA O RUČNE UDRŽIAVANÝ galeria.csv.
+    // Zložka /fotky/ na GitHube je jediný zdroj pravdy.
+    // Názov súboru určuje dátum a prípadne kapelu:
+    //   2022-02-09.webp             -> 2.9.2022, všeobecná fotka
+    //   2022-02-09 (1).webp        -> 2.9.2022, všeobecná fotka
+    //   2022-02-09-brmbolce.webp   -> 2.9.2022, fotka Brmbolce
+    //   2022-02-09-brmbolce (1).webp -> ďalšia fotka Brmbolce
+    // Formát dátumu je ROK-DEŇ-MESIAC.
+    async function loadGalleryFromGitHub() {
+        const apiUrl = 'https://api.github.com/repos/koncerty-furmanka/koncerty/contents/fotky?ref=main';
+        let files = null;
         try {
-            const resp = await fetch(galleryUrl + "?t=" + Date.now());
-            if (!resp.ok) throw new Error("galeria.csv zatiaľ neexistuje");
-            txt = await resp.text();
-            localStorage.setItem('koncerty_cache_gallery', txt);
-        } catch (fetchErr) {
-            const cached = localStorage.getItem('koncerty_cache_gallery');
-            if (!cached) throw fetchErr;
-            txt = cached;
+            const resp = await fetch(apiUrl + '&t=' + Date.now(), {
+                headers: { 'Accept': 'application/vnd.github+json' },
+                cache: 'no-store'
+            });
+            if (!resp.ok) throw new Error('GitHub API HTTP ' + resp.status);
+            files = await resp.json();
+            if (!Array.isArray(files)) throw new Error('GitHub API nevrátil zoznam fotiek');
+            localStorage.setItem('koncerty_gallery_files', JSON.stringify(files));
+            localStorage.setItem('koncerty_gallery_files_time', String(Date.now()));
+        } catch (e) {
+            try {
+                files = JSON.parse(localStorage.getItem('koncerty_gallery_files') || '[]');
+            } catch (_) { files = []; }
+            if (!files.length) throw e;
         }
-        const rows = txt.trim().split(/\r?\n/);
-        const delim = detectCsvDelimiter(rows[0]);
-        const headers = splitCsvRow(rows[0], delim).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
-        const uIdx = headers.indexOf('url');
-        const pIdx = headers.indexOf('popis');
-        const dIdx = headers.indexOf('datum');
 
         const groups = new Map();
-        for (let i = 1; i < rows.length; i++) {
-            if (!rows[i].trim()) continue;
-            const cols = splitCsvRow(rows[i], delim).map(c => c ? c.replace(/^"|"$/g, '').replace(/\r/g, '').trim() : '');
-            const url = cols[uIdx];
-            const popis = pIdx > -1 ? cols[pIdx] : '';
-            const datum = dIdx > -1 ? cols[dIdx] : '';
-            if (!url || !safeUrl(url)) continue;
-            const key = datum || '';
-            if (!groups.has(key)) groups.set(key, []);
-            groups.get(key).push({ url, popis });
+        const bandGroups = new Map();
+        const filenameRe = /^(\d{4})-(\d{2})-(\d{2})(?:-([^()]+?))?(?:\s*\(\d+\))?\.webp$/i;
+
+        for (const file of files) {
+            if (!file || file.type !== 'file' || !/\.webp$/i.test(file.name || '')) continue;
+            const m = (file.name || '').match(filenameRe);
+            if (!m) continue;
+
+            const year = parseInt(m[1], 10);
+            const day = parseInt(m[2], 10);
+            const month = parseInt(m[3], 10);
+            const bandRaw = (m[4] || '').trim();
+            const date = `${day}.${month}.${year}`;
+            const url = file.download_url || `https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/fotky/${encodeURIComponent(file.name)}`;
+            if (!safeUrl(url)) continue;
+
+            const photo = { url, popis: bandRaw ? bandRaw : '', filename: file.name, band: bandRaw };
+            if (!groups.has(date)) groups.set(date, []);
+            groups.get(date).push(photo);
+
+            if (bandRaw) {
+                const bandKey = normalizeBandKey(bandRaw);
+                if (!bandGroups.has(bandKey)) bandGroups.set(bandKey, []);
+                bandGroups.get(bandKey).push(photo);
+            }
         }
 
-        const dateKeys = [...groups.keys()].filter(k => k);
-        dateKeys.sort((a, b) => {
-            const da = parseEventDate(a) || new Date(0);
-            const db = parseEventDate(b) || new Date(0);
-            return db - da;
-        });
-        const orderedKeys = [...dateKeys, ...(groups.has('') ? [''] : [])];
+        // Stabilné zoradenie: prirodzene podľa názvu súboru.
+        for (const photos of groups.values()) photos.sort((a,b) => a.filename.localeCompare(b.filename, undefined, {numeric:true, sensitivity:'base'}));
+        for (const photos of bandGroups.values()) photos.sort((a,b) => a.filename.localeCompare(b.filename, undefined, {numeric:true, sensitivity:'base'}));
 
-        let html = "";
-        orderedKeys.forEach(key => {
-            const photos = groups.get(key);
-            const gid = key || '__other__';
-            const heading = key
-                ? `${escapeHtml(window.eventTitleByDate && window.eventTitleByDate[key] ? window.eventTitleByDate[key] : 'KONCERT')}<span class="sub">${escapeHtml(key)}</span>`
-                : `OSTATNÉ FOTKY`;
+        // Najprv vytvoríme skupiny kapiel. Takto sa fotky zobrazia aj v detaile kapely.
+        window.bandGalleryGroups = Object.fromEntries([...bandGroups.entries()]);
+
+        const dateKeys = [...groups.keys()];
+        dateKeys.sort((a, b) => (parseEventDate(b) || new Date(0)) - (parseEventDate(a) || new Date(0)));
+
+        let html = '';
+        dateKeys.forEach(key => {
+            const photos = groups.get(key) || [];
+            const gid = key;
+            const heading = `${escapeHtml(window.eventTitleByDate && window.eventTitleByDate[key] ? window.eventTitleByDate[key] : 'KONCERT')}<span class="sub">${escapeHtml(key)}</span>`;
             html += `<div class="gallery-section"><div class="gallery-section-title">${heading}</div><div class="gallery-grid">`;
 
             const poster = key && window.eventPosterByDate ? window.eventPosterByDate[key] : null;
@@ -4625,21 +3880,20 @@ initCarouselObserver();
             window.galleryGroups[gid] = gPhotos;
 
             if (hasPoster) {
-                html += `<div class="gallery-item gallery-poster-tile" onclick="openLightbox('${gid}', 0)"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
+                html += `<div class="gallery-item gallery-poster-tile" data-group="${escapeHtml(gid)}" data-index="0"><img src="${safeUrl(poster)}" loading="lazy" decoding="async" alt="Plagát koncertu"></div>`;
                 gPhotos.slice(1, 3).forEach((p, idx) => {
-                    html += `<div class="gallery-item" data-group="${gid}" data-index="${idx + 1}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
+                    html += `<div class="gallery-item" data-group="${escapeHtml(gid)}" data-index="${idx + 1}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
                 });
                 html += `</div>`;
                 if (photos.length > 0) {
-                    html += `<div role="button" tabindex="0" class="gallery-view-all-btn" onclick="openEventGalleryCarousel('${gid}')"><i class="fas fa-images"></i> POZRIEŤ CELÚ GALÉRIU (${photos.length})</div>`;
+                    html += `<div role="button" tabindex="0" class="gallery-view-all-btn" onclick="openEventGalleryCarousel('${escapeHtml(gid)}')"><i class="fas fa-images"></i> POZRIEŤ CELÚ GALÉRIU (${photos.length})</div>`;
                 }
             } else {
-                photos.forEach((p, idx) => {
-                    const extra = idx >= GALLERY_PREVIEW_LIMIT ? ' gallery-item-extra" style="display:none;' : '';
-                    html += `<div class="gallery-item${extra}" data-group="${gid}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
+                photos.slice(0, GALLERY_PREVIEW_LIMIT).forEach((p, idx) => {
+                    html += `<div class="gallery-item" data-group="${escapeHtml(gid)}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`;
                 });
                 if (photos.length > GALLERY_PREVIEW_LIMIT) {
-                    html += `<div class="gallery-item gallery-more-tile"><span>+${photos.length - GALLERY_PREVIEW_LIMIT}</span><small>ĎALŠIE</small></div>`;
+                    html += `<div role="button" tabindex="0" class="gallery-item gallery-more-tile" data-gallery-more="${escapeHtml(gid)}"><span>+${photos.length - GALLERY_PREVIEW_LIMIT}</span><small>ĎALŠIE</small></div>`;
                 }
                 html += `</div>`;
             }
@@ -4649,8 +3903,13 @@ initCarouselObserver();
         galleryGrid.outerHTML = html
             ? `<div id="gallery-grid" class="gallery-sections">${html}</div>`
             : `<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>`;
+    }
+
+    try {
+        await loadGalleryFromGitHub();
     } catch (e) {
-        if (galleryGrid) galleryGrid.outerHTML = '<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Zatiaľ tu nemáme žiadne fotky z koncertov.</div></div>';
+        console.warn('Galéria sa nepodarila načítať:', e);
+        if (galleryGrid) galleryGrid.outerHTML = '<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">Galériu sa nepodarilo načítať.</div></div>';
     }
 }
 
@@ -4672,34 +3931,63 @@ function initCarouselObserver() {
 function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
     buzz();
     const modalBody = document.getElementById('modal-content-body');
-    
+    const bandKey = normalizeBandKey(name);
+    const bandPhotos = (window.bandGalleryGroups && window.bandGalleryGroups[bandKey]) || [];
+    const bandGalleryId = 'band:' + bandKey;
+
+    if (bandPhotos.length) {
+        window.galleryGroups[bandGalleryId] = bandPhotos;
+    }
+
     let html = `
-        ${logo ? `<div class="band-detail-logo"><img src="${safeUrl(logo)}" alt="Logo ${escapeHtml(name)}" loading="eager" onerror="this.parentElement.remove()"></div>` : ''}
+        ${logo ? `<div class="band-detail-logo"><img src="${safeUrl(logo)}" alt="Logo ${escapeHtml(name)}" loading="eager"></div>` : ''}
         <div class="modal-title">${escapeHtml(name)}</div>
         ${city || style ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(city || '')} ${style ? '• ' + escapeHtml(style) : ''}</div>` : ''}
         <div class="modal-desc">
             ${bio ? `<div class="band-bio">${escapeHtml(bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
             <div class="band-links" style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center;">
-                ${safeSocialUrl(spotify) ? `<a href="${safeSocialUrl(spotify)}" target="_blank" rel="noopener noreferrer" class="band-link-btn spotify band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp';"></a>` : ''}
+                ${safeSocialUrl(spotify) ? `<a href="${safeSocialUrl(spotify)}" target="_blank" rel="noopener noreferrer" class="band-link-btn spotify band-image-btn"><img src="spotbut.png" alt="Spotify"></a>` : ''}
+                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="fbbut.png" alt="Facebook" onerror="this.onerror=null;this.src='fb.png';"></a>` : ''}
             </div>
         </div>
+        ${bandPhotos.length ? `
+            <div class="band-photo-gallery">
+                <div class="event-gallery-heading"><i class="fas fa-images"></i> FOTOGALÉRIA KAPELY</div>
+                <div class="event-gallery-strip">
+                    ${bandPhotos.slice(0, 6).map((p, idx) => `<div class="strip-photo" data-group="${escapeHtml(bandGalleryId)}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(name)}"></div>`).join('')}
+                </div>
+                ${bandPhotos.length > 6 ? `<div role="button" tabindex="0" class="gallery-view-all-btn" onclick="openBandGalleryCarousel('${escapeHtml(bandGalleryId)}', '${escapeHtml(name).replace(/'/g, '&#39;')}')"><i class="fas fa-images"></i> POZRIEŤ VŠETKY FOTKY (${bandPhotos.length})</div>` : ''}
+            </div>
+        ` : ''}
         <div class="modal-buttons">
             <button class="btn btn-share" onclick="shareBand('${escapeHtml(name)}')"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>
         </div>
     `;
-    
-    modalBody.innerHTML = html;
 
-    // Zamkni scroll hlavnej stránky, ale samotný modal nechaj scrollovateľný.
+    modalBody.innerHTML = html;
     window.__modalScrollY = window.scrollY || window.pageYOffset || 0;
     document.documentElement.classList.add('modal-scroll-locked');
     document.body.classList.add('modal-scroll-locked');
     document.body.style.top = `-${window.__modalScrollY}px`;
-
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('modal-overlay').scrollTop = 0;
     history.pushState({ screen: activeScreenId, modal: true }, "", "#band-detail");
+}
+
+function openBandGalleryCarousel(gid, bandName) {
+    const photos = (window.galleryGroups && window.galleryGroups[gid]) || [];
+    if (!photos.length) return;
+    const carousel = document.getElementById('event-gallery-carousel');
+    const title = document.getElementById('event-gallery-title');
+    title.textContent = (bandName || 'KAPELA') + ' — FOTOGALÉRIA';
+    carousel.innerHTML = '<div style="flex: 0 0 17.5%;"></div>' + photos.map((p, idx) =>
+        `<div class="carousel-card event-gallery-card" onclick="closeEventGalleryCarousel(); openLightbox('${escapeHtml(gid)}', ${idx});">
+            <img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka kapely')}">
+        </div>`
+    ).join('') + '<div style="flex: 0 0 17.5%;"></div>';
+    document.getElementById('event-gallery-overlay').classList.add('active');
+    carousel.scrollLeft = 0;
+    setTimeout(initCarouselObserver, 50);
 }
 
 // ===== ZDIEĽANIE KAPELY =====
@@ -4983,8 +4271,8 @@ function openDetailData(encodedData) {
     if (data.bands && data.bands.length > 0) {
         bandsHtml = `<div class="modal-desc">`;
         data.bands.forEach(band => {
-            bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp" alt="Facebook"></a>` : ''}</div>`;
+            bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="spotbut.png" alt="Spotify"></a>` : ''}
+${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="fbbut.png" alt="Facebook"></a>` : ''}</div>`;
         });
         bandsHtml += `</div>`;
     }
@@ -5113,7 +4401,6 @@ window.addEventListener("popstate", function(event) {
     }
     hideModalNow();
     const targetScreen = (event.state && event.state.screen) ? event.state.screen : 'screen-home';
-    merchCheckoutMode = !!(event.state && event.state.merchCheckout);
     if (targetScreen !== activeScreenId) {
         showScreen(targetScreen);
     }
@@ -5129,7 +4416,7 @@ function openEventGalleryCarousel(gid) {
     
     const grid = document.getElementById('event-gallery-carousel');
     const title = document.getElementById('event-gallery-title');
-    title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || 'GALÉRIA';
+    title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || (gid && String(gid).startsWith('band:') ? 'FOTOGALÉRIA KAPELY' : 'GALÉRIA');
     grid.innerHTML = photos.map((p, idx) =>
         `<div class="gallery-item${p.isPoster ? ' gallery-poster-tile' : ''}" onclick="openLightbox('${gid}', ${idx});">
             <img src="${safeUrl(p.url)}" loading="lazy" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
@@ -5363,6 +4650,12 @@ document.addEventListener('click', function(e) {
         moreTile.remove();
         return;
     }
+    const more = e.target.closest('.gallery-more-tile[data-gallery-more]');
+    if (more) {
+        const group = more.getAttribute('data-gallery-more');
+        if (group) openEventGalleryCarousel(group);
+        return;
+    }
     const photo = e.target.closest('.gallery-item, .strip-photo');
     if (!photo) return;
     const group = photo.getAttribute('data-group');
@@ -5479,7 +4772,6 @@ if (spotifyPlaylistUrl) {
             // ktorý bol príčinou nefunkčných tlačidiel.
             try {
                 if (typeof showScreen === 'function') {
-                    merchCheckoutMode = false;
                     showScreen(target);
                     history.pushState({ screen: target }, "", "#" + target);
                 }
