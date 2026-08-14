@@ -4813,6 +4813,15 @@ initCarouselObserver();
             }
         });
 
+        // Prednačítanie celej fotogalérie pred jej vykreslením.
+        const preloadUrls = imageFiles.map(file => 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/' + encodeURIComponent(file.name) + '?v=1');
+        const uniquePreloadUrls = [...new Set(preloadUrls)];
+        await Promise.all(uniquePreloadUrls.map(url => new Promise(resolve => {
+            const img = new Image();
+            img.onload = img.onerror = () => resolve();
+            img.src = url;
+        })));
+
         // Zoradenie podľa názvu súboru dáva 2022-... (1), (2), (3)...
         for (const photos of eventPhotosByDate.values()) {
             photos.sort((a, b) => a.filename.localeCompare(b.filename, 'sk', { numeric: true }));
