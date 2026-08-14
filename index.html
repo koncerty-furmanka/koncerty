@@ -4178,7 +4178,7 @@ async function shareEvent() {
     const e = window.currentEvent;
     if (!e) return;
     const txt = (e.title || 'Koncert') + ' • ' + e.date + (e.time ? (' o ' + e.time) : '') + ' • Furmanka Námestovo';
-    const url = location.href.split('#')[0];
+    const url = location.href;
     try {
         if (navigator.share) { await navigator.share({ title: 'Kôňcerty', text: txt, url: url }); }
         else { await navigator.clipboard.writeText(txt + ' ' + url); alert('Skopírované do schránky!'); }
@@ -4440,6 +4440,7 @@ const clean = cols.map(c =>
         let upcomingEvents = [];
         let pastEvents = [];
         let allEventsList = [];
+        window.allEventsList = allEventsList;
         let bandsDir = new Map();
         const today = new Date();
         today.setHours(0,0,0,0); 
@@ -4685,6 +4686,9 @@ const clean = cols.map(c =>
             bandsHtmlOut += pastBands.length ? pastBands.map(b => bandRow(b, false)).join('') : '<div class="cal-empty">Zatiaľ prázdno...</div>';
             bandsEl.innerHTML = bandsHtmlOut;
         }
+
+        // Ak bola appka otvorená z push notifikácie na konkrétny koncert, otvor ho teraz.
+        openEventFromHash();
 
         upcomingContainer.innerHTML += '<div style="flex: 0 0 17.5%;"></div>';
         pastContainer.innerHTML += '<div style="flex: 0 0 17.5%;"></div>';
@@ -5246,7 +5250,7 @@ function openDetail(card) {
     openDetailData(card.getAttribute('data-details'));
 }
 
-function openDetailData(encodedData) {
+function openDetailData(encodedData, updateHistory = true) {
     buzz();
     const data = JSON.parse(decodeURIComponent(encodedData));
     window.currentEvent = data;
@@ -5271,7 +5275,12 @@ ${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" targ
     modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>${eventGalleryHtml}`;
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('modal-overlay').scrollTop = 0;
-    history.pushState({ screen: activeScreenId, modal: true }, "", "#detail");
+    // URL konkrétneho koncertu – napr. #detail/2026-08-14
+    // Pri otvorení cez odkaz z push notifikácie sa história nepridáva znova.
+    if (updateHistory) {
+        const urlDate = (data.date || '').replace(/\s/g, '').split('.').reverse().join('-');
+        history.pushState({ screen: activeScreenId, modal: true, eventDate: data.date }, "", urlDate ? `#detail/${encodeURIComponent(urlDate)}` : "#detail");
+    }
 }
 
 function startCountdown(queue, index) {
@@ -5368,6 +5377,26 @@ function startCountdown(queue, index) {
             startCountdown(queue, index + 1);
         }
     }, 1000);
+}
+
+// Deep-link: ak URL obsahuje #detail/YYYY-MM-DD, po načítaní dát otvorí správny koncert.
+let deepLinkHandled = false;
+function openEventFromHash() {
+    if (deepLinkHandled) return;
+    const match = location.hash.match(/^#detail\/(\d{4}-\d{2}-\d{2})$/);
+    if (!match || !window.allEventsList) return;
+
+    const wantedDate = match[1];
+    const event = window.allEventsList.find(e => {
+        const d = (e.dateRaw || '').replace(/\s/g, '').split('.').reverse().join('-');
+        return d === wantedDate;
+    });
+
+    if (event) {
+        deepLinkHandled = true;
+        openDetailData(event.encoded, false);
+        history.replaceState({ screen: activeScreenId, modal: true, eventDate: event.dateRaw }, "", `#detail/${encodeURIComponent(wantedDate)}`);
+    }
 }
 
 let suppressNextPopstate = false;
