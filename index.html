@@ -706,6 +706,11 @@
         }
 
         .about-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .about-history-title { margin: 38px 0 14px; font-size: 2rem; line-height: 1; color: var(--accent-color); text-align: center; text-transform: uppercase; text-shadow: 2px 2px 4px #000; }
+        .about-history-subtitle { margin: 0 0 18px; font-size: 1.35rem; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: .04em; }
+        .about-history-text { font-size: 1.18rem; color: #eee; line-height: 1.55; text-align: left; text-shadow: 2px 2px 4px #000; margin: 0 0 20px; }
+        .about-history-img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(255,255,255,.15); box-shadow: 0 6px 18px rgba(0,0,0,.4); margin: 18px 0 28px; }
+
         .about-item { 
             margin-bottom: 30px; 
             text-align: center; 
@@ -4712,35 +4717,73 @@ initCarouselObserver();
         document.getElementById('countdown-bar').style.display = 'none';
     }
 
-    try {
-        let txt;
-        try {
-            const resp = await fetch(aboutUrl + "?t=" + Date.now());
-            if (!resp.ok) throw new Error('HTTP ' + resp.status);
-            txt = await resp.text();
-            localStorage.setItem('koncerty_cache_about', txt);
-        } catch (fetchErr) {
-            const cached = localStorage.getItem('koncerty_cache_about');
-            if (!cached) throw fetchErr;
-            txt = cached;
-        }
-        const aboutRows = txt.trim().split('\n');
-        const aboutContainer = document.getElementById('about-container');
-        const startIdx = aboutRows[0].toLowerCase().includes("popis") ? 1 : 0;
-        const aboutDelimiter = detectCsvDelimiter(aboutRows[0]);
-        let html = "";
-        for(let i = startIdx; i < aboutRows.length; i++) {
-            const row = aboutRows[i];
-            if(!row.trim()) continue;
-            const cols = splitCsvRow(row, aboutDelimiter);
-            const clean = cols.map(c => c ? c.replace(/^"|"$/g, '').trim() : '');
-            const [popis, imgUrl] = clean;
-            html += `<div class="about-item">${safeUrl(imgUrl) ? `<img src="${safeUrl(imgUrl)}" class="about-img" alt="">` : ''}<div class="about-text">${escapeHtml(popis)}</div></div>`;
-        }
-        if(html) aboutContainer.innerHTML = html;
-    } catch (e) { console.log("O nás error:", e); }
 
-    const GALLERY_PREVIEW_LIMIT = 3;
+    // O NÁS – história Kôňcertov a kapely Kuca-paca
+    const aboutContainer = document.getElementById('about-container');
+    if (aboutContainer) {
+        aboutContainer.innerHTML = `
+            <div class="about-history-text">
+                Sme partia chalanov, ktorí sa poznajú dlhé roky, a okrem organizácie koncertov máme aj kapelu Kuca-paca. Hráme punk a naše texty sú väčšinou o pive, trávení času v krčme s priateľmi a o zábave. S kapelou to ťaháme od roku 2010, nahrali sme jeden album a z času na čas koncertujeme po Slovensku.
+            </div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty(1).webp?v=1" class="about-history-img" alt="Kôňcerty – začiatky">
+
+            <div class="about-history-title">Začiatky</div>
+            <div class="about-history-subtitle">Prvé koncerty</div>
+            <div class="about-history-text">
+                Organizovanie koncertov sme zo začiatku robili ako kamarátske akcie. Väčšinou to bolo v krčme Papuča, kde sa stretli starí známi, každý doniesol nejaký aparát a zahrali sme si. Neskôr sme spravili prvý väčší koncert v Baron Pube s kapelami Tri groše a Sitňan, ale po zlej skúsenosti a problémoch okolo koncertu sme si povedali, že tam už akcie robiť nebudeme.
+            </div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty(2).webp?v=1" class="about-history-img" alt="Prvé koncerty">
+
+            <div class="about-history-title">Budafest</div>
+            <div class="about-history-text">
+                Po čase vysedávania v Koni nás začalo lákať, že by sme spravili väčšiu akciu a zavolali kapely, ktoré máme radi. Tak sa pomaličky začal rysovať jednodňový festival Budafest. Ešte predtým mal názov Čongo bongo, ale kamarát Bárby nás presvedčil, že by bolo fajn pokračovať v Budafeste, keďže už predtým mal svoju tradíciu a po mnohých rokoch ho už nemal kto robiť. Bol to fajn nápad pokračovať v myšlienke undergroundového festivalu, a tak sme sa rozhodli, že Budafest spravíme na nábreží. Robili sme ho 5 rokov, od roku 2014 až do roku 2018.
+            </div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty(3).webp?v=1" class="about-history-img" alt="Budafest">
+
+            <div class="about-history-title">Prvý koncert v Koni</div>
+            <div class="about-history-text">
+                Ešte pred koronou, v roku 2020 na Valentína, sa prvýkrát konal koncert vo Furmanke pod záštitou Michala Kaščáka (ktorý organizuje Pohodu). Tentokrát spravil celoslovenskú akciu „Slovenská krčma“ a jedným z mnohých podnikov, ktoré sa do nej zapojili, bola aj Konská. Tam sme si zahrali my, Raz2try, RozpoR a Vydrapená bužírka Punk System, čo je punkový projekt Michala Kaščáka.
+            </div>
+            <div class="about-history-text">
+                Ešte pred touto akciou sme veľakrát v Koni pri pive rozmýšľali, že by sme spravili koncert tak, ako sme to kedysi robili v Papuči, ale nikdy sme sa do toho naplno nepustili. Po akcii Slovenská krčma sme si povedali, že by bolo super v tom pokračovať, ale korona to celé stopla.
+            </div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty(4).webp?v=1" class="about-history-img" alt="Prvý koncert v Koni">
+
+            <div class="about-history-title">Saténové ruky</div>
+            <div class="about-history-text">
+                Po dvoch rokoch sme sa zapojili do súťaže s kapelou Saténové ruky, kde bol výhrou ich privátny koncert kdekoľvek na Slovensku. Zhodou okolností vyžrebovali nášho kamaráta Janka a spolu sme sa rozhodli, že to spravíme ako verejný koncert vo Furmanke. Nakoniec Saténové ruky zahrali s nami a s kapelou Trstenica. Koncert dopadol skvelo, prišlo veľa ľudí a výborne sa bavili.
+            </div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty(5).webp?v=1" class="about-history-img" alt="Saténové ruky">
+
+            <div class="about-history-title">Kôňcerty</div>
+            <div class="about-history-text">A tu sa začala naša cesta s Kôňcertami.</div>
+            <div class="about-history-text">
+                Majiteľom Gerekovcom sa tento koncert veľmi zapáčil a chceli, aby sme v tom pokračovali. Aj vďaka ich pomoci – za ktorú sa chceme veľmi pekne poďakovať – sme zakúpili aparát, s ktorým sme mohli začať robiť koncerty plnohodnotne.
+            </div>
+            <div class="about-history-text">
+                Potom sme vymysleli názov Kôňcerty a prvý oficiálny koncert mohol začať. Spravili sme ho tak, ako to len my vieme. Zavolali sme našich kamarátov z kapiel Brmbolce, DPH-DK a Zpunkruky. Pôvodne sme mali vystúpiť aj my, ale čo čert nechcel, vytopilo nám skúšobňu. Chvalabohu, všetko sme zachránili, no rozhodli sme sa, že my na tomto koncerte nakoniec hrať nebudeme.
+            </div>
+            <div class="about-history-text">
+                Tak sme začali robiť koncerty na pravidelnej báze – viac-menej počas jesene a jari každý mesiac a cez leto jeden unplugged koncert na terase.
+            </div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/komcerty(6).webp?v=1" class="about-history-img" alt="Kôňcerty">
+
+            <div class="about-history-text">
+                Vstupné na koncerty je vždy dobrovoľné a za dobrovoľný príspevok si môžete vybrať niečo z nášho, poväčšine ručne robeného merchu – či už odznaky, nálepky, nášivky alebo podpivníky.
+            </div>
+            <div class="about-history-text">
+                Keďže sme len hudobní nadšenci a amatéri, učíme sa každým koncertom niečo nové a snažíme sa zlepšovať, aby sa u nás ľudia cítili dobre.
+            </div>
+            <div class="about-history-text">
+                Na záver by sme chceli ešte dodať, že sme veľmi radi že máme možnosť robiť čo nás baví a máme radosť z toho vždy keď vidíme ako sa dokážete zabaviť na koncertoch! Ste najlepší!
+            </div>
+
+            <div class="about-history-title">Už len... vidíme sa v Koni!</div>
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty(7).webp?v=1" class="about-history-img" alt="Kôňcerty – záver">
+        `;
+    }
+
+    const GALLERY_PREVIEW_LIMIT
     const galleryGrid = document.getElementById('gallery-grid');
     window.galleryGroups = {};
     window.bandGalleryGroups = {};
