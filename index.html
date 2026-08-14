@@ -4859,7 +4859,7 @@ initCarouselObserver();
 
                 gPhotos.slice(1, 3).forEach((p, idx) => {
                     html += `<div class="gallery-item" onclick="openLightbox('${gid}', ${idx + 1})">
-                        <img src="${safeUrl(p.url)}" loading="eager" fetchpriority="low" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
+                        <img src="${safeUrl(p.url)}" loading="eager" fetchpriority="high" decoding="sync" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
                     </div>`;
                 });
 
@@ -4874,7 +4874,7 @@ initCarouselObserver();
                 photos.forEach((p, idx) => {
                     const extra = idx >= GALLERY_PREVIEW_LIMIT ? ' gallery-item-extra" style="display:none;' : '';
                     html += `<div class="gallery-item${extra}" onclick="openLightbox('${gid}', ${idx})">
-                        <img src="${safeUrl(p.url)}" loading="eager" fetchpriority="low" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
+                        <img src="${safeUrl(p.url)}" loading="eager" fetchpriority="high" decoding="sync" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
                     </div>`;
                 });
 
@@ -5269,7 +5269,7 @@ ${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" targ
     const eventPhotos = (window.galleryGroups && window.galleryGroups[data.date]) || [];
     let eventGalleryHtml = "";
     if (eventPhotos.length > 0) {
-        eventGalleryHtml = `<div class="event-gallery-wrap"><div class="event-gallery-heading"><i class="fas fa-images"></i> FOTKY Z KONCERTU</div><div class="event-gallery-strip">${eventPhotos.map((p, idx) => `<div class="strip-photo" data-group="${escapeHtml(data.date)}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="eager" fetchpriority="low" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`).join('')}</div></div>`;
+        eventGalleryHtml = `<div class="event-gallery-wrap"><div class="event-gallery-heading"><i class="fas fa-images"></i> FOTKY Z KONCERTU</div><div class="event-gallery-strip">${eventPhotos.map((p, idx) => `<div class="strip-photo" data-group="${escapeHtml(data.date)}" data-index="${idx}"><img src="${safeUrl(p.url)}" loading="eager" fetchpriority="high" decoding="sync" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}"></div>`).join('')}</div></div>`;
     }
 
     modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>${eventGalleryHtml}`;
@@ -5435,7 +5435,7 @@ function openEventGalleryCarousel(gid) {
     title.textContent = (window.eventTitleByDate && window.eventTitleByDate[gid]) || 'GALÉRIA';
     grid.innerHTML = photos.map((p, idx) =>
         `<div class="gallery-item${p.isPoster ? ' gallery-poster-tile' : ''}" onclick="openLightbox('${gid}', ${idx});">
-            <img src="${safeUrl(p.url)}" loading="eager" fetchpriority="low" decoding="async" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
+            <img src="${safeUrl(p.url)}" loading="eager" fetchpriority="high" decoding="sync" alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
         </div>`
     ).join('');
     document.getElementById('event-gallery-overlay').classList.add('active');
