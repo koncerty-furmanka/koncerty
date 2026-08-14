@@ -4794,8 +4794,10 @@ initCarouselObserver();
                 if (bandNameFromFile) bandSlug = normalizeGallerySlug(bandNameFromFile);
             }
 
-            const imageUrl = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/' +
+            const originalImageUrl = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/' +
                 encodeURIComponent(name) + '?v=1';
+            // Galéria používa ľahké náhľady. Originál sa otvorí až v lightboxe.
+            const imageUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(originalImageUrl) + '&w=700&q=78&output=webp';
 
             const photo = {
                 url: imageUrl,
