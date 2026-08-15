@@ -5398,7 +5398,20 @@ function startCountdown(queue, index) {
     const current = queue[index];
     const targetDate = current.date;
     const bandName = current.title;
-    if (imgEl) imgEl.src = safeUrl(current.icon) || defaultUpcomingImg;
+    // Obrázok pre odpočet berieme výhradne z priečinka /najblizsie/.
+    // Názov je podľa dátumu koncertu, napr. 19.9.2026 -> 2026-19-09N.webp
+    if (imgEl) {
+        const d = current.date;
+        const y = d.getFullYear();
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const upcomingPoster = `https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/najblizsie/${y}-${day}-${month}N.webp?v=${Date.now()}`;
+        imgEl.src = upcomingPoster;
+        imgEl.onerror = function() {
+            this.onerror = null;
+            this.src = safeUrl(current.icon) || defaultUpcomingImg;
+        };
+    }
 
     const bandList = (current.bands && current.bands.length > 0) ? current.bands : [{ name: bandName }];
     const nightEnd = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
