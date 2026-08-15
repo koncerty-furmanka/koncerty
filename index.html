@@ -296,6 +296,14 @@
     z-index: 2; 
 }
 
+/* QR/web prehliadač: iba webová verzia sa posunie mierne doprava.
+   Nainštalovaná PWA/apka zostáva bez zmeny. */
+@media (display-mode: browser) {
+    #btn-upcoming {
+        transform: translateX(8px);
+    }
+}
+
 #btn-archive { 
     transform: translateY(0); z-index: 1; 
 }
