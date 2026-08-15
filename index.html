@@ -3678,9 +3678,52 @@ function escapeHtml(str) {
 }
 function safeUrl(str) {
     if (!str) return '';
-    const s = String(str).trim();
-    if (/^https?:\/\//i.test(s)) return escapeHtml(s);
-    return '';
+    let s = String(str).trim();
+    if (!/^https?:\/\//i.test(s)) return '';
+
+    // Plagáty načítame priamo z GitHubu, aby sa nové .webp súbory
+    // nezasekli na starej cache jsDelivr.
+    if (/^https:\/\/cdn\.jsdelivr\.net\/gh\/koncerty-furmanka\/koncerty@main\/plagaty\//i.test(s)) {
+        const file = s.split('/plagaty/')[1].split('?')[0];
+        s = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/plagaty/' +
+            file + '?v=' + Date.now();
+    }
+
+    return escapeHtml(s);
+}
+
+/* ===== PLAKÁTY – spoľahlivé načítanie nových súborov =====
+   CSV môže obsahovať starší jsDelivr odkaz. Pre plagáty používame
+   priamo GitHub Raw, aby sa nové .webp súbory zobrazili hneď.
+   Ak sa pri novom plagáte omylom vynechá .webp, doplníme ho automaticky.
+*/
+function normalizePosterUrl(str) {
+    if (!str) return '';
+    let s = String(str).trim();
+    if (!/^https?:\/\//i.test(s)) return '';
+
+    try {
+        const u = new URL(s);
+
+        if (u.pathname.includes('/plagaty/')) {
+            let filePath = u.pathname;
+
+            // Opraví napr. .../plagaty/2027-30-01 na .../plagaty/2027-30-01.webp
+            const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+            if (!/\.[a-z0-9]+$/i.test(fileName)) {
+                filePath += '.webp';
+            }
+
+            const marker = '/plagaty/';
+            const idx = filePath.indexOf(marker);
+            if (idx !== -1) {
+                const relative = filePath.substring(idx + 1);
+                return 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/' + relative + '?v=1';
+            }
+        }
+    } catch (e) {}
+
+    return s;
 }
 
 function safeSocialUrl(str) {
@@ -4398,7 +4441,7 @@ const clean = cols.map(c =>
     const cas = clean[getIndex("cas")];
     const miesto = clean[getIndex("miesto")];
     const vstupne = clean[getIndex("vstupne")];
-    const plagat = clean[getIndex("plagat")];
+    const plagat = normalizePosterUrl(clean[getIndex("plagat")]);
     const plagat_ikona = clean[getIndex("plagat_ikona")];
     const fb_event = clean[getIndex("fb_event")];
 
