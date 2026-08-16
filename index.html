@@ -132,6 +132,8 @@
     <link rel="dns-prefetch" href="https://i.postimg.cc">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+    <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" rel="stylesheet"></noscript>
     
@@ -3231,6 +3233,7 @@ body.modal-scroll-locked {
 <img id="dynamic-upcoming-img"
      class="btn-image"
      width="332" height="470"
+     fetchpriority="high"
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
@@ -5431,7 +5434,7 @@ function startCountdown(queue, index) {
         const y = d.getFullYear();
         const day = String(d.getDate()).padStart(2, '0');
         const month = String(d.getMonth() + 1).padStart(2, '0');
-        const upcomingPoster = `https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/najblizsie/${y}-${day}-${month}N.webp?v=${Date.now()}`;
+        const upcomingPoster = `https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/najblizsie/${y}-${day}-${month}N.webp?v=1`;
         imgEl.src = upcomingPoster;
         imgEl.onerror = function() {
             this.onerror = null;
