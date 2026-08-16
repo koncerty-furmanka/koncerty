@@ -2494,7 +2494,6 @@ body.gallery-open {
 
         .home-merch-btn .small-btn-img { transform: scale(1.15); }
 </style>
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <style>
 
@@ -3151,6 +3150,7 @@ body.modal-scroll-locked {
         <div class="splash-vinyl-wrap">
             <img
                 class="splash-vinyl-image"
+                width="332" height="332"
                 src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=664&q=82&output=webp"
                 alt="Kôňcerty vinyl">
         </div>
@@ -3219,7 +3219,7 @@ body.modal-scroll-locked {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1&w=630&q=82&output=webp" class="main-logo" alt="Logo">
+<img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1&w=630&q=82&output=webp" class="main-logo" width="315" height="98" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -3230,31 +3230,32 @@ body.modal-scroll-locked {
                 <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-upcoming');},200)">
 <img id="dynamic-upcoming-img"
      class="btn-image"
+     width="332" height="470"
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
-                    <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1&w=664&q=82&output=webp" class="btn-image" alt="Archív">
+                    <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1&w=664&q=82&output=webp" class="btn-image" width="332" height="470" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
                     <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-gallery');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=630&q=82&output=webp" class="small-btn-img" alt="Fotogaléria">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=630&q=82&output=webp" class="small-btn-img" width="315" height="219" alt="Fotogaléria">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2 home-merch-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp" class="small-btn-img" alt="Náš Merch">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp" class="small-btn-img" width="263" height="175" alt="Náš Merch">
                     </div>
                 </div>
                 <div class="right-col">
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" alt="Mapa">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="116" alt="Mapa">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-contact');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" alt="Kontakt">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="110" alt="Kontakt">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-social');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" alt="Social">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="104" alt="Social">
                     </div>
                 </div>
             </div>
@@ -3306,17 +3307,7 @@ body.modal-scroll-locked {
         <div class="merch-grid">
           <div class="merch-item">
             <div class="merch-img" style="height: 150px; flex-basis: 150px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
-                <model-viewer 
-                    src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb" 
-                    camera-controls 
-                    auto-rotate 
-                    shadow-intensity="1" 
-                    environment-image="neutral" 
-                    exposure="1"
-                    loading="eager"
-                    style="width: 100%; height: 100%; outline: none;">
-                    <div slot="poster" style="color: var(--accent-color); padding-top: 100px;">Načítavam 3D model...</div>
-                </model-viewer>
+                <div id="model-viewer-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--accent-color); text-align: center; padding: 0 10px;">3D náhľad sa načíta po otvorení</div>
             </div>
             <div class="merch-name">TRIČKO (3D NÁHĽAD)</div>
             <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 15 €</div>
@@ -4024,6 +4015,31 @@ function resetMerchCheckoutView() {
     if (merchTotalField) merchTotalField.value = '';
 }
 
+let merchModelViewerLoaded = false;
+function initMerchModelViewer() {
+    if (merchModelViewerLoaded) return;
+    merchModelViewerLoaded = true;
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js';
+    script.onload = () => {
+        const container = document.getElementById('model-viewer-container');
+        if (!container) return;
+        container.outerHTML = `<model-viewer id="model-viewer-container"
+            src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb"
+            camera-controls
+            auto-rotate
+            shadow-intensity="1"
+            environment-image="neutral"
+            exposure="1"
+            style="width: 100%; height: 100%; outline: none;">
+            <div slot="poster" style="color: var(--accent-color); padding-top: 60px; font-size: 0.8rem;">Načítavam 3D model...</div>
+            <div slot="error" style="color: var(--accent-color); padding-top: 60px; font-size: 0.8rem;">3D náhľad sa nepodarilo načítať</div>
+        </model-viewer>`;
+    };
+    document.body.appendChild(script);
+}
+
 function showScreen(screenId) {
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
@@ -4038,6 +4054,8 @@ function showScreen(screenId) {
         playSwipeGesture('carousel-upcoming');
     } else if (screenId === 'screen-map') {
         initFurmankaMap();
+    } else if (screenId === 'screen-merch') {
+        initMerchModelViewer();
     }
     
     if(screenId === 'screen-home') {
@@ -4837,10 +4855,16 @@ initCarouselObserver();
         `;
     }
 
-    const GALLERY_PREVIEW_LIMIT = 3;
-    const galleryGrid = document.getElementById('gallery-grid');
     window.galleryGroups = {};
     window.bandGalleryGroups = {};
+
+    // Fotogaléria sa načítava na pozadí - neblokuje štart appky ani splash screen.
+    loadGalleryData();
+}
+
+async function loadGalleryData() {
+    const GALLERY_PREVIEW_LIMIT = 3;
+    const galleryGrid = document.getElementById('gallery-grid');
 
     // Fotogaléria sa už nespolieha na galeria.csv.
     // Zoznam súborov načítame priamo z priečinka /fotky/ na GitHube.
