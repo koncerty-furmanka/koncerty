@@ -296,14 +296,6 @@
     z-index: 2; 
 }
 
-/* QR/web prehliadač: iba webová verzia sa posunie mierne doprava.
-   Nainštalovaná PWA/apka zostáva bez zmeny. */
-@media (display-mode: browser) {
-    #btn-upcoming {
-        transform: translateX(8px);
-    }
-}
-
 #btn-archive { 
     transform: translateY(0); z-index: 1; 
 }
@@ -2491,7 +2483,7 @@ body.gallery-open {
 
         .home-merch-btn .small-btn-img { transform: scale(1.15); }
 </style>
-<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+<!-- Model Viewer sa načíta až po otvorení sekcie NÁŠ MERCH -->
 
 <style>
 
@@ -3303,17 +3295,11 @@ body.modal-scroll-locked {
         <div class="merch-grid">
           <div class="merch-item">
             <div class="merch-img" style="height: 150px; flex-basis: 150px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
-                <model-viewer 
-                    src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb" 
-                    camera-controls 
-                    auto-rotate 
-                    shadow-intensity="1" 
-                    environment-image="neutral" 
-                    exposure="1"
-                    loading="lazy"
-                    style="width: 100%; height: 100%; outline: none;">
-                    <div slot="poster" style="color: var(--accent-color); padding-top: 100px;">Načítavam 3D model...</div>
-                </model-viewer>
+                <div id="merch-3d-placeholder"
+                     data-model-src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb"
+                     style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--accent-color); text-align:center; padding:10px; box-sizing:border-box;">
+                    3D NÁHĽAD SA NAČÍTA PO OTVORENÍ MERCHU...
+                </div>
             </div>
             <div class="merch-name">TRIČKO (3D NÁHĽAD)</div>
             <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 15 €</div>
@@ -3686,52 +3672,9 @@ function escapeHtml(str) {
 }
 function safeUrl(str) {
     if (!str) return '';
-    let s = String(str).trim();
-    if (!/^https?:\/\//i.test(s)) return '';
-
-    // Plagáty načítame priamo z GitHubu, aby sa nové .webp súbory
-    // nezasekli na starej cache jsDelivr.
-    if (/^https:\/\/cdn\.jsdelivr\.net\/gh\/koncerty-furmanka\/koncerty@main\/plagaty\//i.test(s)) {
-        const file = s.split('/plagaty/')[1].split('?')[0];
-        s = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/plagaty/' +
-            file + '?v=' + Date.now();
-    }
-
-    return escapeHtml(s);
-}
-
-/* ===== PLAKÁTY – spoľahlivé načítanie nových súborov =====
-   CSV môže obsahovať starší jsDelivr odkaz. Pre plagáty používame
-   priamo GitHub Raw, aby sa nové .webp súbory zobrazili hneď.
-   Ak sa pri novom plagáte omylom vynechá .webp, doplníme ho automaticky.
-*/
-function normalizePosterUrl(str) {
-    if (!str) return '';
-    let s = String(str).trim();
-    if (!/^https?:\/\//i.test(s)) return '';
-
-    try {
-        const u = new URL(s);
-
-        if (u.pathname.includes('/plagaty/')) {
-            let filePath = u.pathname;
-
-            // Opraví napr. .../plagaty/2027-30-01 na .../plagaty/2027-30-01.webp
-            const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-            if (!/\.[a-z0-9]+$/i.test(fileName)) {
-                filePath += '.webp';
-            }
-
-            const marker = '/plagaty/';
-            const idx = filePath.indexOf(marker);
-            if (idx !== -1) {
-                const relative = filePath.substring(idx + 1);
-                return 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/' + relative + '?v=1';
-            }
-        }
-    } catch (e) {}
-
-    return s;
+    const s = String(str).trim();
+    if (/^https?:\/\//i.test(s)) return escapeHtml(s);
+    return '';
 }
 
 function safeSocialUrl(str) {
@@ -4021,6 +3964,63 @@ function resetMerchCheckoutView() {
     if (merchTotalField) merchTotalField.value = '';
 }
 
+let merch3DLoading = false;
+let merch3DLoaded = false;
+
+function loadMerch3D() {
+    if (merch3DLoaded || merch3DLoading) return;
+    const placeholder = document.getElementById('merch-3d-placeholder');
+    if (!placeholder) return;
+
+    merch3DLoading = true;
+    placeholder.textContent = 'NAČÍTAVAM 3D MODEL...';
+
+    const createModel = () => {
+        const current = document.getElementById('merch-3d-placeholder');
+        if (!current) return;
+        const model = document.createElement('model-viewer');
+        model.setAttribute('src', current.dataset.modelSrc);
+        model.setAttribute('camera-controls', '');
+        model.setAttribute('auto-rotate', '');
+        model.setAttribute('shadow-intensity', '1');
+        model.setAttribute('environment-image', 'neutral');
+        model.setAttribute('exposure', '1');
+        model.setAttribute('loading', 'lazy');
+        model.style.cssText = 'width:100%;height:100%;outline:none;';
+        const poster = document.createElement('div');
+        poster.setAttribute('slot', 'poster');
+        poster.style.cssText = 'color:var(--accent-color);padding-top:55px;text-align:center;';
+        poster.textContent = 'NAČÍTAVAM 3D MODEL...';
+        model.appendChild(poster);
+        current.replaceWith(model);
+        merch3DLoaded = true;
+        merch3DLoading = false;
+    };
+
+    if (customElements.get('model-viewer')) {
+        createModel();
+        return;
+    }
+
+    const existing = document.getElementById('model-viewer-loader');
+    if (existing) {
+        existing.addEventListener('load', createModel, { once:true });
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.id = 'model-viewer-loader';
+    script.type = 'module';
+    script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js';
+    script.addEventListener('load', createModel, { once:true });
+    script.addEventListener('error', () => {
+        merch3DLoading = false;
+        const current = document.getElementById('merch-3d-placeholder');
+        if (current) current.textContent = '3D MODEL SA NEPODARILO NAČÍTAŤ.';
+    }, { once:true });
+    document.head.appendChild(script);
+}
+
 function showScreen(screenId) {
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
@@ -4029,7 +4029,10 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
     activeScreenId = screenId;
 
-    if (screenId === 'screen-past') {
+    if (screenId === 'screen-merch') {
+        // 3D knižnica a model sa načítajú až vtedy, keď používateľ skutočne otvorí Merch.
+        setTimeout(loadMerch3D, 50);
+    } else if (screenId === 'screen-past') {
         playSwipeGesture('carousel-past');
     } else if (screenId === 'screen-upcoming' && (window.upcomingEventsCount || 0) > 1) {
         playSwipeGesture('carousel-upcoming');
@@ -4449,7 +4452,7 @@ const clean = cols.map(c =>
     const cas = clean[getIndex("cas")];
     const miesto = clean[getIndex("miesto")];
     const vstupne = clean[getIndex("vstupne")];
-    const plagat = normalizePosterUrl(clean[getIndex("plagat")]);
+    const plagat = clean[getIndex("plagat")];
     const plagat_ikona = clean[getIndex("plagat_ikona")];
     const fb_event = clean[getIndex("fb_event")];
 
@@ -5406,20 +5409,7 @@ function startCountdown(queue, index) {
     const current = queue[index];
     const targetDate = current.date;
     const bandName = current.title;
-    // Obrázok pre odpočet berieme výhradne z priečinka /najblizsie/.
-    // Názov je podľa dátumu koncertu, napr. 19.9.2026 -> 2026-19-09N.webp
-    if (imgEl) {
-        const d = current.date;
-        const y = d.getFullYear();
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const upcomingPoster = `https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/najblizsie/${y}-${day}-${month}N.webp?v=${Date.now()}`;
-        imgEl.src = upcomingPoster;
-        imgEl.onerror = function() {
-            this.onerror = null;
-            this.src = safeUrl(current.icon) || defaultUpcomingImg;
-        };
-    }
+    if (imgEl) imgEl.src = safeUrl(current.icon) || defaultUpcomingImg;
 
     const bandList = (current.bands && current.bands.length > 0) ? current.bands : [{ name: bandName }];
     const nightEnd = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
