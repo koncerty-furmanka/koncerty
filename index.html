@@ -1761,7 +1761,6 @@
 }
 .band-link-btn.spotify { border-color: #1DB954; color: #1DB954; }
 .band-link-btn.fb { border-color: #1877F2; color: #6ea8ff; }
-.band-link-btn.instagram { border-color: #E1306C; color: #E1306C; }
 
 .event-gallery-overlay {
     display: none;
@@ -4060,6 +4059,8 @@ function showScreen(screenId) {
         initFurmankaMap();
     } else if (screenId === 'screen-merch') {
         initMerchModelViewer();
+    } else if (screenId === 'screen-gallery') {
+        renderGalleryIfVisible();
     }
     
     if(screenId === 'screen-home') {
@@ -4484,7 +4485,6 @@ const clean = cols.map(c =>
     const k_bio = clean[getIndex("kapela_bio")];
     const k_spotify = clean[getIndex("kapela_spotify")];
     const k_fb = clean[getIndex("kapela_facebook")];
-    const k_instagram = clean[getIndex("kapela_instagram")];
 
     if (!datumStr) continue;
 
@@ -4508,8 +4508,7 @@ const clean = cols.map(c =>
             style: k_styl,
             bio: k_bio,
             spotify: k_spotify,
-            facebook: k_fb,
-            instagram: k_instagram
+            facebook: k_fb
         });
     }
 }
@@ -4602,7 +4601,6 @@ const clean = cols.map(c =>
                         bio: b.bio,
                         spotify: b.spotify,
                         facebook: b.facebook,
-                        instagram: b.instagram,
                         logo: '',
                         count: 0,
                         hasUpcoming: false,
@@ -4627,7 +4625,6 @@ const clean = cols.map(c =>
                 if (!entry.style && b.style) entry.style = b.style;
                 if (!entry.spotify && b.spotify) entry.spotify = b.spotify;
                 if (!entry.facebook && b.facebook) entry.facebook = b.facebook;
-                if (!entry.instagram && b.instagram) entry.instagram = b.instagram;
 
                 // ===== AUTOMATICKÉ LOGÁ KAPIEL =====
                 // Stačí nahrať logo do GitHubu do priečinka /logo/
@@ -4758,7 +4755,7 @@ const clean = cols.map(c =>
                 });
             const bandRow = (b, upcoming) => `
                 <div class="band-row ${upcoming ? 'band-row-upcoming' : 'band-row-past'}">
-                    <div role="button" tabindex="0" class="band-head" onclick='this.parentElement.classList.add("band-row-pressed"); setTimeout(() => { this.parentElement.classList.remove("band-row-pressed"); openBandDetail(${JSON.stringify(b.name).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.city).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.style).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.bio).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.spotify).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.facebook).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.instagram).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.logo).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}); }, 200)'>
+                    <div role="button" tabindex="0" class="band-head" onclick='this.parentElement.classList.add("band-row-pressed"); setTimeout(() => { this.parentElement.classList.remove("band-row-pressed"); openBandDetail(${JSON.stringify(b.name).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.city).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.style).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.bio).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.spotify).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.facebook).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}, ${JSON.stringify(b.logo).replace(/&/g, "&amp;").replace(/'/g, "&#39;")}); }, 200)'>
                         <div class="band-head-info">
                             <div class="band-head-name">${escapeHtml(b.name)}</div>
                             <div class="band-head-sub">${escapeHtml([b.city, b.style].filter(Boolean).join(' • '))}</div>
@@ -5027,15 +5024,27 @@ async function loadGalleryData() {
             window.galleryGroups[gid] = photos;
         });
 
-        galleryGrid.outerHTML = html
+        window._galleryHtml = html
             ? `<div id="gallery-grid" class="gallery-sections">${html}</div>`
             : `<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">ZATIAĽ TU NEMÁME ŽIADNE FOTKY Z KONCERTOV.</div></div>`;
+        window._galleryDataReady = true;
+        renderGalleryIfVisible();
 
     } catch (e) {
         console.error('Fotogaléria sa nepodarila načítať:', e);
-        if (galleryGrid) {
-            galleryGrid.outerHTML = '<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">FOTOGALÉRIA SA NEPODARILA NAČÍTAŤ.</div></div>';
-        }
+        window._galleryHtml = '<div id="gallery-grid" class="gallery-grid"><div class="gallery-empty">FOTOGALÉRIA SA NEPODARILA NAČÍTAŤ.</div></div>';
+        window._galleryDataReady = true;
+        renderGalleryIfVisible();
+    }
+}
+
+function renderGalleryIfVisible() {
+    if (!window._galleryDataReady || !window._galleryHtml) return;
+    const galleryScreen = document.getElementById('screen-gallery');
+    if (!galleryScreen || !galleryScreen.classList.contains('active')) return;
+    const galleryGrid = document.getElementById('gallery-grid');
+    if (galleryGrid) {
+        galleryGrid.outerHTML = window._galleryHtml;
     }
 }
 
@@ -5054,7 +5063,7 @@ function initCarouselObserver() {
 }
 
 // ===== NOVÁ FUNKCIA: OTVORENIE DETAILU KAPELY V MODALE =====
-function openBandDetail(name, city, style, bio, spotify, facebook, instagram, logo) {
+function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
     buzz();
     const modalBody = document.getElementById('modal-content-body');
 
@@ -5090,7 +5099,7 @@ function openBandDetail(name, city, style, bio, spotify, facebook, instagram, lo
             ${bio ? `<div class="band-bio">${escapeHtml(bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
             <div class="band-links" style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center;">
                 ${safeSocialUrl(spotify) ? `<a href="${safeSocialUrl(spotify)}" target="_blank" rel="noopener noreferrer" class="band-link-btn spotify band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp';"></a>` : ''} ${safeSocialUrl(instagram) ? `<a href="${safeSocialUrl(instagram)}" target="_blank" rel="noopener noreferrer" class="band-link-btn instagram band-image-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>` : ''}
+                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp';"></a>` : ''}
             </div>
         </div>
         ${bandGalleryHtml}
@@ -5393,7 +5402,7 @@ function openDetailData(encodedData, updateHistory = true) {
         bandsHtml = `<div class="modal-desc">`;
         data.bands.forEach(band => {
             bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook"></a>` : ''} ${safeSocialUrl(band.instagram) ? `<a href="${safeSocialUrl(band.instagram)}" target="_blank" class="band-link band-image-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>` : ''}</div>`;
+${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp" alt="Facebook"></a>` : ''}</div>`;
         });
         bandsHtml += `</div>`;
     }
