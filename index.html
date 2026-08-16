@@ -24,11 +24,6 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" href="favicon.png">
 
-    <!-- Kritické obrázky domovskej obrazovky: načítaj ich čo najskôr -->
-    <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/pozadie.webp?v=1" fetchpriority="high">
-    <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1" fetchpriority="high">
-    <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp?v=1" fetchpriority="high">
-
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
     <script>
@@ -301,6 +296,14 @@
     z-index: 2; 
 }
 
+/* QR/web prehliadač: iba webová verzia sa posunie mierne doprava.
+   Nainštalovaná PWA/apka zostáva bez zmeny. */
+@media (display-mode: browser) {
+    #btn-upcoming {
+        transform: translateX(8px);
+    }
+}
+
 #btn-archive { 
     transform: translateY(0); z-index: 1; 
 }
@@ -411,7 +414,7 @@
     filter: blur(0px) grayscale(0%); 
     z-index: 10; 
 }
-        .poster-clean { width: 100%; height: auto; aspect-ratio: 2 / 3; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
+        .poster-clean { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
         .card-mini-info { margin-top: 15px; text-align: center; opacity: 0; transition: opacity 0.3s; }
         .carousel-card.active .card-mini-info { opacity: 1; }
         .mini-title { font-size: 1.5rem; line-height: 1; margin-bottom: 5px; text-shadow: 0 2px 6px #000; }
@@ -2488,7 +2491,7 @@ body.gallery-open {
 
         .home-merch-btn .small-btn-img { transform: scale(1.15); }
 </style>
-<!-- Model Viewer sa načíta až po otvorení sekcie NÁŠ MERCH -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <style>
 
@@ -3143,7 +3146,10 @@ body.modal-scroll-locked {
 
     <div id="app-splash">
         <div class="splash-vinyl-wrap">
-            <img class="splash-vinyl-image" src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1" width="512" height="512" decoding="async" alt="Kôňcerty vinyl">
+            <img
+                class="splash-vinyl-image"
+                src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1"
+                alt="Kôňcerty vinyl">
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
         <div class="splash-tagline">PUNK · SKA · ROCK'N'ROLL</div>
@@ -3210,7 +3216,7 @@ body.modal-scroll-locked {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1" class="main-logo" width="600" height="200" fetchpriority="high" decoding="async" alt="Logo">
+<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1" class="main-logo" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -3221,34 +3227,31 @@ body.modal-scroll-locked {
                 <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-upcoming');},200)">
 <img id="dynamic-upcoming-img"
      class="btn-image"
-     src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/Najblizsie-koncerty.webp?v=1"
-     width="500" height="1000"
-     loading="eager" fetchpriority="high" decoding="async"
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
-                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1" class="btn-image" width="500" height="1000" loading="eager" fetchpriority="high" decoding="async" alt="Archív">
+                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1" class="btn-image" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
                     <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-gallery');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1" class="small-btn-img" width="600" height="400" loading="lazy" decoding="async" alt="Fotogaléria">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1" class="small-btn-img" alt="Fotogaléria">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2 home-merch-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1" class="small-btn-img" width="600" height="400" loading="lazy" decoding="async" alt="Náš Merch">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1" class="small-btn-img" alt="Náš Merch">
                     </div>
                 </div>
                 <div class="right-col">
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1" class="small-btn-img" width="600" height="300" loading="lazy" decoding="async" alt="Mapa">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1" class="small-btn-img" alt="Mapa">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-contact');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1" class="small-btn-img" width="600" height="300" loading="lazy" decoding="async" alt="Kontakt">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1" class="small-btn-img" alt="Kontakt">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-social');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1" class="small-btn-img" width="600" height="300" loading="lazy" decoding="async" alt="Social">
+                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1" class="small-btn-img" alt="Social">
                     </div>
                 </div>
             </div>
@@ -3300,11 +3303,17 @@ body.modal-scroll-locked {
         <div class="merch-grid">
           <div class="merch-item">
             <div class="merch-img" style="height: 150px; flex-basis: 150px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
-                <div id="merch-3d-placeholder"
-                     data-model-src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb"
-                     style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--accent-color); text-align:center; padding:10px; box-sizing:border-box;">
-                    3D NÁHĽAD SA NAČÍTA PO OTVORENÍ MERCHU...
-                </div>
+                <model-viewer 
+                    src="https://cdn.jsdelivr.net/gh/Martiner11/3D-MODELY@main/tshirt.glb" 
+                    camera-controls 
+                    auto-rotate 
+                    shadow-intensity="1" 
+                    environment-image="neutral" 
+                    exposure="1"
+                    loading="eager"
+                    style="width: 100%; height: 100%; outline: none;">
+                    <div slot="poster" style="color: var(--accent-color); padding-top: 100px;">Načítavam 3D model...</div>
+                </model-viewer>
             </div>
             <div class="merch-name">TRIČKO (3D NÁHĽAD)</div>
             <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 15 €</div>
@@ -3677,9 +3686,52 @@ function escapeHtml(str) {
 }
 function safeUrl(str) {
     if (!str) return '';
-    const s = String(str).trim();
-    if (/^https?:\/\//i.test(s)) return escapeHtml(s);
-    return '';
+    let s = String(str).trim();
+    if (!/^https?:\/\//i.test(s)) return '';
+
+    // Plagáty načítame priamo z GitHubu, aby sa nové .webp súbory
+    // nezasekli na starej cache jsDelivr.
+    if (/^https:\/\/cdn\.jsdelivr\.net\/gh\/koncerty-furmanka\/koncerty@main\/plagaty\//i.test(s)) {
+        const file = s.split('/plagaty/')[1].split('?')[0];
+        s = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/plagaty/' +
+            file + '?v=' + Date.now();
+    }
+
+    return escapeHtml(s);
+}
+
+/* ===== PLAKÁTY – spoľahlivé načítanie nových súborov =====
+   CSV môže obsahovať starší jsDelivr odkaz. Pre plagáty používame
+   priamo GitHub Raw, aby sa nové .webp súbory zobrazili hneď.
+   Ak sa pri novom plagáte omylom vynechá .webp, doplníme ho automaticky.
+*/
+function normalizePosterUrl(str) {
+    if (!str) return '';
+    let s = String(str).trim();
+    if (!/^https?:\/\//i.test(s)) return '';
+
+    try {
+        const u = new URL(s);
+
+        if (u.pathname.includes('/plagaty/')) {
+            let filePath = u.pathname;
+
+            // Opraví napr. .../plagaty/2027-30-01 na .../plagaty/2027-30-01.webp
+            const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+            if (!/\.[a-z0-9]+$/i.test(fileName)) {
+                filePath += '.webp';
+            }
+
+            const marker = '/plagaty/';
+            const idx = filePath.indexOf(marker);
+            if (idx !== -1) {
+                const relative = filePath.substring(idx + 1);
+                return 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/' + relative + '?v=1';
+            }
+        }
+    } catch (e) {}
+
+    return s;
 }
 
 function safeSocialUrl(str) {
@@ -3969,63 +4021,6 @@ function resetMerchCheckoutView() {
     if (merchTotalField) merchTotalField.value = '';
 }
 
-let merch3DLoading = false;
-let merch3DLoaded = false;
-
-function loadMerch3D() {
-    if (merch3DLoaded || merch3DLoading) return;
-    const placeholder = document.getElementById('merch-3d-placeholder');
-    if (!placeholder) return;
-
-    merch3DLoading = true;
-    placeholder.textContent = 'NAČÍTAVAM 3D MODEL...';
-
-    const createModel = () => {
-        const current = document.getElementById('merch-3d-placeholder');
-        if (!current) return;
-        const model = document.createElement('model-viewer');
-        model.setAttribute('src', current.dataset.modelSrc);
-        model.setAttribute('camera-controls', '');
-        model.setAttribute('auto-rotate', '');
-        model.setAttribute('shadow-intensity', '1');
-        model.setAttribute('environment-image', 'neutral');
-        model.setAttribute('exposure', '1');
-        model.setAttribute('loading', 'lazy');
-        model.style.cssText = 'width:100%;height:100%;outline:none;';
-        const poster = document.createElement('div');
-        poster.setAttribute('slot', 'poster');
-        poster.style.cssText = 'color:var(--accent-color);padding-top:55px;text-align:center;';
-        poster.textContent = 'NAČÍTAVAM 3D MODEL...';
-        model.appendChild(poster);
-        current.replaceWith(model);
-        merch3DLoaded = true;
-        merch3DLoading = false;
-    };
-
-    if (customElements.get('model-viewer')) {
-        createModel();
-        return;
-    }
-
-    const existing = document.getElementById('model-viewer-loader');
-    if (existing) {
-        existing.addEventListener('load', createModel, { once:true });
-        return;
-    }
-
-    const script = document.createElement('script');
-    script.id = 'model-viewer-loader';
-    script.type = 'module';
-    script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js';
-    script.addEventListener('load', createModel, { once:true });
-    script.addEventListener('error', () => {
-        merch3DLoading = false;
-        const current = document.getElementById('merch-3d-placeholder');
-        if (current) current.textContent = '3D MODEL SA NEPODARILO NAČÍTAŤ.';
-    }, { once:true });
-    document.head.appendChild(script);
-}
-
 function showScreen(screenId) {
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
@@ -4034,10 +4029,7 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
     activeScreenId = screenId;
 
-    if (screenId === 'screen-merch') {
-        // 3D knižnica a model sa načítajú až vtedy, keď používateľ skutočne otvorí Merch.
-        setTimeout(loadMerch3D, 50);
-    } else if (screenId === 'screen-past') {
+    if (screenId === 'screen-past') {
         playSwipeGesture('carousel-past');
     } else if (screenId === 'screen-upcoming' && (window.upcomingEventsCount || 0) > 1) {
         playSwipeGesture('carousel-upcoming');
@@ -4457,7 +4449,7 @@ const clean = cols.map(c =>
     const cas = clean[getIndex("cas")];
     const miesto = clean[getIndex("miesto")];
     const vstupne = clean[getIndex("vstupne")];
-    const plagat = clean[getIndex("plagat")];
+    const plagat = normalizePosterUrl(clean[getIndex("plagat")]);
     const plagat_ikona = clean[getIndex("plagat_ikona")];
     const fb_event = clean[getIndex("fb_event")];
 
@@ -4784,20 +4776,20 @@ initCarouselObserver();
             <div class="about-history-text">
                 Sme partia chalanov, ktorí sa poznajú dlhé roky, a okrem organizácie koncertov máme aj kapelu Kuca-paca. Hráme punk a naše texty sú väčšinou o pive, trávení času v krčme s priateľmi a o zábave. S kapelou to ťaháme od roku 2010, nahrali sme jeden album a z času na čas koncertujeme po Slovensku.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (1).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Kôňcerty – začiatky">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (1).webp?v=1" class="about-history-img" alt="Kôňcerty – začiatky">
 
             <div class="about-history-title">Začiatky</div>
             <div class="about-history-subtitle">Prvé koncerty</div>
             <div class="about-history-text">
                 Organizovanie koncertov sme zo začiatku robili ako kamarátske akcie. Väčšinou to bolo v krčme Papuča, kde sa stretli starí známi, každý doniesol nejaký aparát a zahrali sme si. Neskôr sme spravili prvý väčší koncert v Baron Pube s kapelami Tri groše a Sitňan, ale po zlej skúsenosti a problémoch okolo koncertu sme si povedali, že tam už akcie robiť nebudeme.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (2).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Prvé koncerty">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (2).webp?v=1" class="about-history-img" alt="Prvé koncerty">
 
             <div class="about-history-title">Budafest</div>
             <div class="about-history-text">
                 Po čase vysedávania v Koni nás začalo lákať, že by sme spravili väčšiu akciu a zavolali kapely, ktoré máme radi. Tak sa pomaličky začal rysovať jednodňový festival Budafest. Ešte predtým mal názov Čongo bongo, ale kamarát Bárby nás presvedčil, že by bolo fajn pokračovať v Budafeste, keďže už predtým mal svoju tradíciu a po mnohých rokoch ho už nemal kto robiť. Bol to fajn nápad pokračovať v myšlienke undergroundového festivalu, a tak sme sa rozhodli, že Budafest spravíme na nábreží. Robili sme ho 5 rokov, od roku 2014 až do roku 2018.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (3).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Budafest">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (3).webp?v=1" class="about-history-img" alt="Budafest">
 
             <div class="about-history-title">Prvý koncert v Koni</div>
             <div class="about-history-text">
@@ -4806,13 +4798,13 @@ initCarouselObserver();
             <div class="about-history-text">
                 Ešte pred touto akciou sme veľakrát v Koni pri pive rozmýšľali, že by sme spravili koncert tak, ako sme to kedysi robili v Papuči, ale nikdy sme sa do toho naplno nepustili. Po akcii Slovenská krčma sme si povedali, že by bolo super v tom pokračovať, ale korona to celé stopla.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (4).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Prvý koncert v Koni">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (4).webp?v=1" class="about-history-img" alt="Prvý koncert v Koni">
 
             <div class="about-history-title">Saténové ruky</div>
             <div class="about-history-text">
                 Po dvoch rokoch sme sa zapojili do súťaže s kapelou Saténové ruky, kde bol výhrou ich privátny koncert kdekoľvek na Slovensku. Zhodou okolností vyžrebovali nášho kamaráta Janka a spolu sme sa rozhodli, že to spravíme ako verejný koncert vo Furmanke. Nakoniec Saténové ruky zahrali s nami a s kapelou Trstenica. Koncert dopadol skvelo, prišlo veľa ľudí a výborne sa bavili.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (5).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Saténové ruky">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (5).webp?v=1" class="about-history-img" alt="Saténové ruky">
 
             <div class="about-history-title">Kôňcerty</div>
             <div class="about-history-text">A tu sa začala naša cesta s Kôňcertami.</div>
@@ -4825,7 +4817,7 @@ initCarouselObserver();
             <div class="about-history-text">
                 Tak sme začali robiť koncerty na pravidelnej báze – viac-menej počas jesene a jari každý mesiac a cez leto jeden unplugged koncert na terase.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (6).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Kôňcerty">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (6).webp?v=1" class="about-history-img" alt="Kôňcerty">
 
             <div class="about-history-text">
                 Vstupné na koncerty je vždy dobrovoľné a za dobrovoľný príspevok si môžete vybrať niečo z nášho, poväčšine ručne robeného merchu – či už odznaky, nálepky, nášivky alebo podpivníky.
@@ -4838,7 +4830,7 @@ initCarouselObserver();
             </div>
 
             <div class="about-history-title">Už len... vidíme sa v Koni!</div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (7).webp?v=1" class="about-history-img" width="1600" height="900" loading="lazy" decoding="async" alt="Kôňcerty – záver">
+            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (7).webp?v=1" class="about-history-img" alt="Kôňcerty – záver">
         `;
     }
 
@@ -5414,7 +5406,20 @@ function startCountdown(queue, index) {
     const current = queue[index];
     const targetDate = current.date;
     const bandName = current.title;
-    if (imgEl) imgEl.src = safeUrl(current.icon) || defaultUpcomingImg;
+    // Obrázok pre odpočet berieme výhradne z priečinka /najblizsie/.
+    // Názov je podľa dátumu koncertu, napr. 19.9.2026 -> 2026-19-09N.webp
+    if (imgEl) {
+        const d = current.date;
+        const y = d.getFullYear();
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const upcomingPoster = `https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/najblizsie/${y}-${day}-${month}N.webp?v=${Date.now()}`;
+        imgEl.src = upcomingPoster;
+        imgEl.onerror = function() {
+            this.onerror = null;
+            this.src = safeUrl(current.icon) || defaultUpcomingImg;
+        };
+    }
 
     const bandList = (current.bands && current.bands.length > 0) ? current.bands : [{ name: bandName }];
     const nightEnd = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
