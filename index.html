@@ -2348,23 +2348,26 @@ body.gallery-open {
 #install-btn {
     display: none;
     position: absolute;
-    top: 2px;
+    top: 50%;
     right: 6px;
+    transform: translateY(-50%);
     margin: 0;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: 68px;
     background: var(--accent-color); color: #000; border: 1px solid #000;
-    padding: 0; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 50%;
+    padding: 6px 4px; font-size: 0.58rem; font-weight: 700; line-height: 1.15;
+    cursor: pointer; border-radius: 10px;
     box-shadow: 0 3px 9px rgba(0,0,0,0.9);
-    align-items: center; justify-content: center;
+    flex-direction: column; align-items: center; justify-content: center; gap: 3px;
     animation: installPulse 1.6s infinite alternate;
-    white-space: nowrap;
+    white-space: normal;
+    text-align: center;
     z-index: 30;
 }
-#install-btn span { display: none; }
+#install-btn i { font-size: 1.15rem; }
+#install-btn span { display: block; letter-spacing: 0.2px; }
 #install-btn.show { display: inline-flex; }
-#install-btn:active { transform: scale(0.94); animation: none; }
+#install-btn:active { transform: translateY(-50%) scale(0.94); animation: none; }
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
