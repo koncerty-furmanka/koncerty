@@ -2348,9 +2348,8 @@ body.gallery-open {
 #install-btn {
     display: none;
     position: absolute;
-    top: 50%;
+    top: 10px;
     right: 6px;
-    transform: translateY(-50%);
     margin: 0;
     flex-shrink: 0;
     width: 68px;
@@ -2367,7 +2366,7 @@ body.gallery-open {
 #install-btn i { font-size: 1.15rem; }
 #install-btn span { display: block; letter-spacing: 0.2px; }
 #install-btn.show { display: inline-flex; }
-#install-btn:active { transform: translateY(-50%) scale(0.94); animation: none; }
+#install-btn:active { transform: scale(0.94); animation: none; }
 @keyframes installPulse {
     from { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,204,0,0.6); }
     to   { box-shadow: 0 4px 12px rgba(0,0,0,0.9), 0 0 0 12px rgba(255,204,0,0); }
