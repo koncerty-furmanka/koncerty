@@ -2,7 +2,7 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kôňcerty</title>
     <meta name="description" content="Kôňcerty — Punk, Ska a Rock'n'Roll vo Furmanke, Námestovo. Program, archív, kapely, merch a pripomienky na koncerty.">
 
@@ -122,15 +122,18 @@
         }
     </script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"></noscript>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://i.postimg.cc" crossorigin>
     <link rel="dns-prefetch" href="https://i.postimg.cc">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" rel="stylesheet">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" rel="stylesheet"></noscript>
     
     <style>
 :root {
@@ -3148,7 +3151,7 @@ body.modal-scroll-locked {
         <div class="splash-vinyl-wrap">
             <img
                 class="splash-vinyl-image"
-                src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1"
+                src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=664&q=82&output=webp"
                 alt="Kôňcerty vinyl">
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
@@ -3216,7 +3219,7 @@ body.modal-scroll-locked {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1" class="main-logo" alt="Logo">
+<img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1&w=630&q=82&output=webp" class="main-logo" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -3230,28 +3233,28 @@ body.modal-scroll-locked {
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
-                    <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1" class="btn-image" alt="Archív">
+                    <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1&w=664&q=82&output=webp" class="btn-image" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
                     <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-gallery');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1" class="small-btn-img" alt="Fotogaléria">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=630&q=82&output=webp" class="small-btn-img" alt="Fotogaléria">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2 home-merch-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1" class="small-btn-img" alt="Náš Merch">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp" class="small-btn-img" alt="Náš Merch">
                     </div>
                 </div>
                 <div class="right-col">
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1" class="small-btn-img" alt="Mapa">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" alt="Mapa">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-contact');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1" class="small-btn-img" alt="Kontakt">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" alt="Kontakt">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-social');},200)">
-                        <img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1" class="small-btn-img" alt="Social">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" alt="Social">
                     </div>
                 </div>
             </div>
@@ -4908,15 +4911,6 @@ initCarouselObserver();
                 bandPhotosBySlug.get(bandSlug).push(photo);
             }
         });
-
-        // Prednačítanie celej fotogalérie pred jej vykreslením.
-        const preloadUrls = imageFiles.map(file => 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/' + encodeURIComponent(file.name) + '?v=1');
-        const uniquePreloadUrls = [...new Set(preloadUrls)];
-        await Promise.all(uniquePreloadUrls.map(url => new Promise(resolve => {
-            const img = new Image();
-            img.onload = img.onerror = () => resolve();
-            img.src = url;
-        })));
 
         // Zoradenie podľa názvu súboru dáva 2022-... (1), (2), (3)...
         for (const photos of eventPhotosByDate.values()) {
