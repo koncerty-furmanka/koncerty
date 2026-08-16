@@ -3151,6 +3151,7 @@ body.modal-scroll-locked {
             <img
                 class="splash-vinyl-image"
                 width="332" height="332"
+                fetchpriority="high"
                 src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=664&q=82&output=webp"
                 alt="Kôňcerty vinyl">
         </div>
@@ -4861,8 +4862,9 @@ initCarouselObserver();
     window.galleryGroups = {};
     window.bandGalleryGroups = {};
 
-    // Fotogaléria sa načítava na pozadí - neblokuje štart appky ani splash screen.
-    loadGalleryData();
+    // Fotogaléria sa načítava na pozadí, s malým oneskorením - neblokuje štart appky
+    // ani splash screen, a nesúperí o šírku pásma s kritickými zdrojmi pri prvom vykreslení.
+    setTimeout(loadGalleryData, 2000);
 }
 
 async function loadGalleryData() {
@@ -5097,7 +5099,7 @@ function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
             ${bio ? `<div class="band-bio">${escapeHtml(bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
             <div class="band-links" style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center;">
                 ${safeSocialUrl(spotify) ? `<a href="${safeSocialUrl(spotify)}" target="_blank" rel="noopener noreferrer" class="band-link-btn spotify band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp';"></a>` : ''}
+                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp';"></a>` : ''}
             </div>
         </div>
         ${bandGalleryHtml}
@@ -5400,7 +5402,7 @@ function openDetailData(encodedData, updateHistory = true) {
         bandsHtml = `<div class="modal-desc">`;
         data.bands.forEach(band => {
             bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fb.webp" alt="Facebook"></a>` : ''}</div>`;
+${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook"></a>` : ''}</div>`;
         });
         bandsHtml += `</div>`;
     }
