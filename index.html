@@ -247,6 +247,7 @@
     flex-shrink: 0; 
     width: 100%; 
     z-index: 10; 
+    position: relative;
 }
 
 .main-logo { 
@@ -2346,17 +2347,22 @@ body.gallery-open {
 
 #install-btn {
     display: none;
-    margin: 2px auto 2px auto;
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    margin: 0;
     flex-shrink: 0;
-    width: fit-content;
+    width: 40px;
+    height: 40px;
     background: var(--accent-color); color: #000; border: 1px solid #000;
-    padding: 6px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-radius: 4px;
+    padding: 0; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 50%;
     box-shadow: 0 3px 9px rgba(0,0,0,0.9);
-    align-items: center; gap: 8px;
+    align-items: center; justify-content: center;
     animation: installPulse 1.6s infinite alternate;
     white-space: nowrap;
     z-index: 30;
 }
+#install-btn span { display: none; }
 #install-btn.show { display: inline-flex; }
 #install-btn:active { transform: scale(0.94); animation: none; }
 @keyframes installPulse {
@@ -2369,128 +2375,8 @@ body.gallery-open {
     transform: translateX(-5px);
 }
 
-/* KOMPAKTNY DOMOV PRI ZOBRAZENOM TLACIDLE INSTALACIE
-   Vsetko sa musi zmestit medzi hornu cast a pevnu spodnu navigaciu. */
-#screen-home:has(#install-btn.show) {
-    overflow: hidden !important;
-}
-
-#screen-home:has(#install-btn.show) .home-content {
-    height: 100%;
-    min-height: 0;
-    justify-content: flex-start;
-    overflow: hidden;
-    padding-top: 4px;
-}
-
-#screen-home:has(#install-btn.show) .home-header {
-    margin-bottom: 2px;
-}
-
-#screen-home:has(#install-btn.show) .main-logo {
-    width: clamp(170px, 35vw, 250px);
-}
-
-#screen-home:has(#install-btn.show) #countdown-bar {
-    margin-bottom: 1px;
-}
-
-#screen-home:has(#install-btn.show) #install-btn {
-    margin-top: 1px;
-    margin-bottom: 3px;
-    padding: 5px 15px;
-    font-size: .86rem;
-}
-
-/* Plagaty dostanu presne tolko priestoru, kolko zostane pre spodne ikony. */
-#screen-home:has(#install-btn.show) .menu-grid {
-    flex: 0 0 36vh;
-    height: 36vh;
-    min-height: 0;
-    padding: 2px 0;
-    gap: 4px;
-}
-
-#screen-home:has(#install-btn.show) .menu-grid .img-btn-wrapper {
-    width: 46%;
-    height: 100%;
-}
-
-#screen-home:has(#install-btn.show) .menu-grid .btn-image {
-    max-width: 100%;
-    max-height: 100%;
-}
-
-/* Spodna cast sa vzdy zmesti nad navigaciu. */
-#screen-home:has(#install-btn.show) .bottom-container {
-    flex: 0 0 27vh;
-    height: 27vh;
-    min-height: 0;
-    width: 88%;
-    margin: 0 auto;
-    gap: 4px;
-    padding: 2px 0 0;
-    box-sizing: border-box;
-    overflow: hidden;
-    justify-content: center;
-}
-
-#screen-home:has(#install-btn.show) .left-col {
-    flex: 0 0 44%;
-    max-width: 44%;
-    height: 100%;
-    padding-left: 0;
-    gap: 4px;
-    box-sizing: border-box;
-}
-
-#screen-home:has(#install-btn.show) .right-col {
-    flex: 0 0 44%;
-    max-width: 44%;
-    height: 100%;
-    padding-right: 0;
-    gap: 3px;
-    box-sizing: border-box;
-}
-
-#screen-home:has(#install-btn.show) .left-col > .action-btn,
-#screen-home:has(#install-btn.show) .right-col > .action-btn {
-    min-height: 0;
-    overflow: hidden;
-}
-
-#screen-home:has(#install-btn.show) .left-col .small-btn-img,
-#screen-home:has(#install-btn.show) .right-col .small-btn-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-/* Na nizkych displejoch este trochu uberieme, aby nic nebolo odrezane. */
-@media (max-height: 760px) {
-    #screen-home:has(#install-btn.show) .menu-grid {
-        flex-basis: 33vh;
-        height: 33vh;
-    }
-    #screen-home:has(#install-btn.show) .bottom-container {
-        flex-basis: 25vh;
-        height: 25vh;
-    }
-}
-
-@media (max-height: 680px) {
-    #screen-home:has(#install-btn.show) .main-logo {
-        width: 160px;
-    }
-    #screen-home:has(#install-btn.show) .menu-grid {
-        flex-basis: 31vh;
-        height: 31vh;
-    }
-    #screen-home:has(#install-btn.show) .bottom-container {
-        flex-basis: 24vh;
-        height: 24vh;
-    }
-}
+/* Install tlačidlo je teraz malé kolečko v rohu hlavičky (position:absolute),
+   takže sa nezasahuje do zvyšku layoutu a netreba nič zmenšovať/prekresľovať. */
 
         .home-merch-btn .small-btn-img { transform: scale(1.15); }
 </style>
@@ -3225,7 +3111,7 @@ body.modal-scroll-locked {
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
 
-            <button id="install-btn" onclick="installApp()"><i class="fas fa-download"></i> NAINŠTALOVAŤ APKU</button>
+            <button id="install-btn" onclick="installApp()" aria-label="Nainštalovať appku" title="Nainštalovať appku"><i class="fas fa-download"></i><span>NAINŠTALOVAŤ APKU</span></button>
             
             <div class="menu-grid">
                 <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-upcoming');},200)">
