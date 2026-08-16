@@ -1761,6 +1761,7 @@
 }
 .band-link-btn.spotify { border-color: #1DB954; color: #1DB954; }
 .band-link-btn.fb { border-color: #1877F2; color: #6ea8ff; }
+.band-link-btn.instagram { border-color: #E1306C; color: #E1306C; }
 
 .event-gallery-overlay {
     display: none;
@@ -3074,19 +3075,6 @@ a.band-image-btn img {
 </style>
 
 <style>
-a.band-image-btn.instagram {
-    align-items: center !important;
-    justify-content: center !important;
-    width: 110px !important;
-    height: 56px !important;
-    background: rgba(255,255,255,.06) !important;
-    color: #fff !important;
-    font-size: 30px !important;
-    border: 1px solid rgba(255,255,255,.15) !important;
-}
-</style>
-
-<style>
 /* Modal musí zostať nad stránkou – stránka v pozadí sa nesmie scrollovať */
 html.modal-scroll-locked,
 body.modal-scroll-locked {
@@ -3751,7 +3739,6 @@ function safeSocialUrl(str) {
     if (/^https?:\/\//i.test(s)) return escapeHtml(s);
     if (/^(www\.)?(facebook\.com|fb\.com)\//i.test(s)) return escapeHtml('https://' + s);
     if (/^(www\.)?open\.spotify\.com\//i.test(s)) return escapeHtml('https://' + s);
-    if (/^(www\.)?instagram\.com\//i.test(s)) return escapeHtml('https://' + s);
     return '';
 }
 
@@ -4497,8 +4484,7 @@ const clean = cols.map(c =>
     const k_bio = clean[getIndex("kapela_bio")];
     const k_spotify = clean[getIndex("kapela_spotify")];
     const k_fb = clean[getIndex("kapela_facebook")];
-    const instagramIndex = getIndex("kapela_instagram");
-    const k_instagram = instagramIndex >= 0 ? clean[instagramIndex] : "";
+    const k_instagram = clean[getIndex("kapela_instagram")];
 
     if (!datumStr) continue;
 
@@ -5104,8 +5090,7 @@ function openBandDetail(name, city, style, bio, spotify, facebook, instagram, lo
             ${bio ? `<div class="band-bio">${escapeHtml(bio)}</div>` : '<div class="band-bio" style="color:#888;">Bio zatiaľ nemáme...</div>'}
             <div class="band-links" style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center;">
                 ${safeSocialUrl(spotify) ? `<a href="${safeSocialUrl(spotify)}" target="_blank" rel="noopener noreferrer" class="band-link-btn spotify band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp';"></a>` : ''}
-                ${safeSocialUrl(instagram) ? `<a href="${safeSocialUrl(instagram)}" target="_blank" rel="noopener noreferrer" class="band-link-btn instagram band-image-btn"><i class="fab fa-instagram" aria-label="Instagram"></i></a>` : ''}
+                ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp';"></a>` : ''} ${safeSocialUrl(instagram) ? `<a href="${safeSocialUrl(instagram)}" target="_blank" rel="noopener noreferrer" class="band-link-btn instagram band-image-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>` : ''}
             </div>
         </div>
         ${bandGalleryHtml}
@@ -5408,8 +5393,7 @@ function openDetailData(encodedData, updateHistory = true) {
         bandsHtml = `<div class="modal-desc">`;
         data.bands.forEach(band => {
             bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/spotbut.webp" alt="Spotify"></a>` : ''}
-${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook"></a>` : ''}
-${safeSocialUrl(band.instagram) ? `<a href="${safeSocialUrl(band.instagram)}" target="_blank" class="band-link band-image-btn instagram"><i class="fab fa-instagram" aria-label="Instagram"></i></a>` : ''}</div>`;
+${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fbbut.webp" alt="Facebook"></a>` : ''} ${safeSocialUrl(band.instagram) ? `<a href="${safeSocialUrl(band.instagram)}" target="_blank" class="band-link band-image-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>` : ''}</div>`;
         });
         bandsHtml += `</div>`;
     }
