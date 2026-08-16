@@ -3054,19 +3054,6 @@ a.band-image-btn img {
 </style>
 
 <style>
-a.band-image-btn.instagram {
-    align-items: center !important;
-    justify-content: center !important;
-    width: 110px !important;
-    height: 56px !important;
-    background: rgba(255,255,255,.06) !important;
-    color: #fff !important;
-    font-size: 30px !important;
-    border: 1px solid rgba(255,255,255,.15) !important;
-}
-</style>
-
-<style>
 /* Facebook v detaile kapely – rovnaká veľkosť ako Spotify */
 .band-links a.band-image-btn {
     display: inline-flex !important;
@@ -3083,6 +3070,19 @@ a.band-image-btn.instagram {
     width: 110px !important;
     max-width: 110px !important;
     height: auto !important;
+}
+</style>
+
+<style>
+a.band-image-btn.instagram {
+    align-items: center !important;
+    justify-content: center !important;
+    width: 110px !important;
+    height: 56px !important;
+    background: rgba(255,255,255,.06) !important;
+    color: #fff !important;
+    font-size: 30px !important;
+    border: 1px solid rgba(255,255,255,.15) !important;
 }
 </style>
 
@@ -4497,7 +4497,8 @@ const clean = cols.map(c =>
     const k_bio = clean[getIndex("kapela_bio")];
     const k_spotify = clean[getIndex("kapela_spotify")];
     const k_fb = clean[getIndex("kapela_facebook")];
-    const k_instagram = clean[getIndex("kapela_instagram")];
+    const instagramIndex = getIndex("kapela_instagram");
+    const k_instagram = instagramIndex >= 0 ? clean[instagramIndex] : "";
 
     if (!datumStr) continue;
 
@@ -4640,7 +4641,7 @@ const clean = cols.map(c =>
                 if (!entry.style && b.style) entry.style = b.style;
                 if (!entry.spotify && b.spotify) entry.spotify = b.spotify;
                 if (!entry.facebook && b.facebook) entry.facebook = b.facebook;
-                 if (!entry.instagram && b.instagram) entry.instagram = b.instagram;
+                if (!entry.instagram && b.instagram) entry.instagram = b.instagram;
 
                 // ===== AUTOMATICKÉ LOGÁ KAPIEL =====
                 // Stačí nahrať logo do GitHubu do priečinka /logo/
