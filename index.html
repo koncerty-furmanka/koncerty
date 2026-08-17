@@ -127,8 +127,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://raw.githubusercontent.com">
-    <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+    <link rel="preconnect" href="https://koncerty-furmanka.github.io/koncerty/">
+    <link rel="dns-prefetch" href="https://koncerty-furmanka.github.io/koncerty/">
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" rel="stylesheet"></noscript>
     
@@ -3576,11 +3576,11 @@ function safeUrl(str) {
     let s = String(str).trim();
     if (!/^https?:\/\//i.test(s)) return '';
 
-    // Plagáty načítame priamo z GitHubu, aby sa nové .webp súbory
+    // Plagáty načítame priamo z GitHub Pages, aby sa nové .webp súbory
     // nezasekli na starej cache jsDelivr.
     if (/^https:\/\/cdn\.jsdelivr\.net\/gh\/koncerty-furmanka\/koncerty@main\/plagaty\//i.test(s)) {
         const file = s.split('/plagaty/')[1].split('?')[0];
-        s = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/plagaty/' +
+        s = 'https://koncerty-furmanka.github.io/koncerty/plagaty/' +
             file + '?v=' + Date.now();
     }
 
@@ -3589,7 +3589,7 @@ function safeUrl(str) {
 
 /* ===== PLAKÁTY – spoľahlivé načítanie nových súborov =====
    CSV môže obsahovať starší jsDelivr odkaz. Pre plagáty používame
-   priamo GitHub Raw, aby sa nové .webp súbory zobrazili hneď.
+   priamo z GitHub Pages, aby sa nové .webp súbory zobrazili hneď.
    Ak sa pri novom plagáte omylom vynechá .webp, doplníme ho automaticky.
 */
 function normalizePosterUrl(str) {
@@ -3613,7 +3613,7 @@ function normalizePosterUrl(str) {
             const idx = filePath.indexOf(marker);
             if (idx !== -1) {
                 const relative = filePath.substring(idx + 1);
-                return 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/' + relative + '?v=1';
+                return 'https://koncerty-furmanka.github.io/koncerty/' + relative + '?v=1';
             }
         }
     } catch (e) {}
@@ -4737,20 +4737,20 @@ initCarouselObserver();
             <div class="about-history-text">
                 Sme partia chalanov, ktorí sa poznajú dlhé roky, a okrem organizácie koncertov máme aj kapelu Kuca-paca. Hráme punk a naše texty sú väčšinou o pive, trávení času v krčme s priateľmi a o zábave. S kapelou to ťaháme od roku 2010, nahrali sme jeden album a z času na čas koncertujeme po Slovensku.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (1).webp?v=1" class="about-history-img" alt="Kôňcerty – začiatky">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (1).webp?v=1" class="about-history-img" alt="Kôňcerty – začiatky">
 
             <div class="about-history-title">Začiatky</div>
             <div class="about-history-subtitle">Prvé koncerty</div>
             <div class="about-history-text">
                 Organizovanie koncertov sme zo začiatku robili ako kamarátske akcie. Väčšinou to bolo v krčme Papuča, kde sa stretli starí známi, každý doniesol nejaký aparát a zahrali sme si. Neskôr sme spravili prvý väčší koncert v Baron Pube s kapelami Tri groše a Sitňan, ale po zlej skúsenosti a problémoch okolo koncertu sme si povedali, že tam už akcie robiť nebudeme.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (2).webp?v=1" class="about-history-img" alt="Prvé koncerty">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (2).webp?v=1" class="about-history-img" alt="Prvé koncerty">
 
             <div class="about-history-title">Budafest</div>
             <div class="about-history-text">
                 Po čase vysedávania v Koni nás začalo lákať, že by sme spravili väčšiu akciu a zavolali kapely, ktoré máme radi. Tak sa pomaličky začal rysovať jednodňový festival Budafest. Ešte predtým mal názov Čongo bongo, ale kamarát Bárby nás presvedčil, že by bolo fajn pokračovať v Budafeste, keďže už predtým mal svoju tradíciu a po mnohých rokoch ho už nemal kto robiť. Bol to fajn nápad pokračovať v myšlienke undergroundového festivalu, a tak sme sa rozhodli, že Budafest spravíme na nábreží. Robili sme ho 5 rokov, od roku 2014 až do roku 2018.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (3).webp?v=1" class="about-history-img" alt="Budafest">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (3).webp?v=1" class="about-history-img" alt="Budafest">
 
             <div class="about-history-title">Prvý koncert v Koni</div>
             <div class="about-history-text">
@@ -4759,13 +4759,13 @@ initCarouselObserver();
             <div class="about-history-text">
                 Ešte pred touto akciou sme veľakrát v Koni pri pive rozmýšľali, že by sme spravili koncert tak, ako sme to kedysi robili v Papuči, ale nikdy sme sa do toho naplno nepustili. Po akcii Slovenská krčma sme si povedali, že by bolo super v tom pokračovať, ale korona to celé stopla.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (4).webp?v=1" class="about-history-img" alt="Prvý koncert v Koni">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (4).webp?v=1" class="about-history-img" alt="Prvý koncert v Koni">
 
             <div class="about-history-title">Saténové ruky</div>
             <div class="about-history-text">
                 Po dvoch rokoch sme sa zapojili do súťaže s kapelou Saténové ruky, kde bol výhrou ich privátny koncert kdekoľvek na Slovensku. Zhodou okolností vyžrebovali nášho kamaráta Janka a spolu sme sa rozhodli, že to spravíme ako verejný koncert vo Furmanke. Nakoniec Saténové ruky zahrali s nami a s kapelou Trstenica. Koncert dopadol skvelo, prišlo veľa ľudí a výborne sa bavili.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (5).webp?v=1" class="about-history-img" alt="Saténové ruky">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (5).webp?v=1" class="about-history-img" alt="Saténové ruky">
 
             <div class="about-history-title">Kôňcerty</div>
             <div class="about-history-text">A tu sa začala naša cesta s Kôňcertami.</div>
@@ -4778,7 +4778,7 @@ initCarouselObserver();
             <div class="about-history-text">
                 Tak sme začali robiť koncerty na pravidelnej báze – viac-menej počas jesene a jari každý mesiac a cez leto jeden unplugged koncert na terase.
             </div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (6).webp?v=1" class="about-history-img" alt="Kôňcerty">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (6).webp?v=1" class="about-history-img" alt="Kôňcerty">
 
             <div class="about-history-text">
                 Vstupné na koncerty je vždy dobrovoľné a za dobrovoľný príspevok si môžete vybrať niečo z nášho, poväčšine ručne robeného merchu – či už odznaky, nálepky, nášivky alebo podpivníky.
@@ -4791,7 +4791,7 @@ initCarouselObserver();
             </div>
 
             <div class="about-history-title">Už len... vidíme sa v Koni!</div>
-            <img src="https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/koncerty (7).webp?v=1" class="about-history-img" alt="Kôňcerty – záver">
+            <img src="https://koncerty-furmanka.github.io/koncerty/fotky/koncerty (7).webp?v=1" class="about-history-img" alt="Kôňcerty – záver">
         `;
     }
 
@@ -4862,10 +4862,10 @@ async function loadGalleryData() {
                 if (bandNameFromFile) bandSlug = normalizeGallerySlug(bandNameFromFile);
             }
 
-            const originalImageUrl = 'https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/fotky/' +
+            const originalImageUrl = 'https://koncerty-furmanka.github.io/koncerty/fotky/' +
                 encodeURIComponent(name) + '?v=1';
             // Galéria používa ľahké náhľady. Originál sa otvorí až v lightboxe.
-            const imageUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(originalImageUrl) + '&w=700&q=78&output=webp';
+            const imageUrl = originalImageUrl;
 
             const photo = {
                 url: imageUrl,
