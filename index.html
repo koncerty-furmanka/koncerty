@@ -33,6 +33,11 @@
                 safari_web_id: "web.onesignal.auto.062d21d9-5bd4-46cb-a28c-e44e38d1b29c",
                 serviceWorkerParam: { scope: "/koncerty/onesignal/" },
                 serviceWorkerPath: "/koncerty/onesignal/OneSignalSDKWorker.js",
+                welcomeNotification: {
+                    title: "Kôňcerty 🤘",
+                    message: "HOTOVO! KÔŇCERTY ŤA ODTERAZ UPOZORNIA NA DÔLEŽITÉ NOVINKY A KONCERTY.",
+                    url: "https://koncerty-furmanka.github.io/koncerty/"
+                }
             });
 
             try {
@@ -3094,7 +3099,7 @@ body.modal-scroll-locked {
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
 
-            <button id="install-btn" onclick="installApp()" aria-label="Nainštalovať appku" title="Nainštalovať appku"><i class="fas fa-download"></i><span>NAINŠTALOVAŤ APKU</span></button>
+            <button id="install-btn" onclick="installApp()" aria-label="Nainštalovať appku" title="Nainštalovať appku"><i class="fas fa-download"></i><span>NAINŠTALOVAŤ APPKU</span></button>
             
             <div class="menu-grid">
                 <div role="button" tabindex="0" id="btn-upcoming" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-upcoming');},200)">
@@ -4168,17 +4173,40 @@ function isInstalledApp() {
         || window.navigator.standalone === true;
 }
 
+function isIOSDevice() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+function isAndroidDevice() {
+    return /android/i.test(navigator.userAgent);
+}
+
+function isFirefoxAndroid() {
+    return isAndroidDevice() && /firefox/i.test(navigator.userAgent);
+}
+
+function isOperaAndroid() {
+    return isAndroidDevice() && /opr\//i.test(navigator.userAgent);
+}
+
+function showInstallButton() {
+    if (isInstalledApp()) return;
+    const b = document.getElementById('install-btn');
+    if (b) b.classList.add('show');
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     if (isInstalledApp()) return;
     deferredPrompt = e;
-    const b = document.getElementById('install-btn');
-    if (b) b.classList.add('show');
+    showInstallButton();
 });
 
 async function installApp() {
     buzz();
     const b = document.getElementById('install-btn');
+
+    // Chromium browsers (Chrome, Edge, Opera...) can open the native install prompt.
     if (deferredPrompt) {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
@@ -4186,8 +4214,28 @@ async function installApp() {
         if (b && choice && choice.outcome === 'accepted') b.classList.remove('show');
         return;
     }
-    alert('NA IPHONE:\n1. Ťukni dole na tlačidlo ZDIEĽAŤ (štvorček so šípkou)\n2. Vyber "PRIDAŤ NA PLOCHU"\n3. Potvrď — a apka je nainštalovaná!');
+
+    // iPhone/iPad: installation is done from the browser's Share menu.
+    if (isIOSDevice()) {
+        alert('AKO NAINŠTALOVAŤ KÔŇCERTY:\n\n1. Ťukni na ZDIEĽAŤ (štvorček so šípkou).\n2. Vyber „PRIDAŤ NA PLOCHU“.\n3. Potvrď „PRIDAŤ“.\n\nPotom otvor Kôňcerty z novej ikony na ploche.');
+        return;
+    }
+
+    // Firefox Android does not expose beforeinstallprompt, but it supports manual PWA installation.
+    if (isFirefoxAndroid()) {
+        alert('AKO NAINŠTALOVAŤ KÔŇCERTY VO FIREFOXE:\n\n1. Otvor menu ⋮.\n2. Vyber „Pridať na plochu“ / „Install“.\n3. Potvrď inštaláciu.\n\nPotom otvor Kôňcerty z ikony na ploche.');
+        return;
+    }
+
+    // Opera Android can use its browser menu when no native prompt is exposed.
+    if (isOperaAndroid()) {
+        alert('AKO NAINŠTALOVAŤ KÔŇCERTY V OPERe:\n\n1. Otvor menu prehliadača.\n2. Vyber „Pridať na plochu“ / „Add to Home screen“ alebo „Install“.\n3. Potvrď inštaláciu.\n\nPotom otvor Kôňcerty z ikony na ploche.');
+        return;
+    }
+
+    alert('AKO NAINŠTALOVAŤ KÔŇCERTY:\n\nOtvor menu svojho prehliadača a vyhľadaj možnosť „Nainštalovať aplikáciu“, „Inštalovať“ alebo „Pridať na plochu“.');
 }
+
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMerchCart);
@@ -4201,11 +4249,13 @@ window.addEventListener('appinstalled', () => {
     if (b) b.classList.remove('show');
 });
 
-(function iosInstallHint() {
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (isIOS && !isInstalledApp()) {
-        const b = document.getElementById('install-btn');
-        if (b) b.classList.add('show');
+(function installCompatibilityHint() {
+    if (isInstalledApp()) return;
+
+    // iOS and Firefox Android do not expose beforeinstallprompt, so show our
+    // own button with browser-specific installation instructions.
+    if (isIOSDevice() || isFirefoxAndroid() || isOperaAndroid()) {
+        showInstallButton();
     }
 })();
 
