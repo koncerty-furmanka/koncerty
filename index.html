@@ -25,7 +25,6 @@
     <link rel="icon" href="favicon.png">
 
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         OneSignalDeferred.push(async function (OneSignal) {
@@ -124,8 +123,6 @@
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"></noscript>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -136,6 +133,20 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" rel="stylesheet"></noscript>
     
     <style>
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Font Awesome 6 Brands';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2') format('woff2');
+}
 :root {
 --primary-font: 'Oswald', sans-serif;
             --text-color: #ffffff;
@@ -3039,6 +3050,7 @@ body.modal-scroll-locked {
             <img
                 class="splash-vinyl-image"
                 width="332" height="332"
+                style="aspect-ratio:332/332"
                 fetchpriority="high"
                 src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=664&q=82&output=webp"
                 alt="Kôňcerty vinyl">
@@ -3048,6 +3060,7 @@ body.modal-scroll-locked {
         <div class="splash-loading" id="splash-loading-text">NAČÍTAVAM<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
     </div>
 
+    <main id="app-main">
     <div id="screen-calendar" class="screen">
         <div class="page-header">
             <div class="page-title">KALENDÁR</div>
@@ -3080,22 +3093,7 @@ body.modal-scroll-locked {
         <div id="app-version-footer">Verzia: 2.1.6</div>
     </div>
 
-    <nav id="bottom-nav">
-        <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-home');},200)">
-            <i class="fas fa-house"></i><span>DOMOV</span>
-        </div>
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-calendar" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-calendar');},200)">
-            <i class="fas fa-calendar-days"></i><span>KALENDÁR</span>
-        </div>
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-bands" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-bands');},200)">
-            <i class="fas fa-guitar"></i><span>KAPELY</span>
-        </div>
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-more');},200)">
-            <i class="fas fa-ellipsis"></i><span>VIAC</span>
-        </div>
-    </nav>
-
-    <div id="notif-cats-overlay">
+    <div id="notif-cats-overlay"
         <div class="notif-cats-panel">
             <div class="notif-cats-title">UPOZORNENIA ZAPNUTÉ ✓</div>
             <div class="notif-cats-sub">Vyber si, o čom chceš vedieť:</div>
@@ -3108,7 +3106,7 @@ body.modal-scroll-locked {
     <div id="screen-home" class="screen active">
         <div class="home-content">
             <div class="home-header">
-<img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1&w=630&q=82&output=webp" class="main-logo" width="315" height="98" alt="Logo">
+<img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/koncertypunkska.webp?v=1&w=630&q=82&output=webp" class="main-logo" width="315" height="98" style="aspect-ratio:315/98" alt="Logo">
             </div>
 
             <div id="countdown-bar">NAČÍTAVAM...</div>
@@ -3120,32 +3118,33 @@ body.modal-scroll-locked {
 <img id="dynamic-upcoming-img"
      class="btn-image"
      width="332" height="470"
+     style="aspect-ratio:332/470"
      fetchpriority="high"
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
-                    <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1&w=664&q=82&output=webp" class="btn-image" width="332" height="470" alt="Archív">
+                    <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1&w=664&q=82&output=webp" class="btn-image" width="332" height="470" style="aspect-ratio:332/470" alt="Archív">
                 </div>
             </div>
 
             <div class="bottom-container">
                 <div class="left-col">
                     <div role="button" tabindex="0" class="about-btn-wrapper action-btn size-l rot-1" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-gallery');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=630&q=82&output=webp" class="small-btn-img" width="315" height="219" alt="Fotogaléria">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=630&q=82&output=webp" class="small-btn-img" width="315" height="219" style="aspect-ratio:315/219" alt="Fotogaléria">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2 home-merch-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp" class="small-btn-img" width="263" height="175" alt="Náš Merch">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp" class="small-btn-img" width="263" height="175" style="aspect-ratio:263/175" alt="Náš Merch">
                     </div>
                 </div>
                 <div class="right-col">
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-4" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-map');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="116" alt="Mapa">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/mapa.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="116" style="aspect-ratio:210/116" alt="Mapa">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-3" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-contact');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="110" alt="Kontakt">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/kontakty.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="110" style="aspect-ratio:210/110" alt="Kontakt">
                     </div>
                     <div role="button" tabindex="0" class="small-btn-wrapper action-btn size-s rot-5" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-social');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="104" alt="Social">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/socialnesiete.webp?v=1&w=420&q=82&output=webp" class="small-btn-img" width="210" height="104" style="aspect-ratio:210/104" alt="Social">
                     </div>
                 </div>
             </div>
@@ -3526,6 +3525,22 @@ body.modal-scroll-locked {
             </a>
         </div>
     </div>
+    </main>
+
+    <nav id="bottom-nav">
+        <div role="button" tabindex="0" class="nav-item active" data-nav="screen-home" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-home');},200)">
+            <i class="fas fa-house"></i><span>DOMOV</span>
+        </div>
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-calendar" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-calendar');},200)">
+            <i class="fas fa-calendar-days"></i><span>KALENDÁR</span>
+        </div>
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-bands" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-bands');},200)">
+            <i class="fas fa-guitar"></i><span>KAPELY</span>
+        </div>
+        <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-more');},200)">
+            <i class="fas fa-ellipsis"></i><span>VIAC</span>
+        </div>
+    </nav>
 
     <div id="modal-overlay" onclick="overlayClick(event)">
         <div role="button" tabindex="0" class="modal-close-btn" onclick="event.stopPropagation(); closeModal();"><i class="fas fa-times"></i></div>
@@ -5133,9 +5148,36 @@ let furmankaMapMarkers = {
     parkingCsob: null
 };
 
+let leafletLoadPromise = null;
+function loadLeafletAssets() {
+    if (typeof L !== 'undefined') return Promise.resolve();
+    if (leafletLoadPromise) return leafletLoadPromise;
+
+    leafletLoadPromise = new Promise((resolve, reject) => {
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+        document.head.appendChild(cssLink);
+
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Leaflet sa nepodarilo načítať'));
+        document.head.appendChild(script);
+    });
+    return leafletLoadPromise;
+}
+
 function initFurmankaMap() {
     const el = document.getElementById('koncerty-map');
-    if (!el || furmankaMapInstance || typeof L === 'undefined') return;
+    if (!el || furmankaMapInstance) return;
+
+    if (typeof L === 'undefined') {
+        loadLeafletAssets()
+            .then(initFurmankaMap)
+            .catch(() => { el.innerHTML = '<div class="error-box"><p>MAPA SA NEPODARILA NAČÍTAŤ.</p></div>'; });
+        return;
+    }
 
     const venue = { lat: 49.4043245, lng: 19.4789378 };
     const parkingBehind = { lat: 49.4046667, lng: 19.4792222 };
