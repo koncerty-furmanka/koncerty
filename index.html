@@ -4753,7 +4753,13 @@ initCarouselObserver();
 
     // Fotogaléria sa načítava na pozadí, s malým oneskorením - neblokuje štart appky
     // ani splash screen, a nesúperí o šírku pásma s kritickými zdrojmi pri prvom vykreslení.
-    setTimeout(loadGalleryData, 2000);
+    // Fotogaléria sa načítava, keď je prehliadač reálne nečinný (nie v pevnom čase),
+    // aby na pomalších pripojeniach nesúperila o šírku pásma s LCP/FCP.
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGalleryData, { timeout: 5000 });
+    } else {
+        setTimeout(loadGalleryData, 2000);
+    }
 }
 
 async function loadGalleryData() {
