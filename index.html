@@ -1558,12 +1558,15 @@
     padding: 20px;
 }
 .notif-cats-panel {
+    box-sizing: border-box;
     background: #14100d;
     border: 1px solid var(--accent-color);
     box-shadow: 0 6px 24px rgba(0,0,0,0.9);
     padding: 22px 18px;
     width: 100%;
     max-width: 380px;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
 }
 .notif-cats-title {
     font-size: 1.4rem;
@@ -3078,7 +3081,7 @@ body.modal-scroll-locked {
         <div id="app-version-footer">Verzia: 2.1.6</div>
     </div>
 
-    <div id="notif-cats-overlay"
+    <div id="notif-cats-overlay">
         <div class="notif-cats-panel">
             <div class="notif-cats-title">UPOZORNENIA ZAPNUTÉ ✓</div>
             <div class="notif-cats-sub">Vyber si, o čom chceš vedieť:</div>
