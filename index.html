@@ -425,6 +425,45 @@
         .social-grid, .merch-grid { display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 20px; }
         .social-link { border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 300px; padding: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); color: white; text-decoration: none; font-size: 1.5rem; transition: transform 0.2s; }
         .social-link:active { transform: scale(0.95); }
+/* ===== SOCIÁLNE SIETE – ČISTÉ IKONY ===== */
+.social-grid.social-icons-only {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 28px;
+    padding: 24px 20px;
+    align-items: center;
+    justify-content: center;
+}
+.social-icons-only .social-icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    margin: 0;
+    border: 0 !important;
+    outline: 0;
+    background: transparent !important;
+    box-shadow: none;
+    border-radius: 0;
+    text-decoration: none;
+    transition: transform .18s ease, filter .18s ease;
+}
+.social-icons-only .social-icon-link img {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    filter: drop-shadow(0 4px 7px rgba(0,0,0,.75));
+}
+.social-icons-only .social-icon-link:active {
+    transform: scale(.88);
+}
+
         .contact-btn { border-radius: 12px; display: block; width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); padding: 18px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none; font-size: 1.4rem; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
         .contact-btn i { font-size: 0.85rem; margin-right: 6px; }
         .contact-btn-email { font-size: 1.05rem; word-break: break-all; }
@@ -3498,17 +3537,20 @@ body.modal-scroll-locked {
         <div class="page-header">
             <div class="page-title">SIETE</div>
         </div>
-        <div class="social-grid">
-            <a href="https://www.facebook.com/k0ncerty" target="_blank" class="social-link" style="border-color:#1877F2;">
-                <i class="fab fa-facebook" style="color:#1877F2;"></i> FACEBOOK
+        <div class="social-grid social-icons-only">
+            <a href="https://www.facebook.com/k0ncerty" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="Facebook">
+                <img src="./ikony/fbbut.webp" alt="Facebook">
             </a>
-            <a href="https://www.instagram.com/k0ncerty/" target="_blank" class="social-link" style="border-color:#E1306C;">
-                <i class="fab fa-instagram" style="color:#E1306C;"></i> INSTAGRAM
+            <a href="https://www.instagram.com/k0ncerty/" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="Instagram">
+                <img src="./ikony/instabut.webp" alt="Instagram">
             </a>
-            <a href="https://www.tiktok.com/@k0ncerty_" target="_blank" class="social-link" style="border-color:#69C9D0;">
-                <i class="fab fa-tiktok" style="color:#fff;"></i> TIKTOK
+            <a href="https://www.tiktok.com/@k0ncerty_" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="TikTok">
+                <img src="./ikony/tiktokbut.webp" alt="TikTok">
             </a>
-            <a onclick="shareApp()" class="social-link" style="border-color:var(--accent-color); cursor:pointer;">
+            <a href="https://www.youtube.com/@k0ncerty" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="YouTube Kôňcerty">
+                <img src="./ikony/ybbut.webp" alt="YouTube Kôňcerty">
+            </a>
+            <a onclick="shareApp()" class="social-link share-social-link" style="border-color:var(--accent-color); cursor:pointer;">
                 <i class="fas fa-share-nodes" style="color:var(--accent-color);"></i> POŠLI KAMOŠOVI
             </a>
         </div>
