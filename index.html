@@ -3564,6 +3564,29 @@ body.modal-scroll-locked {
     }
 }
 
+
+@media (min-width: 700px) {
+    #carousel-upcoming,
+    #carousel-past {
+        touch-action: pan-y;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: grab;
+    }
+
+    #carousel-upcoming.dragging,
+    #carousel-past.dragging {
+        cursor: grabbing;
+        scroll-snap-type: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    #carousel-upcoming .carousel-card,
+    #carousel-past .carousel-card {
+        cursor: pointer;
+    }
+}
+
 </style>
 
 </head>
@@ -5610,18 +5633,55 @@ function renderGalleryIfVisible() {
 }
 
 function initCarouselObserver() {
-    const options = { root: null, rootMargin: '0px', threshold: 0.7 };
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const container = entry.target.parentElement;
-                container.querySelectorAll('.carousel-card').forEach(c => c.classList.remove('active'));
-                entry.target.classList.add('active');
-            }
-        });
-    }, options);
-    document.querySelectorAll('.carousel-card').forEach(card => observer.observe(card));
+    // Aktívny je vždy plagát, ktorého stred je najbližšie stredu carouselu.
+    // IntersectionObserver bol pri desktopovej šírke nepresný a označoval susedný plagát.
+    const containers = [
+        document.getElementById('carousel-upcoming'),
+        document.getElementById('carousel-past')
+    ].filter(Boolean);
+
+    containers.forEach(container => {
+        if (container.__centerObserverBound) return;
+        container.__centerObserverBound = true;
+
+        let ticking = false;
+
+        const updateActive = () => {
+            ticking = false;
+            const cards = [...container.querySelectorAll('.carousel-card')];
+            if (!cards.length) return;
+
+            const centerX = container.scrollLeft + container.clientWidth / 2;
+            let closest = null;
+            let closestDistance = Infinity;
+
+            cards.forEach(card => {
+                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                const distance = Math.abs(cardCenter - centerX);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closest = card;
+                }
+            });
+
+            cards.forEach(card => card.classList.toggle('active', card === closest));
+        };
+
+        const requestUpdate = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateActive);
+        };
+
+        container.addEventListener('scroll', requestUpdate, { passive: true });
+        window.addEventListener('resize', requestUpdate);
+
+        // Po naplnení DOM nastavíme správne aktívny prvý/stredový plagát.
+        setTimeout(updateActive, 80);
+        setTimeout(updateActive, 350);
+    });
 }
+
 
 
 function makeSpotifyEmbedUrl(url) {
@@ -5971,70 +6031,104 @@ function setupMouseDragCarousel(containerId) {
     let isDown = false;
     let startX = 0;
     let startScrollLeft = 0;
-    let moved = false;
+    let didDrag = false;
+    let activePointerId = null;
 
-    container.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
+    container.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
 
         isDown = true;
-        moved = false;
-        startX = e.pageX;
+        didDrag = false;
+        activePointerId = e.pointerId;
+        startX = e.clientX;
         startScrollLeft = container.scrollLeft;
+
         container.classList.add('dragging');
+
+        try {
+            container.setPointerCapture(e.pointerId);
+        } catch (_) {}
     });
 
-    window.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
+    container.addEventListener('pointermove', (e) => {
+        if (!isDown || e.pointerId !== activePointerId) return;
 
-        const dx = e.pageX - startX;
-        if (Math.abs(dx) > 4) moved = true;
+        const dx = e.clientX - startX;
 
-        container.scrollLeft = startScrollLeft - dx;
+        if (Math.abs(dx) > 7) {
+            didDrag = true;
+            container.scrollLeft = startScrollLeft - dx;
+        }
     });
 
-    window.addEventListener('mouseup', () => {
-        if (!isDown) return;
+    const finishPointer = (e) => {
+        if (!isDown || e.pointerId !== activePointerId) return;
 
         isDown = false;
         container.classList.remove('dragging');
 
-        // Po pustení myši necháme scroll-snap dorovnať najbližší plagát.
-        if (moved) {
+        try {
+            container.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+
+        if (didDrag) {
+            // Po ťahaní dorovnáme na plagát najbližšie stredu.
             requestAnimationFrame(() => {
                 const cards = [...container.querySelectorAll('.carousel-card')];
                 if (!cards.length) return;
 
-                const center = container.scrollLeft + container.clientWidth / 2;
+                const centerX = container.scrollLeft + container.clientWidth / 2;
                 let closest = cards[0];
                 let closestDistance = Infinity;
 
                 cards.forEach(card => {
                     const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-                    const distance = Math.abs(cardCenter - center);
+                    const distance = Math.abs(cardCenter - centerX);
                     if (distance < closestDistance) {
                         closestDistance = distance;
                         closest = card;
                     }
                 });
 
-                closest.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
+                const target = closest.offsetLeft + closest.offsetWidth / 2 - container.clientWidth / 2;
+
+                container.scrollTo({
+                    left: Math.max(0, target),
+                    behavior: 'smooth'
                 });
+
+                setTimeout(() => {
+                    const evt = new Event('scroll');
+                    container.dispatchEvent(evt);
+                }, 300);
             });
+        }
+
+        // didDrag ostane true až do click eventu, aby sa po ťahaní
+        // neotvoril detail koncertu.
+    };
+
+    container.addEventListener('pointerup', finishPointer);
+    container.addEventListener('pointercancel', finishPointer);
+    container.addEventListener('lostpointercapture', () => {
+        if (isDown) {
+            isDown = false;
+            container.classList.remove('dragging');
         }
     });
 
-    // Zabráni otvoreniu koncertu kliknutím, ak používateľ práve ťahal myšou.
     container.addEventListener('click', (e) => {
-        if (moved) {
+        if (didDrag) {
             e.preventDefault();
             e.stopPropagation();
-            moved = false;
+            didDrag = false;
         }
+        // Pri obyčajnom kliknutí didDrag=false a inline
+        // onclick="openDetail(this)" funguje normálne.
     }, true);
 }
+
+
 
 function setupDesktopCarouselMouseControls() {
     if (window.innerWidth < 700) return;
