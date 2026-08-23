@@ -3482,6 +3482,55 @@ body.modal-scroll-locked {
     }
 }
 
+
+
+/* =========================================================
+   DESKTOP – MENŠIE PLAGÁTY V NAJBLIŽŠÍCH KÔŇCERTOCH A ARCHÍVE
+   ========================================================= */
+@media (min-width: 700px) {
+    #carousel-upcoming,
+    #carousel-past {
+        padding-top: 18px;
+        padding-bottom: 34px;
+        gap: 0;
+    }
+
+    #carousel-upcoming .carousel-card,
+    #carousel-past .carousel-card {
+        flex: 0 0 31%;
+        margin: 0 8px;
+        transform: scale(.90);
+    }
+
+    #carousel-upcoming .carousel-card.active,
+    #carousel-past .carousel-card.active {
+        transform: scale(1);
+    }
+
+    #carousel-upcoming .poster-clean,
+    #carousel-past .poster-clean {
+        width: 100%;
+        max-width: 100%;
+        max-height: 58vh;
+        object-fit: contain;
+    }
+
+    #carousel-upcoming .card-mini-info,
+    #carousel-past .card-mini-info {
+        margin-top: 10px;
+    }
+
+    #carousel-upcoming .mini-title,
+    #carousel-past .mini-title {
+        font-size: 1.25rem;
+    }
+
+    #carousel-upcoming .mini-date,
+    #carousel-past .mini-date {
+        font-size: .9rem;
+    }
+}
+
 </style>
 
 </head>
