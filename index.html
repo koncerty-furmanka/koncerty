@@ -5673,11 +5673,20 @@ window.addEventListener("popstate", function(event) {
         return;
     }
     hideModalNow();
-    const targetScreen = (event.state && event.state.screen) ? event.state.screen : 'screen-home';
-    merchCheckoutMode = !!(event.state && event.state.merchCheckout);
-    if (targetScreen !== activeScreenId) {
+
+    // Android / browser "späť":
+    // medzi jednotlivými sekciami appky nechceme prechádzať cez históriu
+    // navštívených obrazoviek. Z každej vnútornej sekcie sa ide priamo na DOMOV.
+    const targetScreen = 'screen-home';
+    merchCheckoutMode = false;
+
+    if (activeScreenId !== targetScreen) {
         showScreen(targetScreen);
     }
+
+    // Aktuálnu históriu aplikácie zrovnáme na DOMOV, aby sa ďalšie
+    // "späť" už nepokúšalo otvárať predchádzajúce sekcie.
+    history.replaceState({ screen: 'screen-home' }, '', '#screen-home');
 });
 
 function openEventGalleryCarousel(gid) {
