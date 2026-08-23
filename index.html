@@ -3304,6 +3304,205 @@ body.modal-scroll-locked {
     }
 }
 
+
+/* =========================================================
+   DESKTOP HOME V2
+   [NAJBLIŽŠIE] [ARCHÍV] [FOTOGALÉRIA + MERCH] [MAPA + KONTAKT + SOCIAL]
+   ========================================================= */
+@media (min-width: 900px) {
+    #screen-home.active {
+        height: calc(100dvh - 62px);
+        overflow: hidden;
+        padding: 0 22px 6px;
+        box-sizing: border-box;
+    }
+
+    #screen-home .home-content {
+        width: min(1320px, 100%);
+        margin: 0 auto;
+        height: 100%;
+        display: grid;
+        grid-template-columns: minmax(230px, 1fr) minmax(230px, 1fr) minmax(175px, .72fr) minmax(175px, .72fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        grid-template-areas:
+            "header header header header"
+            "count count count count"
+            "upcoming archive middle right";
+        column-gap: 8px;
+        row-gap: 5px;
+        padding: 4px 0 2px;
+        box-sizing: border-box;
+    }
+
+    #screen-home .home-header {
+        grid-area: header;
+        margin: 0;
+        text-align: center;
+        align-self: center;
+    }
+
+    #screen-home .main-logo {
+        width: clamp(210px, 21vw, 300px);
+        transform: none;
+        margin: 0 auto;
+    }
+
+    /* Odpočet vycentrovaný cez celú stránku */
+    #screen-home #countdown-bar {
+        grid-area: count;
+        justify-self: center;
+        align-self: center;
+        width: auto;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    #screen-home #install-btn {
+        display: none;
+    }
+
+    #screen-home .menu-grid {
+        display: contents;
+    }
+
+    /* Dva veľké plagáty */
+    #screen-home #btn-upcoming,
+    #screen-home #btn-archive {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        min-height: 0;
+        padding: 0;
+        margin: 0;
+        align-self: stretch;
+        justify-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #screen-home #btn-upcoming {
+        grid-area: upcoming;
+    }
+
+    #screen-home #btn-archive {
+        grid-area: archive;
+    }
+
+    #screen-home #btn-upcoming .btn-image,
+    #screen-home #btn-archive .btn-image {
+        width: auto;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Pôvodné kontajnery už na desktope nevytvárajú vlastné riadky:
+       ich deti sa priamo zapoja do hlavného gridu. */
+    #screen-home .bottom-container,
+    #screen-home .left-col,
+    #screen-home .right-col {
+        display: contents;
+    }
+
+    /* FOTOGALÉRIA */
+    #screen-home .about-btn-wrapper {
+        grid-area: middle;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        min-height: 0;
+        margin: 0;
+        transform: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* MERCH */
+    #screen-home .home-merch-btn {
+        grid-area: middle;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        min-height: 0;
+        margin: 0;
+        transform: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Keďže fotogaléria a merch patria do jedného stĺpca,
+       vytvoríme z nich spoločný vizuálny stĺpec cez wrapperové
+       pseudo-positionovanie. */
+    #screen-home .about-btn-wrapper {
+        grid-column: 3;
+        grid-row: 3;
+        height: 58%;
+        align-self: start;
+    }
+
+    #screen-home .home-merch-btn {
+        grid-column: 3;
+        grid-row: 3;
+        height: 38%;
+        align-self: end;
+    }
+
+    /* PRAVÝ STĹPEC: MAPA / KONTAKT / SOCIÁLNE SIETE */
+    #screen-home .right-col .small-btn-wrapper {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+        transform: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #screen-home .right-col .small-btn-wrapper:nth-child(1) {
+        grid-column: 4;
+        grid-row: 3;
+        height: 31%;
+        align-self: start;
+    }
+
+    #screen-home .right-col .small-btn-wrapper:nth-child(2) {
+        grid-column: 4;
+        grid-row: 3;
+        height: 31%;
+        align-self: center;
+    }
+
+    #screen-home .right-col .small-btn-wrapper:nth-child(3) {
+        grid-column: 4;
+        grid-row: 3;
+        height: 31%;
+        align-self: end;
+    }
+
+    #screen-home .small-btn-img {
+        width: auto;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Na PC necháme ikonky rovné a zarovnané. */
+    #screen-home .rot-1,
+    #screen-home .rot-2,
+    #screen-home .rot-3,
+    #screen-home .rot-4,
+    #screen-home .rot-5 {
+        transform: none;
+    }
+}
+
 </style>
 
 </head>
