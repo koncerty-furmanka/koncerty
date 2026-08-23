@@ -3383,9 +3383,24 @@ body.modal-scroll-locked {
 @media (max-width: 699px) { .mobile-nav-more { display: flex !important; } }
 
 @media (min-width: 700px) {
-    /* Menšia ikonka NÁŠ MERCH, ale bez zmeny jej pozície */
+    /* NÁŠ MERCH – trochu väčší než predtým */
     #screen-home .home-merch-btn .small-btn-img {
-        transform: scale(.82) !important;
+        transform: scale(.93) !important;
+    }
+
+    /* Pravý stĺpec – rovnaká šírka ako plagát ARCHÍV */
+    #screen-home .right-col .small-btn-wrapper {
+        left: 75.6% !important;
+        width: 23.4% !important;
+    }
+
+    /* Mapa, kontakt a sociálne siete presne v šírke plagátu */
+    #screen-home .right-col .small-btn-img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
     }
 
     /* Desktop upozornenia */
