@@ -3314,52 +3314,66 @@ body.modal-scroll-locked {
 }
 
 
-@media (min-width: 900px) {
-    /* VIAC na desktope už nepoužívame – všetko je priamo v spodnom menu. */
+@media (min-width: 700px) {
+    /* DESKTOP: 6 položiek priamo v spodnom menu */
+    #bottom-nav .desktop-nav-extra {
+        display: flex !important;
+        visibility: visible !important;
+        flex: 1 1 0 !important;
+    }
+
     #bottom-nav .nav-item[data-nav="screen-more"] {
         display: none !important;
     }
 
-    #bottom-nav .desktop-nav-extra {
-        display: flex !important;
-    }
-
     #bottom-nav {
-        height: 64px;
+        height: 66px !important;
+        display: flex !important;
+        align-items: stretch !important;
     }
 
     #bottom-nav .nav-item {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 7px 4px 5px;
-        gap: 2px;
+        flex: 1 1 0 !important;
+        width: 16.6667% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding: 6px 3px 4px !important;
+        gap: 2px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
     }
 
     #bottom-nav .nav-item i {
-        font-size: 19px;
+        font-size: 19px !important;
     }
 
     #bottom-nav .nav-item span {
-        font-size: 9px;
-        white-space: nowrap;
-        text-align: center;
+        font-size: 9px !important;
+        line-height: 11px !important;
+        letter-spacing: 1px !important;
+        white-space: nowrap !important;
     }
 
-    /* MERCH vyššie – jeho spodok ostáva zarovno so spodkom plagátov
-       a sociálnych sietí. */
+    /* MERCH: posun vyššie, spodok približne zarovno s ostatnými */
     #screen-home .home-merch-btn {
-        top: 67%;
-        height: 28%;
+        top: 67% !important;
+        height: 28% !important;
     }
 }
 
-/* Na mobile zostávajú O NÁS/UPOZORNENIA/ZDIEĽAŤ skryté. */
-@media (max-width: 899px) {
+/* MOBILE: iba pôvodné 4 položky */
+@media (max-width: 699px) {
     #bottom-nav .desktop-nav-extra {
         display: none !important;
     }
+    #bottom-nav .nav-item[data-nav="screen-more"] {
+        display: flex !important;
+    }
 }
 
+
+.mobile-nav-more { display: none !important; }
+@media (max-width: 699px) { .mobile-nav-more { display: flex !important; } }
 </style>
 
 </head>
@@ -3870,7 +3884,7 @@ body.modal-scroll-locked {
             <i class="fas fa-share-nodes"></i><span>ZDIEĽAŤ APPKU</span>
         </div>
 
-        <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-more');},200)">
+        <div role="button" tabindex="0" class="nav-item mobile-nav-more" data-nav="screen-more" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-more');},200)">
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
     </nav>
