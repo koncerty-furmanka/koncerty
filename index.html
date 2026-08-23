@@ -3383,29 +3383,102 @@ body.modal-scroll-locked {
 @media (max-width: 699px) { .mobile-nav-more { display: flex !important; } }
 
 @media (min-width: 700px) {
-    /* NÁŠ MERCH – trochu väčší než predtým */
+    /* Menšia ikonka NÁŠ MERCH, ale bez zmeny jej pozície */
     #screen-home .home-merch-btn .small-btn-img {
-        transform: scale(.93) !important;
-    }
-
-    /* Pravý stĺpec – rovnaká šírka ako plagát ARCHÍV */
-    #screen-home .right-col .small-btn-wrapper {
-        left: 75.6% !important;
-        width: 23.4% !important;
-    }
-
-    /* Mapa, kontakt a sociálne siete presne v šírke plagátu */
-    #screen-home .right-col .small-btn-img {
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        object-fit: contain !important;
+        transform: scale(.82) !important;
     }
 
     /* Desktop upozornenia */
     #bottom-nav #desktop-push-icon {
         transition: transform .2s ease, opacity .2s ease;
+    }
+}
+
+
+/* =========================================================
+   SHARE APP PANEL
+   ========================================================= */
+.share-app-panel {
+    width: min(92vw, 520px);
+    margin: 50px auto 0;
+    padding: 28px 24px 30px;
+    box-sizing: border-box;
+    text-align: center;
+    background: rgba(12,12,12,.97);
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 14px;
+    box-shadow: 0 15px 45px rgba(0,0,0,.65);
+}
+
+.share-app-icon {
+    font-size: 34px;
+    color: #f5a000;
+    margin-bottom: 12px;
+}
+
+.share-app-title {
+    color: #f5a000;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.share-app-text {
+    color: #eee;
+    font-size: 15px;
+    line-height: 1.45;
+    margin-bottom: 20px;
+}
+
+.share-app-link {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.share-app-link input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 12px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: #1b1b1b;
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+}
+
+.share-app-link button {
+    border: 1px solid rgba(245,160,0,.7);
+    border-radius: 8px;
+    background: #f5a000;
+    color: #111;
+    padding: 13px 16px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    cursor: pointer;
+}
+
+.share-app-status {
+    min-height: 20px;
+    margin-top: 13px;
+    color: #7dff8a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+@media (min-width: 700px) {
+    /* Merch ešte trochu väčší než v predchádzajúcej verzii */
+    #screen-home .home-merch-btn .small-btn-img {
+        transform: scale(.90) !important;
+    }
+
+    /* Mapa / kontakt / sociálne siete užšie, aby ich šírka
+       sedela s celkovou šírkou veľkých plagátov. */
+    #screen-home .right-col .small-btn-wrapper {
+        left: 76.8% !important;
+        width: 21.8% !important;
     }
 }
 
@@ -3503,7 +3576,7 @@ body.modal-scroll-locked {
                         <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=315&q=82&output=webp" srcset="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=315&q=82&output=webp 1x, https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/fottogaleria.webp?v=1&w=630&q=82&output=webp 2x" class="small-btn-img" width="315" height="219" style="aspect-ratio:315/219" alt="Fotogaléria">
                     </div>
                     <div role="button" tabindex="0" class="mech-btn-wrapper action-btn size-m rot-2 home-merch-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-merch');},200)">
-                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=263&q=82&output=webp" srcset="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=263&q=82&output=webp 1x, https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp 2x" class="small-btn-img" width="220" height="125" style="aspect-ratio:263/175" alt="Náš Merch">
+                        <img src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=263&q=82&output=webp" srcset="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=263&q=82&output=webp 1x, https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/nasmerch1.webp?v=1&w=526&q=82&output=webp 2x" class="small-btn-img" width="263" height="175" style="aspect-ratio:263/175" alt="Náš Merch">
                     </div>
                 </div>
                 <div class="right-col">
@@ -4561,10 +4634,71 @@ async function shareEvent() {
 async function shareApp() {
     const url = location.href.split('#')[0];
     const txt = 'KÔŇCERTY — punk, ska a rock\'n\'roll vo Furmanke. Všetky koncerty na jednom mieste';
+
+    // Na mobile použijeme natívne systémové zdieľanie.
+    // Na desktope zobrazíme vlastné okno s odkazom, pretože Chrome/Windows
+    // často síce navigator.share ponúkne, ale nemá dostupný cieľ zdieľania.
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile && navigator.share) {
+        try {
+            await navigator.share({ title: 'Kôňcerty', text: txt, url: url });
+            return;
+        } catch (err) {
+            // Používateľ zrušil natívne zdieľanie – vtedy nič ďalšie neotvárame.
+            if (err && err.name === 'AbortError') return;
+        }
+    }
+
+    const modal = document.getElementById('modal-overlay');
+    const body = document.getElementById('modal-content-body');
+    if (!modal || !body) return;
+
+    const safeUrl = escapeHtml(url);
+
+    body.innerHTML = `
+        <div class="share-app-panel">
+            <div class="share-app-icon"><i class="fas fa-share-nodes"></i></div>
+            <div class="share-app-title">ZDIEĽAŤ KÔŇCERTY</div>
+            <div class="share-app-text">Pošli niekomu odkaz na Kôňcerty a pozvi ho na koncert.</div>
+
+            <div class="share-app-link">
+                <input id="share-app-url" type="text" value="${safeUrl}" readonly onclick="this.select()">
+                <button type="button" onclick="copyAppShareLink()">
+                    <i class="fas fa-copy"></i> KOPÍROVAŤ ODKAZ
+                </button>
+            </div>
+
+            <div id="share-app-status" class="share-app-status"></div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    modal.scrollTop = 0;
+    document.documentElement.classList.add('modal-scroll-locked');
+    document.body.classList.add('modal-scroll-locked');
+
+    // Tento panel je len fallback a nemá vytvárať ďalší krok v histórii.
+}
+
+async function copyAppShareLink() {
+    const url = location.href.split('#')[0];
+    const status = document.getElementById('share-app-status');
+
     try {
-        if (navigator.share) { await navigator.share({ title: 'Kôňcerty', text: txt, url: url }); }
-        else { await navigator.clipboard.writeText(txt + ' ' + url); alert('Skopírované do schránky!'); }
-    } catch (err) {}
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(url);
+        } else {
+            const input = document.getElementById('share-app-url');
+            input.focus();
+            input.select();
+            document.execCommand('copy');
+        }
+
+        if (status) status.textContent = 'ODKAZ SKOPÍROVANÝ ✓';
+    } catch (err) {
+        if (status) status.textContent = 'Odkaz označ a skopíruj ručne.';
+    }
 }
 
 let deferredPrompt = null;
