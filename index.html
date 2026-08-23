@@ -73,6 +73,21 @@
         }
 
         
+function bindPushButton() {
+    const btn = document.getElementById('push-btn');
+    if (!btn || btn.__pushBound) return;
+    btn.__pushBound = true;
+    const run = function(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        handlePushButtonClick();
+    };
+    btn.addEventListener('click', run, false);
+    btn.addEventListener('touchend', run, { passive: false });
+    btn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') run(e);
+    });
+}
+
 function handleDesktopPushButtonClick() {
     if (typeof handlePushButtonClick === 'function') {
         handlePushButtonClick();
@@ -99,21 +114,29 @@ function handlePushButtonClick() {
                 return;
             }
 
-            showToast('Prihlasujem na odber...', 1500);
+            showToast('PRIHLASUJEM NA ODBER...', 1500);
+            window.OneSignalDeferred = window.OneSignalDeferred || [];
             window.OneSignalDeferred.push(async function (OneSignal) {
                 try {
-                    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 10000));
+                    if (Notification.permission === 'default' && Notification.requestPermission) {
+                        const permission = await Notification.requestPermission();
+                        if (permission !== 'granted') {
+                            showToast('POVOLENIE: ' + permission.toUpperCase(), 2200);
+                            return;
+                        }
+                    }
+                    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 12000));
                     await Promise.race([OneSignal.User.PushSubscription.optIn(), timeout]);
-
-                    const perm = Notification.permission;
-                    if (perm === 'granted') {
-                        showToast('Prihlásený! Otváram výber...', 1500);
-                        openNotifCats();
+                    if (Notification.permission === 'granted') {
+                        updatePushButtonUI(true);
+                        showToast('UPOZORNENIA ZAPNUTÉ ✓', 1500);
+                        setTimeout(openNotifCats, 150);
                     } else {
-                        showToast('Povolenie: ' + perm);
+                        showToast('POVOLENIE: ' + Notification.permission);
                     }
                 } catch (e) {
-                    showToast('NEPODARILO SA PRIHLÁSIŤ, SKÚS NESKÔR');
+                    console.error('Push subscription error:', e);
+                    showToast('NEPODARILO SA ZAPNÚŤ UPOZORNENIA', 2500);
                 }
             });
         }
@@ -847,7 +870,7 @@ function handlePushButtonClick() {
 .band-spotify-card iframe {
     display: block;
     width: 100%;
-    height: 352px;
+    height: 152px;
     border: 0;
 }
 .event-band-spotify-card {
@@ -857,11 +880,11 @@ function handlePushButtonClick() {
     font-size: .78rem;
 }
 .event-band-spotify-card iframe {
-    height: 300px;
+    height: 152px;
 }
 @media (max-width: 430px) {
     .event-band-spotify-card iframe {
-        height: 300px;
+        height: 152px;
     }
 }
 .band-spotify-label {
@@ -875,7 +898,7 @@ function handlePushButtonClick() {
 }
 .band-spotify-label i { color: #1DB954; margin-right: 7px; }
 @media (max-width: 430px) {
-    .band-spotify-card iframe { height: 352px; }
+    .band-spotify-card iframe { height: 152px; }
 }
 
 .modal-buttons { display: flex; gap: 10px; margin-top: 30px; justify-content: center; flex-wrap: wrap; }
@@ -3635,7 +3658,7 @@ body.modal-scroll-locked {
         </div>
         <div class="more-grid">
             <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-about"><i class="fas fa-record-vinyl"></i> O NÁS</div>
-            <div role="button" tabindex="0" id="push-btn" class="more-btn" onclick="handlePushButtonClick()"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
+            <div role="button" tabindex="0" id="push-btn" class="more-btn" aria-label="Dostávať upozornenia"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
             <div role="button" tabindex="0" class="more-btn" data-more-share="1"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
         </div>
         <div id="app-version-footer">Verzia: 2.1.6</div>
@@ -6624,6 +6647,8 @@ document.addEventListener('click', function(e) {
     const index = parseInt(photo.getAttribute('data-index'), 10);
     if (group !== null && !isNaN(index)) openLightbox(group, index);
 });
+
+bindPushButton();
 
 history.replaceState({ screen: 'screen-home' }, "", "#screen-home");
 showScreen('screen-home');
