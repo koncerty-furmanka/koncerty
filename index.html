@@ -53,16 +53,23 @@
 
         function updatePushButtonUI(isSubscribed) {
             window.__pushOptedIn = !!isSubscribed;
-            const icon = document.getElementById('push-btn-icon');
-            const label = document.getElementById('push-btn-label');
-            if (!icon || !label) return;
-            if (isSubscribed) {
-                icon.className = 'fas fa-bell-slash';
-                label.textContent = 'VYPNÚŤ UPOZORNENIA';
-            } else {
-                icon.className = 'fas fa-bell';
-                label.textContent = 'DOSTÁVAŤ UPOZORNENIA';
-            }
+
+            // Mobilné tlačidlo vo VIAC
+            const mobileIcon = document.getElementById('push-btn-icon');
+            const mobileLabel = document.getElementById('push-btn-label');
+
+            // Priame tlačidlo v desktopovom spodnom menu
+            const desktopIcon = document.getElementById('desktop-push-icon');
+            const desktopLabel = document.getElementById('desktop-push-label');
+
+            const iconClass = isSubscribed ? 'fas fa-bell-slash' : 'fas fa-bell';
+            const labelText = isSubscribed ? 'VYPNÚŤ UPOZORNENIA' : 'ZAPNÚŤ UPOZORNENIA';
+
+            if (mobileIcon) mobileIcon.className = iconClass;
+            if (mobileLabel) mobileLabel.textContent = isSubscribed ? 'VYPNÚŤ UPOZORNENIA' : 'DOSTÁVAŤ UPOZORNENIA';
+
+            if (desktopIcon) desktopIcon.className = iconClass;
+            if (desktopLabel) desktopLabel.textContent = labelText;
         }
 
         
@@ -3374,6 +3381,19 @@ body.modal-scroll-locked {
 
 .mobile-nav-more { display: none !important; }
 @media (max-width: 699px) { .mobile-nav-more { display: flex !important; } }
+
+@media (min-width: 700px) {
+    /* Menšia ikonka NÁŠ MERCH, ale bez zmeny jej pozície */
+    #screen-home .home-merch-btn .small-btn-img {
+        transform: scale(.82) !important;
+    }
+
+    /* Desktop upozornenia */
+    #bottom-nav #desktop-push-icon {
+        transition: transform .2s ease, opacity .2s ease;
+    }
+}
+
 </style>
 
 </head>
