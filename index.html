@@ -819,7 +819,38 @@
     font-size: 0.9rem;
 }
 
-        .modal-buttons { display: flex; gap: 10px; margin-top: 30px; justify-content: center; flex-wrap: wrap; }
+        
+/* ===== SPOTIFY TOP TRACKS V DETAILI KAPELY ===== */
+.band-spotify-card {
+    margin: 18px 0 0;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #181818;
+    box-shadow: 0 8px 24px rgba(0,0,0,.45);
+    border: 1px solid rgba(255,255,255,.06);
+}
+.band-spotify-card iframe {
+    display: block;
+    width: 100%;
+    height: 352px;
+    border: 0;
+}
+.band-spotify-label {
+    padding: 10px 14px 8px;
+    color: #fff;
+    background: #181818;
+    font-size: .85rem;
+    letter-spacing: .7px;
+    text-align: left;
+    font-weight: 700;
+}
+.band-spotify-label i { color: #1DB954; margin-right: 7px; }
+@media (max-width: 430px) {
+    .band-spotify-card iframe { height: 352px; }
+}
+
+.modal-buttons { display: flex; gap: 10px; margin-top: 30px; justify-content: center; flex-wrap: wrap; }
 .btn { border-radius: 10px;
     padding: 15px 25px;
     text-decoration: none;
@@ -5068,6 +5099,22 @@ function initCarouselObserver() {
     document.querySelectorAll('.carousel-card').forEach(card => observer.observe(card));
 }
 
+
+function makeSpotifyEmbedUrl(url) {
+    if (!url) return '';
+    try {
+        const u = new URL(url);
+        if (u.hostname !== 'open.spotify.com' && !u.hostname.endsWith('.spotify.com')) return '';
+        const parts = u.pathname.split('/').filter(Boolean);
+        if (parts.length < 2) return '';
+        const type = parts[0];
+        const id = parts[1];
+        const allowed = ['artist','album','playlist','track','show','episode'];
+        if (!allowed.includes(type) || !id) return '';
+        return `https://open.spotify.com/embed/${type}/${encodeURIComponent(id)}?utm_source=generator&theme=0`;
+    } catch (e) { return ''; }
+}
+
 // ===== NOVÁ FUNKCIA: OTVORENIE DETAILU KAPELY V MODALE =====
 function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
     buzz();
@@ -5097,6 +5144,8 @@ function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
             </div>`;
     }
 
+    const spotifyEmbed = makeSpotifyEmbedUrl(spotify);
+
     let html = `
         ${logo ? `<div class="band-detail-logo"><img src="${safeUrl(logo)}" alt="Logo ${escapeHtml(name)}" loading="eager" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src=this.src.replace(/\.webp(?:\?v=1)?$/, '.png?v=1');}else{this.parentElement.remove();}"></div>` : ''}
         <div class="modal-title">${escapeHtml(name)}</div>
@@ -5108,6 +5157,7 @@ function openBandDetail(name, city, style, bio, spotify, facebook, logo) {
                 ${safeSocialUrl(facebook) ? `<a href="${safeSocialUrl(facebook)}" target="_blank" rel="noopener noreferrer" class="band-link-btn fb band-image-btn"><img src="./ikony/fbbut.webp" alt="Facebook" onerror="this.onerror=null;this.src='./ikony/fbbut.webp';"></a>` : ''}
             </div>
         </div>
+        ${spotifyEmbed ? `<div class="band-spotify-card"><div class="band-spotify-label"><i class="fab fa-spotify"></i> TOP SKLADBY • ${escapeHtml(name)}</div><iframe src="${spotifyEmbed}" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen title="Spotify – ${escapeHtml(name)}"></iframe></div>` : ''}
         ${bandGalleryHtml}
         <div class="modal-buttons">
             <button class="btn btn-share" onclick="shareBand('${escapeHtml(name)}')"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>
