@@ -3135,6 +3135,175 @@ body.modal-scroll-locked {
 .site-logo, .main-logo, .header-logo {
     transform: translateX(14px);
 }
+
+/* =========================================================
+   DESKTOP HOME LAYOUT
+   Mobil ostáva nezmenený. Od 900 px sa domovská obrazovka
+   preusporiada do troch stĺpcov:
+   [NAJBLIŽŠIE] [ARCHÍV] [ostatné tlačidlá]
+   ========================================================= */
+@media (min-width: 900px) {
+    #screen-home.active {
+        height: calc(100dvh - 62px);
+        overflow: hidden;
+        padding: 0 28px 8px;
+        box-sizing: border-box;
+    }
+
+    #screen-home .home-content {
+        width: min(1380px, 100%);
+        margin: 0 auto;
+        height: 100%;
+        display: grid;
+        grid-template-columns: minmax(250px, 1fr) minmax(250px, 1fr) minmax(250px, .82fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        grid-template-areas:
+            "header header header"
+            "count  count  install"
+            "upcoming archive side";
+        column-gap: 18px;
+        row-gap: 8px;
+        padding: 10px 0 4px;
+        box-sizing: border-box;
+    }
+
+    #screen-home .home-header {
+        grid-area: header;
+        margin: 0;
+        align-self: center;
+    }
+
+    #screen-home .main-logo {
+        width: clamp(220px, 24vw, 315px);
+        transform: none;
+        margin: 0 auto;
+    }
+
+    #screen-home #countdown-bar {
+        grid-area: count;
+        align-self: center;
+        justify-self: center;
+        width: 100%;
+        margin: 0;
+    }
+
+    #screen-home #install-btn {
+        grid-area: install;
+        justify-self: end;
+        align-self: center;
+        margin: 0;
+    }
+
+    /* Udalosť + archív sú dva vysoké panely */
+    #screen-home .menu-grid {
+        display: contents;
+    }
+
+    #screen-home #btn-upcoming,
+    #screen-home #btn-archive {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        min-height: 0;
+        align-self: stretch;
+        justify-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    #screen-home #btn-upcoming {
+        grid-area: upcoming;
+    }
+
+    #screen-home #btn-archive {
+        grid-area: archive;
+    }
+
+    #screen-home #btn-upcoming .btn-image,
+    #screen-home #btn-archive .btn-image {
+        width: auto;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Pravý stĺpec – zvyšné menu */
+    #screen-home .bottom-container {
+        grid-area: side;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1.25fr .8fr .8fr .8fr;
+        gap: 12px;
+        align-items: stretch;
+        justify-items: stretch;
+    }
+
+    #screen-home .left-col,
+    #screen-home .right-col {
+        display: contents;
+    }
+
+    #screen-home .bottom-container .action-btn {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+        transform: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #screen-home .bottom-container .about-btn-wrapper {
+        grid-row: 1;
+    }
+
+    #screen-home .bottom-container .home-merch-btn {
+        grid-row: 2;
+    }
+
+    #screen-home .bottom-container .small-btn-wrapper:nth-child(1) {
+        grid-row: 3;
+    }
+
+    #screen-home .bottom-container .small-btn-wrapper:nth-child(2) {
+        grid-row: 4;
+    }
+
+    #screen-home .bottom-container .small-btn-wrapper:nth-child(3) {
+        grid-row: 5;
+    }
+
+    #screen-home .bottom-container .small-btn-img {
+        width: auto;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Na desktop neťahať obsah do strán */
+    #screen-home .menu-grid,
+    #screen-home .bottom-container {
+        overflow: hidden;
+    }
+}
+
+/* Väčšie monitory – viac priestoru medzi hlavnými panelmi */
+@media (min-width: 1200px) {
+    #screen-home .home-content {
+        column-gap: 24px;
+    }
+}
+
 </style>
 
 </head>
