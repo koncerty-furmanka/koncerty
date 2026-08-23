@@ -65,7 +65,14 @@
             }
         }
 
-        function handlePushButtonClick() {
+        
+function handleDesktopPushButtonClick() {
+    if (typeof handlePushButtonClick === 'function') {
+        handlePushButtonClick();
+    }
+}
+
+function handlePushButtonClick() {
             buzz();
 
             if (!('Notification' in window)) {
@@ -3306,6 +3313,53 @@ body.modal-scroll-locked {
     }
 }
 
+
+@media (min-width: 900px) {
+    /* VIAC na desktope už nepoužívame – všetko je priamo v spodnom menu. */
+    #bottom-nav .nav-item[data-nav="screen-more"] {
+        display: none !important;
+    }
+
+    #bottom-nav .desktop-nav-extra {
+        display: flex !important;
+    }
+
+    #bottom-nav {
+        height: 64px;
+    }
+
+    #bottom-nav .nav-item {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 7px 4px 5px;
+        gap: 2px;
+    }
+
+    #bottom-nav .nav-item i {
+        font-size: 19px;
+    }
+
+    #bottom-nav .nav-item span {
+        font-size: 9px;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    /* MERCH vyššie – jeho spodok ostáva zarovno so spodkom plagátov
+       a sociálnych sietí. */
+    #screen-home .home-merch-btn {
+        top: 67%;
+        height: 28%;
+    }
+}
+
+/* Na mobile zostávajú O NÁS/UPOZORNENIA/ZDIEĽAŤ skryté. */
+@media (max-width: 899px) {
+    #bottom-nav .desktop-nav-extra {
+        display: none !important;
+    }
+}
+
 </style>
 
 </head>
@@ -3804,6 +3858,18 @@ body.modal-scroll-locked {
         <div role="button" tabindex="0" class="nav-item" data-nav="screen-bands" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-bands');},200)">
             <i class="fas fa-guitar"></i><span>KAPELY</span>
         </div>
+
+        <!-- Desktop-only direct menu items -->
+        <div role="button" tabindex="0" class="nav-item desktop-nav-extra" data-nav="screen-about" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-about');},200)">
+            <i class="fas fa-record-vinyl"></i><span>O NÁS</span>
+        </div>
+        <div role="button" tabindex="0" class="nav-item desktop-nav-extra" data-nav="screen-push" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleDesktopPushButtonClick();},200)">
+            <i id="desktop-push-icon" class="fas fa-bell"></i><span id="desktop-push-label">UPOZORNENIA</span>
+        </div>
+        <div role="button" tabindex="0" class="nav-item desktop-nav-extra" data-nav="screen-share" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');if(typeof shareApp==='function')shareApp();},200)">
+            <i class="fas fa-share-nodes"></i><span>ZDIEĽAŤ APPKU</span>
+        </div>
+
         <div role="button" tabindex="0" class="nav-item" data-nav="screen-more" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-more');},200)">
             <i class="fas fa-ellipsis"></i><span>VIAC</span>
         </div>
