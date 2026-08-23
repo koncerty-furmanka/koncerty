@@ -3587,16 +3587,6 @@ body.modal-scroll-locked {
     }
 }
 
-
-@media (min-width: 700px) {
-    #carousel-upcoming .carousel-card,
-    #carousel-past .carousel-card,
-    #carousel-upcoming .carousel-card *,
-    #carousel-past .carousel-card * {
-        pointer-events: auto;
-    }
-}
-
 </style>
 
 </head>
@@ -5361,8 +5351,7 @@ const clean = cols.map(c =>
         upcomingContainer.innerHTML += '<div class="carousel-side-spacer"></div>';
         pastContainer.innerHTML += '<div class="carousel-side-spacer"></div>';
 
-        bindCarouselCardClicks();
-        initCarouselObserver();
+initCarouselObserver();
         setupDesktopCarouselMouseControls();
 
     } catch (error) {
@@ -5694,19 +5683,6 @@ function initCarouselObserver() {
 }
 
 
-
-
-function bindCarouselCardClicks() {
-    document.querySelectorAll('.carousel-card').forEach(card => {
-        if (card.dataset.detailClickBound) return;
-        card.dataset.detailClickBound = '1';
-
-        card.addEventListener('click', (e) => {
-            if (card.closest('.dragging')) return;
-            openDetail(card);
-        });
-    });
-}
 
 function makeSpotifyEmbedUrl(url) {
     if (!url) return '';
@@ -6068,6 +6044,10 @@ function setupMouseDragCarousel(containerId) {
         startScrollLeft = container.scrollLeft;
 
         container.classList.add('dragging');
+
+        try {
+            container.setPointerCapture(e.pointerId);
+        } catch (_) {}
     });
 
     container.addEventListener('pointermove', (e) => {
@@ -6086,6 +6066,10 @@ function setupMouseDragCarousel(containerId) {
 
         isDown = false;
         container.classList.remove('dragging');
+
+        try {
+            container.releasePointerCapture(e.pointerId);
+        } catch (_) {}
 
         if (didDrag) {
             // Po ťahaní dorovnáme na plagát najbližšie stredu.
@@ -6134,13 +6118,14 @@ function setupMouseDragCarousel(containerId) {
     });
 
     container.addEventListener('click', (e) => {
-        if (!didDrag) return;
-
-        // Zrušíme iba klik, ktorý vznikol po skutočnom ťahaní.
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        didDrag = false;
-    }, false);
+        if (didDrag) {
+            e.preventDefault();
+            e.stopPropagation();
+            didDrag = false;
+        }
+        // Pri obyčajnom kliknutí didDrag=false a inline
+        // onclick="openDetail(this)" funguje normálne.
+    }, true);
 }
 
 
