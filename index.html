@@ -3531,6 +3531,39 @@ body.modal-scroll-locked {
     }
 }
 
+
+
+/* =========================================================
+   CAROUSEL – CENTROVANIE PRVÉHO PLAGÁTU + OVLÁDANIE MYŠOU
+   ========================================================= */
+.carousel-side-spacer {
+    flex: 0 0 17.5%;
+}
+
+@media (min-width: 700px) {
+    .carousel-side-spacer {
+        flex: 0 0 34%;
+    }
+
+    #carousel-upcoming,
+    #carousel-past {
+        cursor: grab;
+        user-select: none;
+    }
+
+    #carousel-upcoming.dragging,
+    #carousel-past.dragging {
+        cursor: grabbing;
+        scroll-snap-type: none;
+        scroll-behavior: auto;
+    }
+
+    #carousel-upcoming.dragging .carousel-card,
+    #carousel-past.dragging .carousel-card {
+        pointer-events: none;
+    }
+}
+
 </style>
 
 </head>
@@ -5035,8 +5068,8 @@ const clean = cols.map(c =>
         const upcomingContainer = document.getElementById('carousel-upcoming');
         const pastContainer = document.getElementById('carousel-past');
         
-        upcomingContainer.innerHTML = '<div style="flex: 0 0 17.5%;"></div>';
-        pastContainer.innerHTML = '<div style="flex: 0 0 17.5%;"></div>';
+        upcomingContainer.innerHTML = '<div class="carousel-side-spacer"></div>';
+        pastContainer.innerHTML = '<div class="carousel-side-spacer"></div>';
 
         let upcomingEvents = [];
         let pastEvents = [];
@@ -5292,10 +5325,11 @@ const clean = cols.map(c =>
         // Ak bola appka otvorená z push notifikácie na konkrétny koncert, otvor ho teraz.
         openEventFromHash();
 
-        upcomingContainer.innerHTML += '<div style="flex: 0 0 17.5%;"></div>';
-        pastContainer.innerHTML += '<div style="flex: 0 0 17.5%;"></div>';
+        upcomingContainer.innerHTML += '<div class="carousel-side-spacer"></div>';
+        pastContainer.innerHTML += '<div class="carousel-side-spacer"></div>';
 
 initCarouselObserver();
+        setupDesktopCarouselMouseControls();
 
     } catch (error) {
         console.error("Chyba načítania:", error);
@@ -5922,6 +5956,90 @@ function focusFurmankaMapMarker(type) {
             block: 'center'
         });
     }
+}
+
+
+/* =========================================================
+   DESKTOP CAROUSEL – POSÚVANIE PLAGÁTOV MYŠOU
+   ========================================================= */
+function setupMouseDragCarousel(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container || container.dataset.mouseDragBound) return;
+
+    container.dataset.mouseDragBound = '1';
+
+    let isDown = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+    let moved = false;
+
+    container.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+
+        isDown = true;
+        moved = false;
+        startX = e.pageX;
+        startScrollLeft = container.scrollLeft;
+        container.classList.add('dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+
+        const dx = e.pageX - startX;
+        if (Math.abs(dx) > 4) moved = true;
+
+        container.scrollLeft = startScrollLeft - dx;
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+
+        isDown = false;
+        container.classList.remove('dragging');
+
+        // Po pustení myši necháme scroll-snap dorovnať najbližší plagát.
+        if (moved) {
+            requestAnimationFrame(() => {
+                const cards = [...container.querySelectorAll('.carousel-card')];
+                if (!cards.length) return;
+
+                const center = container.scrollLeft + container.clientWidth / 2;
+                let closest = cards[0];
+                let closestDistance = Infinity;
+
+                cards.forEach(card => {
+                    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                    const distance = Math.abs(cardCenter - center);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closest = card;
+                    }
+                });
+
+                closest.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            });
+        }
+    });
+
+    // Zabráni otvoreniu koncertu kliknutím, ak používateľ práve ťahal myšou.
+    container.addEventListener('click', (e) => {
+        if (moved) {
+            e.preventDefault();
+            e.stopPropagation();
+            moved = false;
+        }
+    }, true);
+}
+
+function setupDesktopCarouselMouseControls() {
+    if (window.innerWidth < 700) return;
+    setupMouseDragCarousel('carousel-upcoming');
+    setupMouseDragCarousel('carousel-past');
 }
 
 function setupArchiveScrollTracking() {
