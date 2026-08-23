@@ -6345,6 +6345,9 @@ window.addEventListener("popstate", function(event) {
         suppressNextPopstate = false;
         return;
     }
+
+    // Vnorené okná sa zatvárajú po jednom kroku.
+    // Ak je otvorená fotka alebo galéria, najprv sa zatvorí iba ona.
     if (isLightboxOpen) {
         closeLightbox(true);
         return;
@@ -6353,21 +6356,22 @@ window.addEventListener("popstate", function(event) {
         closeEventGalleryCarousel(true);
         return;
     }
-    hideModalNow();
 
-    // Android / browser "späť":
-    // medzi jednotlivými sekciami appky nechceme prechádzať cez históriu
-    // navštívených obrazoviek. Z každej vnútornej sekcie sa ide priamo na DOMOV.
-    const targetScreen = 'screen-home';
+    // Ak bol otvorený detail koncertu/kapely, história nás teraz
+    // automaticky vrátila na obrazovku, z ktorej bol detail otvorený.
+    // Preto NEPRESMERÚVAME vždy na DOMOV. Použijeme konkrétny stav histórie.
+    const state = event && event.state ? event.state : null;
+    const targetScreen = (state && state.screen) || 'screen-home';
+
+    hideModalNow();
     merchCheckoutMode = false;
 
-    if (activeScreenId !== targetScreen) {
+    if (document.getElementById(targetScreen) && activeScreenId !== targetScreen) {
         showScreen(targetScreen);
     }
 
-    // Aktuálnu históriu aplikácie zrovnáme na DOMOV, aby sa ďalšie
-    // "späť" už nepokúšalo otvárať predchádzajúce sekcie.
-    history.replaceState({ screen: 'screen-home' }, '', '#screen-home');
+    // Nevolať replaceState na DOMOV – tým by sme zničili práve získaný
+    // "krok späť" v histórii. Ďalšie stlačenie Späť teda pokračuje ešte o krok ďalej.
 });
 
 function openEventGalleryCarousel(gid) {
