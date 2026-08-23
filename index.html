@@ -4646,14 +4646,12 @@ async function submitMessageForm(e) {
     return false;
 }
 
-function closeModal() {
-    // Detail koncertu je podvrstva aktuálnej sekcie.
-    // Krížik preto zavrie iba detail a nechá používateľa v
-    // NAJBLIŽŠÍCH KÔŇCERTOCH alebo ARCHÍVE.
-    hideModalNow();
 
-    const screen = activeScreenId || 'screen-home';
-    history.replaceState({ screen: screen }, "", "#" + screen);
+
+function closeModal() {
+    // Detail je iba prekrytie aktuálnej sekcie. Nepracujeme tu s history.back(),
+    // aby X vždy vrátil používateľa presne tam, odkiaľ detail otvoril.
+    hideModalNow();
 }
 
 function overlayClick(e) {
@@ -10343,13 +10341,7 @@ async function submitMessageForm(e) {
     return false;
 }
 
-function closeModal() {
-    if (history.state && history.state.modal) {
-        history.back();
-    } else {
-        hideModalNow();
-    }
-}
+
 
 function overlayClick(e) {
     if (e.target.closest('.modal-close-btn, .btn, a, button, .gallery-item, .gallery-poster-tile, .gallery-view-all-btn, .gallery-more-tile, .strip-photo')) return;
@@ -11399,13 +11391,15 @@ function bindCarouselCardClicks() {
     document.querySelectorAll('.carousel-card').forEach(card => {
         if (card.dataset.detailClickBound) return;
         card.dataset.detailClickBound = '1';
-        card.addEventListener('click', (e) => {
+
+        card.addEventListener('click', function(e) {
             const container = card.closest('#carousel-upcoming, #carousel-past');
             if (container && container.dataset.justDragged === '1') {
                 e.preventDefault();
-                e.stopImmediatePropagation();
+                e.stopPropagation();
                 return;
             }
+
             e.preventDefault();
             e.stopPropagation();
             openDetail(card);
@@ -11878,12 +11872,30 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function openDetail(card) {
-    openDetailData(card.getAttribute('data-details'));
+    const encoded = card && card.getAttribute('data-details');
+    if (!encoded) return;
+    openDetailData(encoded, false);
 }
 
 function openDetailData(encodedData, updateHistory = true) {
     buzz();
-    const data = JSON.parse(decodeURIComponent(encodedData));
+
+    let data;
+    try {
+        data = JSON.parse(decodeURIComponent(encodedData));
+    } catch (error) {
+        console.error('Detail koncertu sa nepodarilo načítať:', error);
+        const overlay = document.getElementById('modal-overlay');
+        const body = document.getElementById('modal-content-body');
+        if (body) {
+            body.innerHTML = '<div class="loading">DETAIL KONCERTU SA NEPODARILO NAČÍTAŤ.</div>';
+        }
+        if (overlay) {
+            overlay.style.display = 'flex';
+            overlay.scrollTop = 0;
+        }
+        return;
+    }
     window.currentEvent = data;
     const evDate = parseEventDate(data.date, data.time);
     const isUpcoming = evDate ? (evDate.getTime() > Date.now()) : false;
@@ -11907,12 +11919,9 @@ ${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" targ
     modalBody.innerHTML = `${safeUrl(data.poster) ? `<img src="${safeUrl(data.poster)}" class="modal-poster" alt="Plagát: ${escapeHtml(data.title)}">` : ''}<div class="modal-title">${escapeHtml(data.title)}</div><div class="modal-info"><i class="fas fa-calendar-day"></i> ${escapeHtml(data.date)}</div>${data.time ? `<div class="modal-info"><i class="far fa-clock"></i> ${escapeHtml(data.time)}</div>` : ''}${data.place ? `<div class="modal-info"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(data.place)}</div>` : ''}${data.price ? `<div class="modal-info"><i class="fas fa-ticket-alt"></i> ${escapeHtml(data.price)}</div>` : ''}${bandsHtml}<div class="modal-buttons">${isUpcoming ? `<button class="btn btn-cal" onclick="addToCalendar()"><i class="fas fa-calendar-plus"></i> PRIPOMENÚŤ</button>` : ''}<button class="btn btn-share" onclick="shareEvent()"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ</button>${safeUrl(data.fb_event) ? `<a href="${safeUrl(data.fb_event)}" target="_blank" class="btn btn-fb"><i class="fab fa-facebook"></i> UDALOSŤ</a>` : ''}</div>${eventGalleryHtml}`;
     document.getElementById('modal-overlay').style.display = 'flex';
     document.getElementById('modal-overlay').scrollTop = 0;
-    // URL konkrétneho koncertu – napr. #detail/2026-08-14
-    // Pri otvorení cez odkaz z push notifikácie sa história nepridáva znova.
-    if (updateHistory) {
-        const urlDate = (data.date || '').replace(/\s/g, '').split('.').reverse().join('-');
-        history.pushState({ screen: activeScreenId, modal: true, eventDate: data.date }, "", urlDate ? `#detail/${encodeURIComponent(urlDate)}` : "#detail");
-    }
+    // Detail koncertu nemení históriu sekcií. X preto vždy zavrie iba detail.
+    // updateHistory ponechávame kvôli kompatibilite s existujúcimi volaniami.
+
 }
 
 function startCountdown(queue, index) {
