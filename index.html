@@ -836,6 +836,20 @@
     height: 352px;
     border: 0;
 }
+.event-band-spotify-card {
+    margin: 16px 0 8px;
+}
+.event-band-spotify-card .band-spotify-label {
+    font-size: .78rem;
+}
+.event-band-spotify-card iframe {
+    height: 300px;
+}
+@media (max-width: 430px) {
+    .event-band-spotify-card iframe {
+        height: 300px;
+    }
+}
 .band-spotify-label {
     padding: 10px 14px 8px;
     color: #fff;
@@ -5484,7 +5498,8 @@ function openDetailData(encodedData, updateHistory = true) {
     if (data.bands && data.bands.length > 0) {
         bandsHtml = `<div class="modal-desc">`;
         data.bands.forEach(band => {
-            bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${escapeHtml(band.style ? '• ' + band.style : '')}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="./ikony/spotbut.webp" alt="Spotify"></a>` : ''}
+            const eventSpotifyEmbed = makeSpotifyEmbedUrl(band.spotify);
+            bandsHtml += `<div class="band-block"><div class="band-name-detail">${escapeHtml(band.name)}</div>${band.city || band.style ? `<div class="band-meta">${escapeHtml(band.city ? band.city : '')} ${band.style ? '• ' + escapeHtml(band.style) : ''}</div>` : ''}${band.bio ? `<div class="band-bio">${escapeHtml(band.bio)}</div>` : ''}${eventSpotifyEmbed ? `<div class="band-spotify-card event-band-spotify-card"><div class="band-spotify-label"><i class="fab fa-spotify"></i> TOP SKLADBY • ${escapeHtml(band.name)}</div><iframe src="${eventSpotifyEmbed}" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen title="Spotify – ${escapeHtml(band.name)}"></iframe></div>` : ''}${safeSocialUrl(band.spotify) ? `<a href="${safeSocialUrl(band.spotify)}" target="_blank" class="band-link band-image-btn"><img src="./ikony/spotbut.webp" alt="Spotify"></a>` : ''}
 ${safeSocialUrl(band.facebook) ? `<a href="${safeSocialUrl(band.facebook)}" target="_blank" class="band-link band-image-btn"><img src="./ikony/fbbut.webp" alt="Facebook"></a>` : ''}</div>`;
         });
         bandsHtml += `</div>`;
