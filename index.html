@@ -68,6 +68,11 @@
             if (mobileIcon) mobileIcon.className = iconClass;
             if (mobileLabel) mobileLabel.textContent = isSubscribed ? 'VYPNÚŤ UPOZORNENIA' : 'DOSTÁVAŤ UPOZORNENIA';
 
+            // Po zapnutí upozornení zmeň aj vzhľad tlačidla na žlté tlačidlo.
+            // Po vypnutí sa automaticky vráti pôvodné čierne tlačidlo.
+            const pushBtn = document.getElementById('push-btn');
+            if (pushBtn) pushBtn.classList.toggle('push-enabled', !!isSubscribed);
+
             if (desktopIcon) desktopIcon.className = iconClass;
             if (desktopLabel) desktopLabel.textContent = labelText;
         }
@@ -1986,6 +1991,16 @@ body.gallery-open {
     transition: transform 0.1s ease;
 }
 .more-btn:active { transform: scale(0.98); }
+
+/* Upozornenia: po zapnutí použije tlačidlo žlté tlačidlo namiesto čierneho. */
+#push-btn.push-enabled {
+    background-image: url('./ikony/yellbutonr.webp?v=1');
+    color: #000;
+}
+#push-btn.push-enabled i {
+    color: #000;
+}
+
 .more-qr-wrap {
     display: flex;
     justify-content: center;
@@ -2015,17 +2030,31 @@ body.gallery-open {
 .more-btn.msg i { color: #fff; background: none; }
 .install-choice-btn {
     position: relative;
+    overflow: hidden;
+    padding: 0;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.install-choice-btn i {
-    font-size: 1.25rem;
+.install-choice-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
 }
-.install-platform {
-    margin-left: auto;
-    color: #aaa;
-    font-size: 0.72rem;
+.install-choice-btn > span {
+    position: relative;
+    z-index: 1;
+    color: #000;
+    font-weight: 700;
+    text-align: center;
     letter-spacing: 1px;
-    white-space: nowrap;
+    text-shadow: 0 1px 1px rgba(255,255,255,.35);
 }
+.install-platform { display: none; }
 
 /* ===== OPRAVA: FOTOGALÉRIA - KONTRAJNERY NA CELÚ ŠÍRKU ===== */
 .gallery-sections {
@@ -3688,10 +3717,12 @@ body.modal-scroll-locked {
             <div role="button" tabindex="0" id="push-btn" class="more-btn" aria-label="Dostávať upozornenia"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
             <div role="button" tabindex="0" class="more-btn" data-more-share="1"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
             <div role="button" tabindex="0" class="more-btn install-choice-btn" id="install-chrome-btn" onclick="installViaChrome()">
-                <i class="fab fa-chrome"></i> NAINŠTALOVAŤ CEZ GOOGLE CHROME <span class="install-platform">ANDROID</span>
+                <img class="install-choice-image" src="./ikony/yellbutonr.webp" alt="">
+                <span>NAINŠTALOVAŤ APLIKÁCIU</span>
             </div>
             <div role="button" tabindex="0" class="more-btn install-choice-btn" id="install-safari-btn" onclick="installViaSafari()">
-                <i class="fab fa-safari"></i> NAINŠTALOVAŤ CEZ SAFARI <span class="install-platform">IPHONE</span>
+                <img class="install-choice-image" src="./ikony/yellbutonr.webp" alt="">
+                <span>NAINŠTALOVAŤ APLIKÁCIU</span>
             </div>
         </div>
         <div class="more-qr-wrap">
@@ -4878,17 +4909,20 @@ function isSafariIOS() {
 }
 
 function openChromeAndroid() {
-    // Android intent opens the real Chrome app even when the page was opened
-    // from Messenger, Facebook or another in-app browser.
-    const intentUrl = 'intent://koncerty-furmanka.github.io/koncerty/#Intent;scheme=https;package=com.android.chrome;end';
+    // Použi výhradne Chrome. Na rozdiel od všeobecného intent:// odkazu
+    // googlechrome:// odovzdá URL priamo aplikácii Google Chrome a Android
+    // tak nemá ponúkať Opera ani iný prehliadač.
+    const chromeUrl = 'googlechrome://navigate?url=' + encodeURIComponent(APP_URL);
     let leftPage = false;
     const onBlur = () => { leftPage = true; };
     window.addEventListener('blur', onBlur, { once: true });
-    window.location.href = intentUrl;
+    try { window.location.href = chromeUrl; } catch (e) {}
     setTimeout(() => {
         window.removeEventListener('blur', onBlur);
-        if (!leftPage && document.visibilityState === 'visible') {
-            window.location.href = APP_URL;
+        // Ak Chrome nie je dostupný, necháme používateľa na aktuálnej stránke
+        // namiesto otvorenia Opera/inej aplikácie.
+        if (!leftPage) {
+            showToast('OTVOR TÚTO STRÁNKU V GOOGLE CHROME');
         }
     }, 1200);
 }
@@ -4981,7 +5015,8 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     if (isInstalledApp()) return;
     deferredPrompt = e;
-    showInstallButton();
+    // Hlavné tlačidlo zobrazujeme iba v podporovanom Chrome/Safari prostredí.
+    if (isChromeAndroid() || isSafariIOS()) showInstallButton();
 });
 
 async function installApp() {
@@ -5036,11 +5071,9 @@ window.addEventListener('appinstalled', () => {
     updatePlatformInstallButtons();
     if (isInstalledApp()) return;
 
-    // Hlavné tlačidlo NAINŠTALOVAŤ APPKU zostáva zachované.
-    // Na iPhone/iPade ho ukážeme vždy v prehliadači; na Androide sa v Chrome
-    // zobrazí cez beforeinstallprompt a v ostatných podporovaných prehliadačoch
-    // ponúkne príslušný návod.
-    if (isIOSDevice() || isFirefoxAndroid() || isOperaAndroid()) {
+    // Hlavné tlačidlo NAINŠTALOVAŤ APPKU zobraz iba v Chrome na Androide
+    // alebo v Safari na iPhone/iPade. Opera, Firefox a iné prehliadače ho nemajú.
+    if (isChromeAndroid() || isSafariIOS()) {
         showInstallButton();
     }
 })();
