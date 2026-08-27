@@ -5003,22 +5003,24 @@ function confirmOpenChromeAndroid() {
     // Explicitne cielime na Google Chrome. Nepoužívame všeobecný https intent,
     // pretože Android by mohol zobraziť výber Opera/Chrome.
     const encodedUrl = encodeURIComponent(url);
-    const chromeScheme = 'googlechrome://navigate?url=' + encodedUrl;
     const explicitChromeIntent = 'intent://' + url.replace(/^https?:\/\//i, '')
         + '#Intent;scheme=https;package=com.android.chrome;end';
+    const chromeScheme = 'googlechrome://navigate?url=' + encodedUrl;
 
-    let opened = false;
+    // Firefox Android môže googlechrome:// otvoriť Chrome, ale nie vždy mu
+    // odovzdá cieľovú URL. Preto ako prvý spôsob používame explicitný Android
+    // intent s package=com.android.chrome. Tým sa otvorí priamo Chrome aj so
+    // správnou stránkou a Android nemá dôvod ponúknuť Operu.
     try {
-        window.location.href = chromeScheme;
-        opened = true;
+        window.location.href = explicitChromeIntent;
     } catch (e) {}
 
-    // Záložný spôsob pre Android, stále výhradne s package=com.android.chrome.
+    // Záloha pre zariadenia, ktoré explicitný intent neotvoria.
     setTimeout(() => {
         if (document.visibilityState === 'visible') {
-            try { window.location.href = explicitChromeIntent; } catch (e) {}
+            try { window.location.href = chromeScheme; } catch (e) {}
         }
-    }, 500);
+    }, 800);
 }
 
 async function installViaChrome() {
