@@ -2013,6 +2013,19 @@ body.gallery-open {
     border-radius: 10px;
 }
 .more-btn.msg i { color: #fff; background: none; }
+.install-choice-btn {
+    position: relative;
+}
+.install-choice-btn i {
+    font-size: 1.25rem;
+}
+.install-platform {
+    margin-left: auto;
+    color: #aaa;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
 
 /* ===== OPRAVA: FOTOGALÉRIA - KONTRAJNERY NA CELÚ ŠÍRKU ===== */
 .gallery-sections {
@@ -3674,6 +3687,12 @@ body.modal-scroll-locked {
             <div role="button" tabindex="0" class="more-btn" data-more-screen="screen-about"><i class="fas fa-record-vinyl"></i> O NÁS</div>
             <div role="button" tabindex="0" id="push-btn" class="more-btn" aria-label="Dostávať upozornenia"><i id="push-btn-icon" class="fas fa-bell"></i> <span id="push-btn-label">DOSTÁVAŤ UPOZORNENIA</span></div>
             <div role="button" tabindex="0" class="more-btn" data-more-share="1"><i class="fas fa-share-nodes"></i> ZDIEĽAŤ APPKU</div>
+            <div role="button" tabindex="0" class="more-btn install-choice-btn" id="install-chrome-btn" onclick="installViaChrome()">
+                <i class="fab fa-chrome"></i> NAINŠTALOVAŤ CEZ GOOGLE CHROME <span class="install-platform">ANDROID</span>
+            </div>
+            <div role="button" tabindex="0" class="more-btn install-choice-btn" id="install-safari-btn" onclick="installViaSafari()">
+                <i class="fab fa-safari"></i> NAINŠTALOVAŤ CEZ SAFARI <span class="install-platform">IPHONE</span>
+            </div>
         </div>
         <div class="more-qr-wrap">
             <img class="more-qr" src="./ikony/qrcode.webp" alt="QR kód aplikácie" loading="lazy">
@@ -4848,6 +4867,79 @@ async function copyAppShareLink() {
 
 let deferredPrompt = null;
 
+const APP_URL = 'https://koncerty-furmanka.github.io/koncerty/';
+
+function isChromeAndroid() {
+    return isAndroidDevice() && /chrome\//i.test(navigator.userAgent) && !/edg\//i.test(navigator.userAgent) && !/opr\//i.test(navigator.userAgent);
+}
+
+function isSafariIOS() {
+    return isIOSDevice() && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios|opios/i.test(navigator.userAgent);
+}
+
+function openChromeAndroid() {
+    // Android intent opens the real Chrome app even when the page was opened
+    // from Messenger, Facebook or another in-app browser.
+    const intentUrl = 'intent://koncerty-furmanka.github.io/koncerty/#Intent;scheme=https;package=com.android.chrome;end';
+    let leftPage = false;
+    const onBlur = () => { leftPage = true; };
+    window.addEventListener('blur', onBlur, { once: true });
+    window.location.href = intentUrl;
+    setTimeout(() => {
+        window.removeEventListener('blur', onBlur);
+        if (!leftPage && document.visibilityState === 'visible') {
+            window.location.href = APP_URL;
+        }
+    }, 1200);
+}
+
+async function installViaChrome() {
+    buzz();
+    if (isInstalledApp()) {
+        showToast('APLIKÁCIA JE UŽ NAINŠTALOVANÁ ✓');
+        return;
+    }
+
+    // Best case: Chrome itself has supplied the native PWA install prompt.
+    if (deferredPrompt && isChromeAndroid()) {
+        deferredPrompt.prompt();
+        try { await deferredPrompt.userChoice; } catch (e) {}
+        deferredPrompt = null;
+        return;
+    }
+
+    if (isAndroidDevice() && !isChromeAndroid()) {
+        openChromeAndroid();
+        return;
+    }
+
+    if (isChromeAndroid()) {
+        alert('CHROME ZATIAĽ NENABOL INŠTALÁCIU AUTOMATICKY.\n\nŤukni v Chrome na ⋮ a vyber „Nainštalovať aplikáciu“ alebo „Pridať na plochu“.');
+        return;
+    }
+
+    alert('TOTO TLAČIDLO JE URČENÉ PRE ANDROID + GOOGLE CHROME.');
+}
+
+function installViaSafari() {
+    buzz();
+    if (isInstalledApp()) {
+        showToast('APLIKÁCIA JE UŽ NAINŠTALOVANÁ ✓');
+        return;
+    }
+
+    if (isIOSDevice()) {
+        if (!isSafariIOS()) {
+            alert('NA IPHONE OTVOR KÔŇCERTY V SAFARI.\n\nPotom klepni na ZDIEĽAŤ → PRIDAŤ NA PLOCHU → PRIDAŤ.\n\nApple túto inštaláciu umožňuje priamo zo Safari.');
+            return;
+        }
+        alert('AKO NAINŠTALOVAŤ KÔŇCERTY:\n\n1. Klepni na ZDIEĽAŤ.\n2. Vyber „PRIDAŤ NA PLOCHU“.\n3. Ak sa zobrazí možnosť „Otvoriť ako webovú apku“, zapni ju.\n4. Klepni na „PRIDAŤ“.');
+        return;
+    }
+
+    alert('TOTO TLAČIDLO JE URČENÉ PRE IPHONE + SAFARI.');
+}
+
 function isInstalledApp() {
     return window.matchMedia('(display-mode: standalone)').matches
         || window.navigator.standalone === true;
@@ -4873,6 +4965,16 @@ function showInstallButton() {
     if (isInstalledApp()) return;
     const b = document.getElementById('install-btn');
     if (b) b.classList.add('show');
+}
+
+function updatePlatformInstallButtons() {
+    const chromeBtn = document.getElementById('install-chrome-btn');
+    const safariBtn = document.getElementById('install-safari-btn');
+
+    // V sekcii VIAC zobraz iba tlačidlo patriace k operačnému systému.
+    // Android = Chrome, iPhone/iPad = Safari, ostatné systémy = žiadne z nich.
+    if (chromeBtn) chromeBtn.style.display = (!isInstalledApp() && isAndroidDevice()) ? 'flex' : 'none';
+    if (safariBtn) safariBtn.style.display = (!isInstalledApp() && isIOSDevice()) ? 'flex' : 'none';
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -4927,13 +5029,17 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     const b = document.getElementById('install-btn');
     if (b) b.classList.remove('show');
+    updatePlatformInstallButtons();
 });
 
 (function installCompatibilityHint() {
+    updatePlatformInstallButtons();
     if (isInstalledApp()) return;
 
-    // iOS and Firefox Android do not expose beforeinstallprompt, so show our
-    // own button with browser-specific installation instructions.
+    // Hlavné tlačidlo NAINŠTALOVAŤ APPKU zostáva zachované.
+    // Na iPhone/iPade ho ukážeme vždy v prehliadači; na Androide sa v Chrome
+    // zobrazí cez beforeinstallprompt a v ostatných podporovaných prehliadačoch
+    // ponúkne príslušný návod.
     if (isIOSDevice() || isFirefoxAndroid() || isOperaAndroid()) {
         showInstallButton();
     }
