@@ -4999,12 +4999,26 @@ function openChromeAndroid() {
 function confirmOpenChromeAndroid() {
     closeChromeOpenChoice();
     const url = APP_URL;
-    const intentUrl = 'intent://navigate?url=' + encodeURIComponent(url) + '#Intent;scheme=https;package=com.android.chrome;end';
+
+    // Explicitne cielime na Google Chrome. Nepoužívame všeobecný https intent,
+    // pretože Android by mohol zobraziť výber Opera/Chrome.
+    const encodedUrl = encodeURIComponent(url);
+    const chromeScheme = 'googlechrome://navigate?url=' + encodedUrl;
+    const explicitChromeIntent = 'intent://' + url.replace(/^https?:\/\//i, '')
+        + '#Intent;scheme=https;package=com.android.chrome;end';
+
+    let opened = false;
     try {
-        window.location.href = intentUrl;
-    } catch (e) {
-        window.location.href = url;
-    }
+        window.location.href = chromeScheme;
+        opened = true;
+    } catch (e) {}
+
+    // Záložný spôsob pre Android, stále výhradne s package=com.android.chrome.
+    setTimeout(() => {
+        if (document.visibilityState === 'visible') {
+            try { window.location.href = explicitChromeIntent; } catch (e) {}
+        }
+    }, 500);
 }
 
 async function installViaChrome() {
