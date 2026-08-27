@@ -2001,6 +2001,63 @@ body.gallery-open {
     color: #000;
 }
 
+#chrome-open-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    background: rgba(0,0,0,.72);
+}
+#chrome-open-overlay.show { display: flex; }
+.chrome-open-panel {
+    width: min(420px, 100%);
+    box-sizing: border-box;
+    padding: 24px 22px 20px;
+    background: #111;
+    border: 2px solid #c98a00;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    text-align: center;
+}
+.chrome-open-title {
+    color: #f0a000;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+.chrome-open-text {
+    color: #fff;
+    font-size: .98rem;
+    line-height: 1.45;
+    margin-bottom: 20px;
+}
+.chrome-open-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.chrome-open-actions button {
+    min-height: 46px;
+    border-radius: 10px;
+    padding: 0 16px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+.chrome-open-cancel {
+    color: #fff;
+    background: #222;
+    border: 1px solid #555;
+}
+.chrome-open-confirm {
+    color: #000;
+    background: #f0a000;
+    border: 1px solid #fff;
+}
 .more-qr-wrap {
     display: flex;
     justify-content: center;
@@ -3731,6 +3788,17 @@ body.modal-scroll-locked {
         <div id="app-version-footer">Verzia: 2.1.6</div>
     </div>
 
+    <div id="chrome-open-overlay" aria-hidden="true">
+        <div class="chrome-open-panel">
+            <div class="chrome-open-title">OTVORIŤ V GOOGLE CHROME</div>
+            <div class="chrome-open-text">Pre inštaláciu aplikácie otvor túto stránku v Google Chrome.</div>
+            <div class="chrome-open-actions">
+                <button type="button" id="chrome-open-cancel" class="chrome-open-cancel">ZRUŠIŤ</button>
+                <button type="button" id="chrome-open-confirm" class="chrome-open-confirm">OTVORIŤ V CHROME</button>
+            </div>
+        </div>
+    </div>
+
     <div id="notif-cats-overlay">
         <div class="notif-cats-panel">
             <div class="notif-cats-title">UPOZORNENIA ZAPNUTÉ ✓</div>
@@ -4908,23 +4976,35 @@ function isSafariIOS() {
     return isIOSDevice() && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios|opios/i.test(navigator.userAgent);
 }
 
+function showChromeOpenChoice() {
+    const overlay = document.getElementById('chrome-open-overlay');
+    if (!overlay) return;
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeChromeOpenChoice() {
+    const overlay = document.getElementById('chrome-open-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+}
+
 function openChromeAndroid() {
-    // Použi výhradne Chrome. Na rozdiel od všeobecného intent:// odkazu
-    // googlechrome:// odovzdá URL priamo aplikácii Google Chrome a Android
-    // tak nemá ponúkať Opera ani iný prehliadač.
-    const chromeUrl = 'googlechrome://navigate?url=' + encodeURIComponent(APP_URL);
-    let leftPage = false;
-    const onBlur = () => { leftPage = true; };
-    window.addEventListener('blur', onBlur, { once: true });
-    try { window.location.href = chromeUrl; } catch (e) {}
-    setTimeout(() => {
-        window.removeEventListener('blur', onBlur);
-        // Ak Chrome nie je dostupný, necháme používateľa na aktuálnej stránke
-        // namiesto otvorenia Opera/inej aplikácie.
-        if (!leftPage) {
-            showToast('OTVOR TÚTO STRÁNKU V GOOGLE CHROME');
-        }
-    }, 1200);
+    // Najprv zobrazíme vlastné okno. Používateľ tak nikdy neuvidí Android
+    // výber Opera/Chrome. Až po potvrdení použijeme explicitný Chrome package.
+    showChromeOpenChoice();
+}
+
+function confirmOpenChromeAndroid() {
+    closeChromeOpenChoice();
+    const url = APP_URL;
+    const intentUrl = 'intent://navigate?url=' + encodeURIComponent(url) + '#Intent;scheme=https;package=com.android.chrome;end';
+    try {
+        window.location.href = intentUrl;
+    } catch (e) {
+        window.location.href = url;
+    }
 }
 
 async function installViaChrome() {
@@ -4973,6 +5053,12 @@ function installViaSafari() {
 
     alert('TOTO TLAČIDLO JE URČENÉ PRE IPHONE + SAFARI.');
 }
+
+document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'chrome-open-confirm') confirmOpenChromeAndroid();
+    if (e.target && e.target.id === 'chrome-open-cancel') closeChromeOpenChoice();
+    if (e.target && e.target.id === 'chrome-open-overlay') closeChromeOpenChoice();
+});
 
 function isInstalledApp() {
     return window.matchMedia('(display-mode: standalone)').matches
