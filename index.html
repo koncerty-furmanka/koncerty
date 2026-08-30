@@ -5044,12 +5044,14 @@ async function installViaChrome() {
     }
 
     if (isAndroidDevice() && !isChromeAndroid()) {
-        openChromeAndroid();
+        // Mimo Chrome nepoužívame žiadnu vlastnú hlášku ani výber prehliadača.
+        // Používateľa rovno prepneme do Google Chrome na tejto stránke.
+        confirmOpenChromeAndroid();
         return;
     }
 
     if (isChromeAndroid()) {
-        alert('CHROME ZATIAĽ NENABOL INŠTALÁCIU AUTOMATICKY.\n\nŤukni v Chrome na ⋮ a vyber „Nainštalovať aplikáciu“ alebo „Pridať na plochu“.');
+        alert('INŠTALÁCIA APLIKÁCIE\n\nChrome zatiaľ neponúkol automatickú inštaláciu.\n\nV Chrome otvor menu ⋮ a vyber „Nainštalovať aplikáciu“ alebo „Pridať na plochu“.');
         return;
     }
 
