@@ -5055,7 +5055,7 @@ async function installViaChrome() {
         return;
     }
 
-    alert('TOTO TLAČIDLO JE URČENÉ PRE ANDROID + GOOGLE CHROME.');
+    alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
 }
 
 function installViaSafari() {
@@ -5067,14 +5067,14 @@ function installViaSafari() {
 
     if (isIOSDevice()) {
         if (!isSafariIOS()) {
-            alert('NA IPHONE OTVOR KÔŇCERTY V SAFARI.\n\nPotom klepni na ZDIEĽAŤ → PRIDAŤ NA PLOCHU → PRIDAŤ.\n\nApple túto inštaláciu umožňuje priamo zo Safari.');
+            alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
             return;
         }
-        alert('AKO NAINŠTALOVAŤ KÔŇCERTY:\n\n1. Klepni na ZDIEĽAŤ.\n2. Vyber „PRIDAŤ NA PLOCHU“.\n3. Ak sa zobrazí možnosť „Otvoriť ako webovú apku“, zapni ju.\n4. Klepni na „PRIDAŤ“.');
+        alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
         return;
     }
 
-    alert('TOTO TLAČIDLO JE URČENÉ PRE IPHONE + SAFARI.');
+    alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
 }
 
 document.addEventListener('click', (e) => {
@@ -5157,23 +5157,23 @@ async function installApp() {
 
     // iPhone/iPad: installation is done from the browser's Share menu.
     if (isIOSDevice()) {
-        alert('AKO NAINŠTALOVAŤ KÔŇCERTY:\n\n1. Ťukni na ZDIEĽAŤ (štvorček so šípkou).\n2. Vyber „PRIDAŤ NA PLOCHU“.\n3. Potvrď „PRIDAŤ“.\n\nPotom otvor Kôňcerty z novej ikony na ploche.');
+        alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
         return;
     }
 
     // Firefox Android does not expose beforeinstallprompt, but it supports manual PWA installation.
     if (isFirefoxAndroid()) {
-        alert('AKO NAINŠTALOVAŤ KÔŇCERTY VO FIREFOXE:\n\n1. Otvor menu ⋮.\n2. Vyber „Pridať na plochu“ / „Install“.\n3. Potvrď inštaláciu.\n\nPotom otvor Kôňcerty z ikony na ploche.');
+        alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
         return;
     }
 
     // Opera Android can use its browser menu when no native prompt is exposed.
     if (isOperaAndroid()) {
-        alert('AKO NAINŠTALOVAŤ KÔŇCERTY V OPERe:\n\n1. Otvor menu prehliadača.\n2. Vyber „Pridať na plochu“ / „Add to Home screen“ alebo „Install“.\n3. Potvrď inštaláciu.\n\nPotom otvor Kôňcerty z ikony na ploche.');
+        alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
         return;
     }
 
-    alert('AKO NAINŠTALOVAŤ KÔŇCERTY:\n\nOtvor menu svojho prehliadača a vyhľadaj možnosť „Nainštalovať aplikáciu“, „Inštalovať“ alebo „Pridať na plochu“.');
+    alert('PRE NAINŠTALOVANIE APLIKÁCIE\n\nOtvor tento odkaz v prehliadači Google Chrome pre Android alebo v Safari pre iPhone.');
 }
 
 
