@@ -5480,6 +5480,7 @@ const clean = cols.map(c =>
                         city: b.city,
                         style: b.style,
                         bio: b.bio,
+                        bioDate: eventDateObj,
                         spotify: b.spotify,
                         facebook: b.facebook,
                         logo: '',
@@ -5501,7 +5502,10 @@ const clean = cols.map(c =>
                         entry.lastDate = eventDateObj;
                     }
                 }
-                if (!entry.bio && b.bio) entry.bio = b.bio;
+                if (b.bio && (!entry.bioDate || eventDateObj >= entry.bioDate)) {
+                    entry.bio = b.bio;
+                    entry.bioDate = eventDateObj;
+                }
                 if (!entry.city && b.city) entry.city = b.city;
                 if (!entry.style && b.style) entry.style = b.style;
                 if (!entry.spotify && b.spotify) entry.spotify = b.spotify;
