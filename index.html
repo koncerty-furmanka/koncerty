@@ -462,7 +462,7 @@ function handlePushButtonClick() {
         .carousel-card.active .card-mini-info { opacity: 1; }
         .mini-title { font-size: 1.5rem; line-height: 1; margin-bottom: 5px; text-shadow: 0 2px 6px #000; }
         .mini-date { font-size: 1rem; color: #ccc; text-shadow: 0 1px 3px #000; }
-        .click-hint { font-size: 0.8rem; color: var(--accent-color); margin-top: 5px; animation: blink 2s infinite; }
+        .click-hint { font-family: var(--primary-font) !important; font-size: 0.8rem; color: var(--accent-color); margin-top: 5px; animation: blink 2s infinite; }
 
         .social-grid, .merch-grid { display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 20px; }
         .social-link { border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 300px; padding: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); color: white; text-decoration: none; font-size: 1.5rem; transition: transform 0.2s; }
@@ -5446,7 +5446,7 @@ const clean = cols.map(c =>
                     <div class="card-mini-info">
                         <div class="mini-title">${escapeHtml(mainTitle)}</div>
                         <div class="mini-date">${event.dateRaw}</div>
-                        <div class="click-hint"><i class="fas fa-hand-pointer">Klik Pre Info</i></div>
+                        <div class="click-hint"><i class="fas fa-hand-pointer"></i> KLIK PRE INFO</div>
                     </div>
                 </div>
             `;
