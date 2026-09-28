@@ -347,6 +347,23 @@ function handlePushButtonClick() {
     }
 }
 
+/* Instagram / webview: niektoré vložené prehliadače vracajú nesprávne
+   malú hodnotu 100dvh. Domovská obrazovka sa potom zmrští do hornej
+   časti stránky. V prehliadači preto držíme rovnakú minimálnu výšku
+   ako v nainštalovanej aplikácii; obsah môže byť pri menšom displeji
+   normálne scrollovateľný. */
+@media (display-mode: browser) and (max-width: 699px) {
+    #screen-home.active {
+        height: max(calc(100svh - 62px - env(safe-area-inset-bottom)), 700px) !important;
+        min-height: 700px !important;
+    }
+
+    #screen-home .home-content {
+        height: 100% !important;
+        min-height: 700px !important;
+    }
+}
+
 #btn-archive { 
     transform: translateY(0); z-index: 1; 
 }
