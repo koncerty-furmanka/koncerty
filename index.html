@@ -339,11 +339,11 @@ function handlePushButtonClick() {
     z-index: 2; 
 }
 
-/* QR/web prehliadač: iba webová verzia sa posunie mierne doprava.
-   Nainštalovaná PWA/apka zostáva bez zmeny. */
+/* Webový prehliadač / Instagram WebView: rozloženie musí zostať
+   identické s nainštalovanou aplikáciou. */
 @media (display-mode: browser) {
     #btn-upcoming {
-        transform: translateX(8px);
+        transform: none !important;
     }
 }
 
@@ -3756,8 +3756,7 @@ body.modal-scroll-locked {
                 width="332" height="332"
                 style="aspect-ratio:332/332"
                 fetchpriority="high"
-                src="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=332&q=82&output=webp"
-                srcset="https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=332&q=82&output=webp 1x, https://wsrv.nl/?url=cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/vinyl.webp?v=1&w=664&q=82&output=webp 2x"
+                src="./ikony/vinyl.webp"
                 alt="Kôňcerty vinyl">
         </div>
         <div class="splash-wordmark">KÔŇCERTY</div>
