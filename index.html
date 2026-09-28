@@ -489,15 +489,6 @@ function handlePushButtonClick() {
         transition: none !important;
     }
 
-    /* Cieľový plagát sa po pustení prsta zvýrazní okamžite.
-       Trieda swipe-target je iba dočasná; po dosunutí natívnym scrollom
-       sa odstráni a active sa nastaví podľa skutočného stredu. */
-    .carousel-container.is-scrolling .carousel-card.swipe-target {
-        opacity: 1 !important;
-        transform: scale(1.05) !important;
-        filter: none !important;
-        z-index: 10;
-    }
 }
 
         .poster-clean { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
@@ -6024,44 +6015,6 @@ function initCarouselObserver() {
         // potom nespôsobujú trhanie/blikanie. Aktívnu kartu prepočítame až
         // po krátkom zastavení gesta.
         let mobileScrollTimer = null;
-        let touchStartX = null;
-        let swipeTarget = null;
-
-        const showSwipeTarget = (direction) => {
-            const cards = [...container.querySelectorAll('.carousel-card')];
-            if (!cards.length) return;
-
-            const current = container.querySelector('.carousel-card.active') || cards[0];
-            const index = cards.indexOf(current);
-            if (index < 0) return;
-
-            // Pri swipe doľava ideme na ďalší plagát, pri swipe doprava na predchádzajúci.
-            const targetIndex = direction < 0 ? index + 1 : index - 1;
-            if (targetIndex < 0 || targetIndex >= cards.length) return;
-
-            swipeTarget = cards[targetIndex];
-            cards.forEach(card => card.classList.remove('swipe-target'));
-            swipeTarget.classList.add('swipe-target');
-        };
-
-        if (window.innerWidth < 700) {
-            container.addEventListener('touchstart', (e) => {
-                if (e.touches && e.touches.length) touchStartX = e.touches[0].clientX;
-            }, { passive: true });
-
-            container.addEventListener('touchend', (e) => {
-                if (touchStartX === null || !e.changedTouches || !e.changedTouches.length) return;
-                const endX = e.changedTouches[0].clientX;
-                const dx = endX - touchStartX;
-                touchStartX = null;
-
-                if (Math.abs(dx) > 35) {
-                    // Okamžite vizuálne zvýrazni cieľ, ale počas natívneho scrollu
-                    // nemeníme active triedu, aby Instagram WebView nezačal blikať.
-                    showSwipeTarget(dx < 0 ? -1 : 1);
-                }
-            }, { passive: true });
-        }
 
         const requestUpdate = () => {
             if (window.innerWidth < 700) {
@@ -6069,8 +6022,6 @@ function initCarouselObserver() {
                 container.classList.add('is-scrolling');
                 mobileScrollTimer = setTimeout(() => {
                     container.classList.remove('is-scrolling');
-                    container.querySelectorAll('.swipe-target').forEach(card => card.classList.remove('swipe-target'));
-                    swipeTarget = null;
                     updateActive();
                 }, 110);
                 return;
