@@ -474,6 +474,21 @@ function handlePushButtonClick() {
     filter: blur(0px) grayscale(0%); 
     z-index: 10; 
 }
+
+@media (max-width: 699px) {
+    /* Počas swipe v Instagrame vypni drahé vizuálne prechody kariet.
+       Natívny horizontálny scroll tak zostane plynulý. */
+    .carousel-container.is-scrolling .carousel-card,
+    .carousel-container.is-scrolling .carousel-card.active {
+        transition: none !important;
+        filter: none !important;
+    }
+
+    .carousel-container.is-scrolling .card-mini-info,
+    .carousel-container.is-scrolling .carousel-card.active .card-mini-info {
+        transition: none !important;
+    }
+}
         .poster-clean { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
         .card-mini-info { margin-top: 15px; text-align: center; opacity: 0; transition: opacity 0.3s; }
         .carousel-card.active .card-mini-info { opacity: 1; }
@@ -5993,7 +6008,22 @@ function initCarouselObserver() {
             cards.forEach(card => card.classList.toggle('active', card === closest));
         };
 
+        // Instagram/Android WebView: počas dotykového scrollovania
+        // neprepínaj active kartu na každom frame. Transform, blur a filter
+        // potom nespôsobujú trhanie/blikanie. Aktívnu kartu prepočítame až
+        // po krátkom zastavení gesta.
+        let mobileScrollTimer = null;
         const requestUpdate = () => {
+            if (window.innerWidth < 700) {
+                clearTimeout(mobileScrollTimer);
+                container.classList.add('is-scrolling');
+                mobileScrollTimer = setTimeout(() => {
+                    container.classList.remove('is-scrolling');
+                    updateActive();
+                }, 110);
+                return;
+            }
+
             if (ticking) return;
             ticking = true;
             requestAnimationFrame(updateActive);
