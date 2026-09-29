@@ -6030,6 +6030,23 @@ function initCarouselObserver() {
         // a po skutočnom zastavení scrollu. Tým sa odstráni lag, ale plagát
         // sa zároveň nemusí čakať približne sekundu na koniec snapu.
         let mobileScrollTimer = null;
+        let touchStartX = null;
+
+        const activateSwipeTarget = (direction) => {
+            const cards = [...container.querySelectorAll('.carousel-card')];
+            if (!cards.length) return;
+
+            const current = container.querySelector('.carousel-card.active') || cards[0];
+            const currentIndex = cards.indexOf(current);
+            if (currentIndex < 0) return;
+
+            const targetIndex = direction < 0 ? currentIndex + 1 : currentIndex - 1;
+            if (targetIndex < 0 || targetIndex >= cards.length) return;
+
+            // Aktivuj cieľ okamžite. Nečakáme, kým natívny scroll + snap dopočíta
+            // novú pozíciu. Pri ďalšom zastavení sa active zosúladí podľa stredu.
+            cards.forEach(card => card.classList.toggle('active', card === cards[targetIndex]));
+        };
 
         const finishMobileScroll = () => {
             clearTimeout(mobileScrollTimer);
@@ -6056,8 +6073,18 @@ function initCarouselObserver() {
         // Nečakáme na celý natívny snap/momentum scroll. Počas neho ostávajú
         // prechody vypnuté, takže sa nevytvorí bliknutie ani druhý vystúpený plagát.
         if (window.innerWidth < 700) {
-            container.addEventListener('touchend', () => {
-                updateActive();
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length) touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+
+            container.addEventListener('touchend', (e) => {
+                if (touchStartX !== null && e.changedTouches && e.changedTouches.length) {
+                    const dx = e.changedTouches[0].clientX - touchStartX;
+                    if (Math.abs(dx) > 25) {
+                        activateSwipeTarget(dx < 0 ? -1 : 1);
+                    }
+                }
+                touchStartX = null;
                 clearTimeout(mobileScrollTimer);
                 mobileScrollTimer = setTimeout(finishMobileScroll, 90);
             }, { passive: true });
