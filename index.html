@@ -476,12 +476,12 @@ function handlePushButtonClick() {
 }
 
 @media (max-width: 699px) {
-    /* Instagram/Android WebView: na mobile nepoužívaj blur/filter.
-       Tieto efekty sa pri natívnom horizontálnom scrollovaní prekresľujú
-       príliš draho a spôsobujú trhanie. Zvýraznenie riešime iba opacity + scale. */
+    /* Instagram/Android WebView: žiadny blur/filter. Aktiváciu robíme iba
+       raz na konci swipe, takže krátky prechod scale už nezaťažuje scroll. */
     .carousel-card {
-        transition: none !important;
+        transition: opacity .14s ease, transform .18s cubic-bezier(.22,.8,.24,1) !important;
         filter: none !important;
+        will-change: transform, opacity;
     }
 
     .carousel-card.active {
@@ -490,19 +490,37 @@ function handlePushButtonClick() {
         filter: none !important;
     }
 
-    /* Počas samotného scrollu žiadne CSS prechody — pohyb riadi natívny
-       scroll systému, nie transformácie kariet. */
-    .carousel-container.is-scrolling .carousel-card,
-    .carousel-container.is-scrolling .carousel-card.active {
-        transition: none !important;
+    /* Počas natívneho scrollu sa karty samé neanimujú. Krátky prechod sa
+       spustí iba pri zmene aktívneho plagátu. */
+    .carousel-container.is-scrolling .carousel-card {
         filter: none !important;
     }
 
-    .carousel-container.is-scrolling .card-mini-info,
-    .carousel-container.is-scrolling .carousel-card.active .card-mini-info,
     .carousel-card .card-mini-info,
     .carousel-card.active .card-mini-info {
-        transition: none !important;
+        transition: opacity .14s ease !important;
+    }
+
+    /* Obrazovka koncertov sa na mobile nesmie vertikálne posúvať pod spodné
+       menu. Horizontálny pohyb zostáva iba v samotnom carouseli. */
+    #screen-upcoming.active,
+    #screen-past.active {
+        height: calc(100dvh - 62px - env(safe-area-inset-bottom));
+        min-height: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    #screen-upcoming.active .carousel-container,
+    #screen-past.active .carousel-container {
+        flex: 1 1 auto;
+        min-height: 0;
+        align-items: center;
+        padding-top: clamp(28px, 6vh, 72px);
+        padding-bottom: 20px;
+        box-sizing: border-box;
     }
 }
 
@@ -6025,10 +6043,9 @@ function initCarouselObserver() {
             cards.forEach(card => card.classList.toggle('active', card === closest));
         };
 
-        // Instagram/Android WebView: počas scrollu neprepínaj active kartu
-        // na každom frame. Namiesto toho ju prepočítame pri pustení prsta
-        // a po skutočnom zastavení scrollu. Tým sa odstráni lag, ale plagát
-        // sa zároveň nemusí čakať približne sekundu na koniec snapu.
+        // Na mobile neprepočítavaj active počas každého scroll eventu. To je
+        // presne to, čo v Instagram WebView spôsobovalo lagovanie. Active sa
+        // zmení iba raz po swipe a krátky scale prechod potom pôsobí plynulo.
         let mobileScrollTimer = null;
         let touchStartX = null;
 
@@ -6043,25 +6060,11 @@ function initCarouselObserver() {
             const targetIndex = direction < 0 ? currentIndex + 1 : currentIndex - 1;
             if (targetIndex < 0 || targetIndex >= cards.length) return;
 
-            // Aktivuj cieľ okamžite. Nečakáme, kým natívny scroll + snap dopočíta
-            // novú pozíciu. Pri ďalšom zastavení sa active zosúladí podľa stredu.
             cards.forEach(card => card.classList.toggle('active', card === cards[targetIndex]));
         };
 
-        const finishMobileScroll = () => {
-            clearTimeout(mobileScrollTimer);
-            container.classList.remove('is-scrolling');
-            updateActive();
-        };
-
         const requestUpdate = () => {
-            if (window.innerWidth < 700) {
-                clearTimeout(mobileScrollTimer);
-                container.classList.add('is-scrolling');
-                mobileScrollTimer = setTimeout(finishMobileScroll, 90);
-                return;
-            }
-
+            if (window.innerWidth < 700) return;
             if (ticking) return;
             ticking = true;
             requestAnimationFrame(updateActive);
@@ -6069,9 +6072,6 @@ function initCarouselObserver() {
 
         container.addEventListener('scroll', requestUpdate, { passive: true });
 
-        // Na mobile aktualizuj aktívny plagát hneď po pustení prsta.
-        // Nečakáme na celý natívny snap/momentum scroll. Počas neho ostávajú
-        // prechody vypnuté, takže sa nevytvorí bliknutie ani druhý vystúpený plagát.
         if (window.innerWidth < 700) {
             container.addEventListener('touchstart', (e) => {
                 if (e.touches && e.touches.length) touchStartX = e.touches[0].clientX;
@@ -6081,12 +6081,17 @@ function initCarouselObserver() {
                 if (touchStartX !== null && e.changedTouches && e.changedTouches.length) {
                     const dx = e.changedTouches[0].clientX - touchStartX;
                     if (Math.abs(dx) > 25) {
+                        // Zmena active prebehne okamžite. Krátky CSS scale prechod
+                        // vytvorí plynulý efekt bez čakania na snap.
                         activateSwipeTarget(dx < 0 ? -1 : 1);
                     }
                 }
                 touchStartX = null;
+
+                // Po dokončení natívneho snapu iba raz zosúladíme active podľa
+                // skutočného stredu. Počas samotného scrollu nič neprekresľujeme.
                 clearTimeout(mobileScrollTimer);
-                mobileScrollTimer = setTimeout(finishMobileScroll, 90);
+                mobileScrollTimer = setTimeout(updateActive, 180);
             }, { passive: true });
         }
 
