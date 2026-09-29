@@ -480,7 +480,7 @@ function handlePushButtonClick() {
        Tieto efekty sa pri natívnom horizontálnom scrollovaní prekresľujú
        príliš draho a spôsobujú trhanie. Zvýraznenie riešime iba opacity + scale. */
     .carousel-card {
-        transition: opacity 0.16s ease, transform 0.16s ease !important;
+        transition: none !important;
         filter: none !important;
     }
 
@@ -499,7 +499,9 @@ function handlePushButtonClick() {
     }
 
     .carousel-container.is-scrolling .card-mini-info,
-    .carousel-container.is-scrolling .carousel-card.active .card-mini-info {
+    .carousel-container.is-scrolling .carousel-card.active .card-mini-info,
+    .carousel-card .card-mini-info,
+    .carousel-card.active .card-mini-info {
         transition: none !important;
     }
 }
