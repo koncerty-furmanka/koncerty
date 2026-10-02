@@ -467,7 +467,7 @@ function handlePushButtonClick() {
     flex-direction: column; 
     align-items: center;
     scroll-snap-align: center;
-    scroll-snap-stop: always; }
+    scroll-snap-stop: normal; }
 .carousel-card.active { 
     opacity: 1; 
       transform: scale(1.05);
@@ -479,7 +479,7 @@ function handlePushButtonClick() {
     /* Instagram/Android WebView: žiadny blur/filter. Aktiváciu robíme iba
        raz na konci swipe, takže krátky prechod scale už nezaťažuje scroll. */
     .carousel-card {
-        transition: opacity .14s ease, transform .18s cubic-bezier(.22,.8,.24,1) !important;
+        transition: opacity .14s ease, transform .14s cubic-bezier(.22,.8,.24,1) !important;
         filter: none !important;
         will-change: transform, opacity;
     }
@@ -753,13 +753,22 @@ function handlePushButtonClick() {
             gap: 7px;
         }
         .merch-qty-btn {
-            width: 30px;
-            height: 30px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
             border: 1px solid rgba(255,255,255,.25);
             background: rgba(255,255,255,.07);
             color: #fff;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         .merch-qty {
             min-width: 20px;
@@ -3972,7 +3981,7 @@ body.modal-scroll-locked {
             <div class="merch-img" style="height: 150px; flex-basis: 150px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"> 
                 <div id="model-viewer-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--accent-color); text-align: center; padding: 0 10px;">3D náhľad sa načíta po otvorení</div>
             </div>
-            <div class="merch-name">TRIČKO (3D NÁHĽAD)</div>
+            <div class="merch-name">TRIČKO ČIERNE KÔŇCERTY</div>
             <div class="merch-price">ODPORÚČANÝ PRÍSPEVOK: 15 €</div>
           </div>
           <div class="merch-item">
@@ -4451,6 +4460,15 @@ function initMerchCart() {
         merchCart = {};
     }
 
+    // Starý názov trička preveď na nový názov, aby sa existujúci košík nestratil.
+    const oldTshirtName = 'TRIČKO (3D NÁHĽAD)';
+    const newTshirtName = 'TRIČKO ČIERNE KÔŇCERTY';
+    if (merchCart[oldTshirtName] && !merchCart[newTshirtName]) {
+        merchCart[newTshirtName] = merchCart[oldTshirtName];
+        delete merchCart[oldTshirtName];
+        saveMerchCart();
+    }
+
     document.querySelectorAll('#screen-merch .merch-item').forEach((item, index) => {
         if (item.querySelector('.merch-add-btn')) return;
         const nameEl = item.querySelector('.merch-name');
@@ -4542,9 +4560,9 @@ function renderMerchCart() {
                 <div class="merch-cart-row-price">${merchMoney(item.price)} / KS</div>
             </div>
             <div class="merch-cart-controls">
-                <button type="button" class="merch-qty-btn" onclick="changeMerchQty(${JSON.stringify(name)}, -1)">−</button>
+                <button type="button" class="merch-qty-btn" data-merch-qty="-1" data-merch-name="${escapeHtml(name)}" aria-label="Znížiť počet">−</button>
                 <span class="merch-qty">${item.qty}</span>
-                <button type="button" class="merch-qty-btn" onclick="changeMerchQty(${JSON.stringify(name)}, 1)">+</button>
+                <button type="button" class="merch-qty-btn" data-merch-qty="1" data-merch-name="${escapeHtml(name)}" aria-label="Zvýšiť počet">+</button>
             </div>
         </div>
     `).join('');
@@ -4599,6 +4617,17 @@ function returnToMerchCart() {
     buzz();
     openMerchCart();
 }
+
+// Ovládanie množstva v košíku cez delegovaný handler je spoľahlivejšie aj v mobilných WebView.
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('#merch-cart-items .merch-qty-btn');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const name = btn.getAttribute('data-merch-name');
+    const delta = parseInt(btn.getAttribute('data-merch-qty'), 10);
+    if (name && (delta === 1 || delta === -1)) changeMerchQty(name, delta);
+}, true);
 
 function openMerchCart() {
     buzz();
@@ -6009,8 +6038,9 @@ function renderGalleryIfVisible() {
 }
 
 function initCarouselObserver() {
-    // Aktívny je vždy plagát, ktorého stred je najbližšie stredu carouselu.
-    // IntersectionObserver bol pri desktopovej šírke nepresný a označoval susedný plagát.
+    // Jeden zdroj pravdy pre aktívny plagát. Počas natívneho swipe/snapu
+    // nemeníme active pri každom frame – to je v Instagram WebView veľmi drahé.
+    // Cieľový plagát však aktivujeme okamžite po pustení prsta.
     const containers = [
         document.getElementById('carousel-upcoming'),
         document.getElementById('carousel-past')
@@ -6021,11 +6051,15 @@ function initCarouselObserver() {
         container.__centerObserverBound = true;
 
         let ticking = false;
+        let mobileScrollTimer = null;
+        let touchStartX = null;
+        let touchStartScrollLeft = 0;
 
-        const updateActive = () => {
-            ticking = false;
-            const cards = [...container.querySelectorAll('.carousel-card')];
-            if (!cards.length) return;
+        const getCards = () => [...container.querySelectorAll('.carousel-card')];
+
+        const getClosestCard = () => {
+            const cards = getCards();
+            if (!cards.length) return null;
 
             const centerX = container.scrollLeft + container.clientWidth / 2;
             let closest = null;
@@ -6039,32 +6073,47 @@ function initCarouselObserver() {
                     closest = card;
                 }
             });
-
-            cards.forEach(card => card.classList.toggle('active', card === closest));
+            return closest;
         };
 
-        // Na mobile neprepočítavaj active počas každého scroll eventu. To je
-        // presne to, čo v Instagram WebView spôsobovalo lagovanie. Active sa
-        // zmení iba raz po swipe a krátky scale prechod potom pôsobí plynulo.
-        let mobileScrollTimer = null;
-        let touchStartX = null;
+        const setActiveCard = (card) => {
+            if (!card) return;
+            const cards = getCards();
+            cards.forEach(c => c.classList.toggle('active', c === card));
+        };
 
-        const activateSwipeTarget = (direction) => {
-            const cards = [...container.querySelectorAll('.carousel-card')];
-            if (!cards.length) return;
+        const updateActive = () => {
+            ticking = false;
+            const card = getClosestCard();
+            if (card) setActiveCard(card);
+        };
 
-            const current = container.querySelector('.carousel-card.active') || cards[0];
-            const currentIndex = cards.indexOf(current);
-            if (currentIndex < 0) return;
-
-            const targetIndex = direction < 0 ? currentIndex + 1 : currentIndex - 1;
-            if (targetIndex < 0 || targetIndex >= cards.length) return;
-
-            cards.forEach(card => card.classList.toggle('active', card === cards[targetIndex]));
+        // Počas programového presunu (napr. šípky rokov) nesmie scroll event
+        // prepísať active skôr, než carousel dorazí na cieľ.
+        const finishMobileScroll = () => {
+            clearTimeout(mobileScrollTimer);
+            mobileScrollTimer = setTimeout(() => {
+                container.classList.remove('is-scrolling');
+                container.__programmaticTarget = null;
+                updateActive();
+            }, 120);
         };
 
         const requestUpdate = () => {
-            if (window.innerWidth < 700) return;
+            if (window.innerWidth < 700) {
+                container.classList.add('is-scrolling');
+
+                // Pri programovom skoku (napr. šípka roka) už cieľový plagát
+                // poznáme. Nenechaj scroll event, aby ho počas smooth pohybu
+                // prepísal na susedný plagát. Dokončenie rieši waitForStop().
+                if (container.__programmaticTarget) return;
+
+                clearTimeout(mobileScrollTimer);
+                finishMobileScroll();
+                return;
+            }
+
+            if (container.__programmaticTarget) return;
             if (ticking) return;
             ticking = true;
             requestAnimationFrame(updateActive);
@@ -6074,30 +6123,55 @@ function initCarouselObserver() {
 
         if (window.innerWidth < 700) {
             container.addEventListener('touchstart', (e) => {
-                if (e.touches && e.touches.length) touchStartX = e.touches[0].clientX;
+                if (!e.touches || !e.touches.length) return;
+                touchStartX = e.touches[0].clientX;
+                touchStartScrollLeft = container.scrollLeft;
+                container.classList.add('is-scrolling');
+                clearTimeout(mobileScrollTimer);
             }, { passive: true });
 
             container.addEventListener('touchend', (e) => {
-                if (touchStartX !== null && e.changedTouches && e.changedTouches.length) {
-                    const dx = e.changedTouches[0].clientX - touchStartX;
-                    if (Math.abs(dx) > 25) {
-                        // Zmena active prebehne okamžite. Krátky CSS scale prechod
-                        // vytvorí plynulý efekt bez čakania na snap.
-                        activateSwipeTarget(dx < 0 ? -1 : 1);
-                    }
+                if (touchStartX === null || !e.changedTouches || !e.changedTouches.length) {
+                    touchStartX = null;
+                    return;
                 }
+
+                const endX = e.changedTouches[0].clientX;
+                const dx = endX - touchStartX;
                 touchStartX = null;
 
-                // Po dokončení natívneho snapu iba raz zosúladíme active podľa
-                // skutočného stredu. Počas samotného scrollu nič neprekresľujeme.
-                clearTimeout(mobileScrollTimer);
-                mobileScrollTimer = setTimeout(updateActive, 180);
+                if (Math.abs(dx) > 20) {
+                    const cards = getCards();
+                    const current = container.querySelector('.carousel-card.active') || getClosestCard();
+                    let currentIndex = cards.indexOf(current);
+
+                    if (currentIndex < 0) currentIndex = 0;
+
+                    // Ak sa natívny scroll už počas dotyku posunul na ďalšiu
+                    // kartu, použijeme jej skutočnú polohu. Inak zvolíme kartu
+                    // podľa smeru swipe.
+                    let target = getClosestCard();
+                    const targetIndex = dx < 0 ? currentIndex + 1 : currentIndex - 1;
+
+                    if (targetIndex >= 0 && targetIndex < cards.length) {
+                        const movedEnough = Math.abs(container.scrollLeft - touchStartScrollLeft) > container.clientWidth * 0.08;
+                        if (!movedEnough || target === current) target = cards[targetIndex];
+                    }
+
+                    if (target) setActiveCard(target);
+                }
+
+                // Necháme natívny snap/momentum dokončiť. Active už je pritom
+                // viditeľne správny, takže používateľ nečaká na jeho vystúpenie.
+                finishMobileScroll();
             }, { passive: true });
         }
 
+        container.__updateCarouselActive = updateActive;
+        container.__setActiveCard = setActiveCard;
+
         window.addEventListener('resize', requestUpdate);
 
-        // Po naplnení DOM nastavíme správne aktívny prvý/stredový plagát.
         setTimeout(updateActive, 80);
         setTimeout(updateActive, 350);
     });
@@ -6224,14 +6298,65 @@ function getOldestCardOfYear(container, year) {
 function scrollArchiveToCard(card, instant) {
     const container = document.getElementById('carousel-past');
     if (!container || !card) return;
+
     window.archiveJumping = true;
-    card.scrollIntoView({ inline: 'start', block: 'nearest', behavior: instant ? 'auto' : 'smooth' });
-    armArchiveJumpQuietTimer();
+    container.__programmaticTarget = card;
+
+    // Nový plagát vystúpí okamžite – nečakáme na dokončenie smooth scrollu.
+    if (container.__setActiveCard) container.__setActiveCard(card);
+    else {
+        container.querySelectorAll('.carousel-card').forEach(c => c.classList.toggle('active', c === card));
+    }
+
+    const targetLeft = Math.max(
+        0,
+        card.offsetLeft + card.offsetWidth / 2 - container.clientWidth / 2
+    );
+
+    container.scrollTo({
+        left: targetLeft,
+        behavior: instant ? 'auto' : 'smooth'
+    });
+
+    clearTimeout(window.archiveJumpingTimer);
+
+    // Čakáme na skutočné ustálenie scrollu, nie na pevný počet milisekúnd.
+    let lastLeft = container.scrollLeft;
+    let stableSince = performance.now();
+    const started = performance.now();
+
+    const waitForStop = () => {
+        const now = performance.now();
+        const left = container.scrollLeft;
+        const stable = Math.abs(left - lastLeft) < 0.5;
+
+        if (stable) {
+            if (now - stableSince >= 100 || instant || now - started > 1600) {
+                window.archiveJumping = false;
+                container.__programmaticTarget = null;
+                if (container.__updateCarouselActive) container.__updateCarouselActive();
+                return;
+            }
+        } else {
+            stableSince = now;
+            lastLeft = left;
+        }
+
+        requestAnimationFrame(waitForStop);
+    };
+
+    requestAnimationFrame(waitForStop);
 }
 
 function armArchiveJumpQuietTimer() {
     clearTimeout(window.archiveJumpingTimer);
-    window.archiveJumpingTimer = setTimeout(() => { window.archiveJumping = false; }, 350);
+    window.archiveJumpingTimer = setTimeout(() => {
+        const container = document.getElementById('carousel-past');
+        if (!container) return;
+        window.archiveJumping = false;
+        container.__programmaticTarget = null;
+        if (container.__updateCarouselActive) container.__updateCarouselActive();
+    }, 250);
 }
 
 function goToArchiveYear(year, instant) {
@@ -6240,7 +6365,8 @@ function goToArchiveYear(year, instant) {
     const card = getOldestCardOfYear(container, year);
     if (card) scrollArchiveToCard(card, instant);
     window.currentArchiveYear = year;
-    window.archiveAtFront = false;
+    const years = window.archiveYears || [];
+    window.archiveAtFront = years.length ? year === years[years.length - 1] : false;
     updateArchiveYearUI(year);
 }
 
@@ -6252,22 +6378,21 @@ function archiveYearStep(dir) {
     let idx = years.indexOf(window.currentArchiveYear);
     if (idx === -1) idx = years.length - 1;
 
+    // Ľavá šípka = novší rok, pravá šípka = starší rok.
     if (dir > 0) {
         if (window.archiveAtFront) return;
         if (idx >= years.length - 1) {
             const front = getFirstArchiveCard(container);
             if (front) scrollArchiveToCard(front);
             window.archiveAtFront = true;
+            window.currentArchiveYear = years[years.length - 1];
             updateArchiveYearUI(window.currentArchiveYear);
             return;
         }
         goToArchiveYear(years[idx + 1]);
     } else {
-        if (!window.archiveAtFront && idx <= 0) return;
-        if (window.archiveAtFront) {
-            goToArchiveYear(years[idx]);
-            return;
-        }
+        // Pravá šípka musí z aktuálneho/najnovšieho roka prejsť na starší rok.
+        if (idx <= 0) return;
         goToArchiveYear(years[idx - 1]);
     }
 }
@@ -6563,7 +6688,9 @@ function setupArchiveScrollTracking() {
     container.dataset.scrollBound = '1';
     let ticking = false;
     container.addEventListener('scroll', () => {
-        if (window.archiveJumping) { armArchiveJumpQuietTimer(); return; }
+        // Pri skoku na konkrétny rok je aktívny cieľový plagát už nastavený.
+        // Počas smooth scrollu iba čakáme, kým sa carousel ustáli.
+        if (window.archiveJumping || container.__programmaticTarget) return;
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
