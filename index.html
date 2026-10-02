@@ -6079,7 +6079,23 @@ function initCarouselObserver() {
         const setActiveCard = (card) => {
             if (!card) return;
             const cards = getCards();
-            cards.forEach(c => c.classList.toggle('active', c === card));
+            cards.forEach(c => {
+                const isActive = c === card;
+                c.classList.toggle('active', isActive);
+                if (window.innerWidth < 700) {
+                    if (isActive) {
+                        c.style.setProperty('opacity', '1', 'important');
+                        c.style.setProperty('transform', 'scale(1.05)', 'important');
+                        c.style.setProperty('filter', 'none', 'important');
+                        c.style.setProperty('z-index', '10', 'important');
+                    } else {
+                        c.style.removeProperty('opacity');
+                        c.style.removeProperty('transform');
+                        c.style.removeProperty('filter');
+                        c.style.removeProperty('z-index');
+                    }
+                }
+            });
         };
 
         const updateActive = () => {
@@ -6332,9 +6348,12 @@ function scrollArchiveToCard(card, instant) {
 
         if (stable) {
             if (now - stableSince >= 100 || instant || now - started > 1600) {
+                // Pri prepnutí roka zostane aktívny presne cieľový plagát.
+                // Neurčujeme ho nanovo podľa stredu, pretože snap môže skončiť
+                // o pár pixelov mimo ideálneho stredu a zobrať susednú kartu.
+                if (container.__setActiveCard) container.__setActiveCard(card);
                 window.archiveJumping = false;
                 container.__programmaticTarget = null;
-                if (container.__updateCarouselActive) container.__updateCarouselActive();
                 return;
             }
         } else {
