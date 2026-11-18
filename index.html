@@ -5237,7 +5237,7 @@ function loadLeafletAssets() {
     if (typeof L !== 'undefined') return Promise.resolve();
     if (leafletLoadPromise) return leafletLoadPromise;
 
-    leafletLoadPromise = new Promise((resolve, reject) => {
+    const loadAttempt = new Promise((resolve, reject) => {
         const cssLink = document.createElement('link');
         cssLink.rel = 'stylesheet';
         cssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
@@ -5245,9 +5245,26 @@ function loadLeafletAssets() {
 
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Leaflet sa nepodarilo načítať'));
+        const timeout = window.setTimeout(() => {
+            script.remove();
+            reject(new Error('Načítanie mapy trvalo príliš dlho'));
+        }, 15000);
+        script.onload = () => {
+            window.clearTimeout(timeout);
+            if (typeof L !== 'undefined') resolve();
+            else reject(new Error('Knižnica mapy sa nespustila'));
+        };
+        script.onerror = () => {
+            window.clearTimeout(timeout);
+            script.remove();
+            reject(new Error('Leaflet sa nepodarilo načítať'));
+        };
         document.head.appendChild(script);
+    });
+
+    leafletLoadPromise = loadAttempt.catch(error => {
+        leafletLoadPromise = null;
+        throw error;
     });
     return leafletLoadPromise;
 }
@@ -5259,7 +5276,9 @@ function initFurmankaMap() {
     if (typeof L === 'undefined') {
         loadLeafletAssets()
             .then(initFurmankaMap)
-            .catch(() => { el.innerHTML = '<div class="error-box"><p>MAPA SA NEPODARILA NAČÍTAŤ.</p></div>'; });
+            .catch(() => {
+                el.innerHTML = '<div class="error-box" role="alert"><p>MAPU SA NEPODARILO NAČÍTAŤ.</p><button type="button" onclick="retryFurmankaMap()">SKÚSIŤ ZNOVA</button></div>';
+            });
         return;
     }
 
@@ -5287,10 +5306,9 @@ function initFurmankaMap() {
         scrollWheelZoom: false
     }).setView([49.40405, 19.47895], 16);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>'
     }).addTo(furmankaMapInstance);
 
     furmankaMapMarkers.venue = L.marker([venue.lat, venue.lng], { icon: venueIcon })
@@ -5336,6 +5354,13 @@ function initFurmankaMap() {
     setTimeout(() => {
         if (furmankaMapInstance) furmankaMapInstance.invalidateSize();
     }, 200);
+}
+
+function retryFurmankaMap() {
+    const el = document.getElementById('koncerty-map');
+    if (!el || furmankaMapInstance) return;
+    el.innerHTML = '';
+    initFurmankaMap();
 }
 
 function focusFurmankaMapMarker(type) {
