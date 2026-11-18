@@ -171,6 +171,7 @@ function handlePushButtonClick() {
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://koncerty-furmanka.github.io/koncerty/">
     <link rel="dns-prefetch" href="https://koncerty-furmanka.github.io/koncerty/">
+    <link rel="preload" href="./ikony/galeriakontajner.webp?v=1" as="image" fetchpriority="high">
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap&subset=latin-ext" rel="stylesheet"></noscript>
     
@@ -2202,6 +2203,8 @@ body.gallery-open {
     box-sizing: border-box;
 }
 .gallery-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 420px;
     background-image: url('./ikony/galeriakontajner.webp?v=1');
     background-size: 100% 100%;
     background-position: center;
@@ -6006,9 +6009,8 @@ async function loadGalleryData() {
                     </div>`;
                 }
             } else {
-                photos.forEach((p, idx) => {
-                    const extra = idx >= GALLERY_PREVIEW_LIMIT ? ' gallery-item-extra" style="display:none;' : '';
-                    html += `<div class="gallery-item${extra}" onclick="openLightbox('${gid}', ${idx})">
+                photos.slice(0, GALLERY_PREVIEW_LIMIT).forEach((p, idx) => {
+                    html += `<div class="gallery-item" onclick="openLightbox('${gid}', ${idx})">
                         <img src="${safeUrl(p.url)}" ${galleryImageAttrs()} alt="${escapeHtml(p.popis || 'Fotka z koncertu')}">
                     </div>`;
                 });
@@ -6852,21 +6854,29 @@ function startCountdown(queue, index) {
         };
     }
 
-    const bandList = (current.bands && current.bands.length > 0) ? current.bands : [{ name: bandName }];
+    const bandList = (current.bands && current.bands.length > 0) ? [...current.bands] : [{ name: bandName }];
+    // Pri koncerte 21. 11. hrá Cascabel ako prvý a SKAcowani od 21:30.
+    if (bandList.some(b => b.name === 'Cascabel') && bandList.some(b => b.name === 'SKAcowani')) {
+        bandList.sort((a, b) => (a.name === 'Cascabel' ? -1 : b.name === 'Cascabel' ? 1 : 0));
+    }
     const nightEnd = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
+    const afterpartyStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 30);
+    const performancesEnd = afterpartyStart > targetDate ? afterpartyStart : nightEnd;
     const slots = [];
     let cursor = new Date(targetDate.getTime());
     for (let i = 0; i < bandList.length; i++) {
         const isLast = i === bandList.length - 1;
         const slotStart = new Date(cursor.getTime());
-        let slotEnd;
-        if (isLast) {
-            slotEnd = nightEnd;
-        } else {
-            slotEnd = new Date(cursor.getTime() + 60 * 60 * 1000);
-        }
+        const remainingMs = Math.max(0, performancesEnd.getTime() - cursor.getTime());
+        const actsRemaining = bandList.length - i;
+        const slotEnd = isLast
+            ? new Date(performancesEnd.getTime())
+            : new Date(cursor.getTime() + Math.min(60 * 60 * 1000, remainingMs / actsRemaining));
         slots.push({ name: bandList[i].name, start: slotStart, end: slotEnd });
         cursor = slotEnd;
+    }
+    if (afterpartyStart < nightEnd && afterpartyStart >= targetDate) {
+        slots.push({ name: 'DJ ALFONZ AFTERPÁRTY', start: afterpartyStart, end: nightEnd });
     }
 
     updateTimer = setInterval(() => {
@@ -7228,9 +7238,6 @@ document.getElementById('lightbox-overlay').addEventListener('click', function(e
 document.addEventListener('click', function(e) {
     const moreTile = e.target.closest('.gallery-more-tile');
     if (moreTile) {
-        const grid = moreTile.closest('.gallery-grid');
-        if (grid) grid.querySelectorAll('.gallery-item-extra').forEach(el => { el.classList.remove('gallery-item-extra'); el.style.display = ''; });
-        moreTile.remove();
         return;
     }
     const photo = e.target.closest('.gallery-item, .strip-photo');
