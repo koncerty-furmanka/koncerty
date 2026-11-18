@@ -2203,8 +2203,6 @@ body.gallery-open {
     box-sizing: border-box;
 }
 .gallery-section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 420px;
     background-image: url('./ikony/galeriakontajner.webp?v=1');
     background-size: 100% 100%;
     background-position: center;
@@ -6052,8 +6050,13 @@ function renderGalleryIfVisible() {
     const galleryScreen = document.getElementById('screen-gallery');
     if (!galleryScreen || !galleryScreen.classList.contains('active')) return;
     const galleryGrid = document.getElementById('gallery-grid');
+    // Ponecháme už vykreslenú galériu v DOM, aby sa obrázky pri návrate na
+    // obrazovku znova nevytvárali a nemuseli sa znovu dekódovať.
+    if (galleryGrid && galleryGrid.dataset.galleryRendered === 'true') return;
     if (galleryGrid) {
         galleryGrid.outerHTML = window._galleryHtml;
+        const renderedGrid = document.getElementById('gallery-grid');
+        if (renderedGrid) renderedGrid.dataset.galleryRendered = 'true';
     }
 }
 
