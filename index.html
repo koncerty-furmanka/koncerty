@@ -482,19 +482,21 @@ function handlePushButtonClick() {
     .carousel-card {
         transition: opacity .14s ease, transform .14s cubic-bezier(.22,.8,.24,1) !important;
         filter: none !important;
-        will-change: transform, opacity;
+        will-change: auto;
     }
 
     .carousel-card.active {
         opacity: 1;
         transform: scale(1.05);
         filter: none !important;
+        will-change: transform, opacity;
     }
 
     /* Počas natívneho scrollu sa karty samé neanimujú. Krátky prechod sa
        spustí iba pri zmene aktívneho plagátu. */
     .carousel-container.is-scrolling .carousel-card {
         filter: none !important;
+        transition: none !important;
     }
 
     .carousel-card .card-mini-info,
@@ -523,9 +525,14 @@ function handlePushButtonClick() {
         padding-bottom: 20px;
         box-sizing: border-box;
     }
+
+    #screen-upcoming.active .carousel-container .carousel-card,
+    #screen-past.active .carousel-container .carousel-card {
+        scroll-snap-stop: always;
+    }
 }
 
-        .poster-clean { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
+        .poster-clean { width: 100%; height: auto; aspect-ratio: auto 3 / 4; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
         .card-mini-info { margin-top: 15px; text-align: center; opacity: 0; transition: opacity 0.3s; }
         .carousel-card.active .card-mini-info { opacity: 1; }
         .mini-title { font-size: 1.5rem; line-height: 1; margin-bottom: 5px; text-shadow: 0 2px 6px #000; }
@@ -918,6 +925,7 @@ function handlePushButtonClick() {
 .modal-poster { border-radius: 12px;
     width: 80%;
     max-width: 300px;
+    aspect-ratio: auto 3 / 4;
     margin-bottom: 20px;
 }
         .modal-title { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 10px; line-height: 1; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
@@ -2281,6 +2289,8 @@ body.gallery-open {
     object-position: center;
     pointer-events: none;
 }
+img.poster-clean:not(.media-loaded):not(.media-failed),
+.modal-poster:not(.media-loaded):not(.media-failed),
 .gallery-item img:not(.media-loaded):not(.media-failed),
 .band-photo-gallery-item img:not(.media-loaded):not(.media-failed),
 .strip-photo img:not(.media-loaded):not(.media-failed) {
@@ -2293,6 +2303,8 @@ body.gallery-open {
     to { background-position-x: -220%; }
 }
 @media (prefers-reduced-motion: reduce) {
+    img.poster-clean:not(.media-loaded):not(.media-failed),
+    .modal-poster:not(.media-loaded):not(.media-failed),
     .gallery-item img:not(.media-loaded):not(.media-failed),
     .band-photo-gallery-item img:not(.media-loaded):not(.media-failed),
     .strip-photo img:not(.media-loaded):not(.media-failed) {
@@ -3746,7 +3758,6 @@ body.modal-scroll-locked {
         width: 100%;
         max-width: 100%;
         max-height: 58vh;
-        object-fit: contain;
     }
 
     #carousel-upcoming .card-mini-info,
@@ -4791,7 +4802,7 @@ function initMerchModelViewer() {
     document.body.appendChild(script);
 }
 
-const concertImageSelector = '.gallery-item img, .band-photo-gallery-item img, .strip-photo img';
+const concertImageSelector = '.poster-clean, .modal-poster, .gallery-item img, .band-photo-gallery-item img, .strip-photo img';
 function markConcertImageState(event) {
     const image = event.target;
     if (!(image instanceof HTMLImageElement) || !image.matches(concertImageSelector)) return;
@@ -4830,6 +4841,13 @@ function showScreen(screenId) {
         document.body.style.overflow = 'hidden';
     } else {
         document.body.style.overflow = 'auto';
+    }
+
+    if (screenId === 'screen-upcoming' || screenId === 'screen-past') {
+        const carousel = document.getElementById(screenId === 'screen-upcoming' ? 'carousel-upcoming' : 'carousel-past');
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (carousel && carousel.__refreshCarousel) carousel.__refreshCarousel();
+        }));
     }
 
     const navMap = {
@@ -5531,9 +5549,6 @@ const clean = cols.map(c =>
         const upcomingContainer = document.getElementById('carousel-upcoming');
         const pastContainer = document.getElementById('carousel-past');
         
-        upcomingContainer.innerHTML = '<div class="carousel-side-spacer"></div>';
-        pastContainer.innerHTML = '<div class="carousel-side-spacer"></div>';
-
         let upcomingEvents = [];
         let pastEvents = [];
         let allEventsList = [];
@@ -5704,13 +5719,23 @@ const clean = cols.map(c =>
         }
 
         upcomingEvents.sort((a, b) => a.date - b.date);
-        if (upcomingEvents.length > 0) upcomingEvents.forEach(e => upcomingContainer.innerHTML += e.html);
-        else upcomingContainer.innerHTML = "<p style='width:100%; text-align:center; padding-top:50px;'>ŽIADNE NOVÉ AKCIE...</p>";
+        const sideSpacer = '<div class="carousel-side-spacer"></div>';
+        const renderCarousel = (container, events, emptyMessage) => {
+            container.innerHTML = events.length
+                ? sideSpacer + events.map(event => event.html).join('') + sideSpacer
+                : `<p style="width:100%; text-align:center; padding-top:50px;">${emptyMessage}</p>`;
+            container.querySelectorAll('.carousel-card img.poster-clean').forEach((image, index) => {
+                if (index < 2) {
+                    image.loading = 'eager';
+                    image.fetchPriority = 'high';
+                }
+            });
+        };
+        renderCarousel(upcomingContainer, upcomingEvents, 'ŽIADNE NOVÉ AKCIE...');
         window.upcomingEventsCount = upcomingEvents.length;
 
         pastEvents.sort((a, b) => b.date - a.date);
-        if (pastEvents.length > 0) pastEvents.forEach(e => pastContainer.innerHTML += e.html);
-        else pastContainer.innerHTML = "<p style='width:100%; text-align:center; padding-top:50px;'>ARCHÍV JE PRÁZDNY...</p>";
+        renderCarousel(pastContainer, pastEvents, 'ARCHÍV JE PRÁZDNY...');
 
         const yearNavEl = document.getElementById('archive-year-nav');
         window.archiveYears = [...new Set(pastEvents.map(e => e.date.getFullYear()))].sort((a, b) => a - b);
@@ -5791,9 +5816,6 @@ const clean = cols.map(c =>
 
         // Ak bola appka otvorená z push notifikácie na konkrétny koncert, otvor ho teraz.
         openEventFromHash();
-
-        upcomingContainer.innerHTML += '<div class="carousel-side-spacer"></div>';
-        pastContainer.innerHTML += '<div class="carousel-side-spacer"></div>';
 
 initCarouselObserver();
         setupDesktopCarouselMouseControls();
@@ -6099,10 +6121,17 @@ function renderGalleryIfVisible() {
     }
 }
 
+function carouselCardTargetLeft(container, card) {
+    const containerRect = container.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const containerCenter = containerRect.left + container.clientLeft + container.clientWidth / 2;
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    return Math.max(0, container.scrollLeft + cardCenter - containerCenter);
+}
+
 function initCarouselObserver() {
-    // Jeden zdroj pravdy pre aktívny plagát. Počas natívneho swipe/snapu
-    // nemeníme active pri každom frame – to je v Instagram WebView veľmi drahé.
-    // Cieľový plagát však aktivujeme okamžite po pustení prsta.
+    // Jeden zdroj pravdy pre aktívny plagát. Neaktualizujeme ho počas pohybu;
+    // po skončení natívneho scrollu vyberieme kartu, ktorá je naozaj v strede.
     const containers = [
         document.getElementById('carousel-upcoming'),
         document.getElementById('carousel-past')
@@ -6114,21 +6143,20 @@ function initCarouselObserver() {
 
         let ticking = false;
         let mobileScrollTimer = null;
-        let touchStartX = null;
-        let touchStartScrollLeft = 0;
-
         const getCards = () => [...container.querySelectorAll('.carousel-card')];
 
         const getClosestCard = () => {
             const cards = getCards();
-            if (!cards.length) return null;
+            if (!cards.length || !container.clientWidth) return null;
 
-            const centerX = container.scrollLeft + container.clientWidth / 2;
+            const containerRect = container.getBoundingClientRect();
+            const centerX = containerRect.left + container.clientLeft + container.clientWidth / 2;
             let closest = null;
             let closestDistance = Infinity;
 
             cards.forEach(card => {
-                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                const rect = card.getBoundingClientRect();
+                const cardCenter = rect.left + rect.width / 2;
                 const distance = Math.abs(cardCenter - centerX);
                 if (distance < closestDistance) {
                     closestDistance = distance;
@@ -6162,6 +6190,7 @@ function initCarouselObserver() {
 
         const updateActive = () => {
             ticking = false;
+            if (!container.clientWidth || !container.isConnected) return;
             const card = getClosestCard();
             if (card) setActiveCard(card);
         };
@@ -6171,10 +6200,10 @@ function initCarouselObserver() {
         const finishMobileScroll = () => {
             clearTimeout(mobileScrollTimer);
             mobileScrollTimer = setTimeout(() => {
+                if (container.__programmaticTarget) return;
                 container.classList.remove('is-scrolling');
-                container.__programmaticTarget = null;
                 updateActive();
-            }, 120);
+            }, 150);
         };
 
         const requestUpdate = () => {
@@ -6186,7 +6215,6 @@ function initCarouselObserver() {
                 // prepísal na susedný plagát. Dokončenie rieši waitForStop().
                 if (container.__programmaticTarget) return;
 
-                clearTimeout(mobileScrollTimer);
                 finishMobileScroll();
                 return;
             }
@@ -6199,54 +6227,12 @@ function initCarouselObserver() {
 
         container.addEventListener('scroll', requestUpdate, { passive: true });
 
-        if (window.innerWidth < 700) {
-            container.addEventListener('touchstart', (e) => {
-                if (!e.touches || !e.touches.length) return;
-                touchStartX = e.touches[0].clientX;
-                touchStartScrollLeft = container.scrollLeft;
-                container.classList.add('is-scrolling');
-                clearTimeout(mobileScrollTimer);
-            }, { passive: true });
-
-            container.addEventListener('touchend', (e) => {
-                if (touchStartX === null || !e.changedTouches || !e.changedTouches.length) {
-                    touchStartX = null;
-                    return;
-                }
-
-                const endX = e.changedTouches[0].clientX;
-                const dx = endX - touchStartX;
-                touchStartX = null;
-
-                if (Math.abs(dx) > 20) {
-                    const cards = getCards();
-                    const current = container.querySelector('.carousel-card.active') || getClosestCard();
-                    let currentIndex = cards.indexOf(current);
-
-                    if (currentIndex < 0) currentIndex = 0;
-
-                    // Ak sa natívny scroll už počas dotyku posunul na ďalšiu
-                    // kartu, použijeme jej skutočnú polohu. Inak zvolíme kartu
-                    // podľa smeru swipe.
-                    let target = getClosestCard();
-                    const targetIndex = dx < 0 ? currentIndex + 1 : currentIndex - 1;
-
-                    if (targetIndex >= 0 && targetIndex < cards.length) {
-                        const movedEnough = Math.abs(container.scrollLeft - touchStartScrollLeft) > container.clientWidth * 0.08;
-                        if (!movedEnough || target === current) target = cards[targetIndex];
-                    }
-
-                    if (target) setActiveCard(target);
-                }
-
-                // Necháme natívny snap/momentum dokončiť. Active už je pritom
-                // viditeľne správny, takže používateľ nečaká na jeho vystúpenie.
-                finishMobileScroll();
-            }, { passive: true });
-        }
-
         container.__updateCarouselActive = updateActive;
         container.__setActiveCard = setActiveCard;
+        container.__getClosestCard = getClosestCard;
+        container.__refreshCarousel = () => {
+            if (container.clientWidth && !container.__programmaticTarget) updateActive();
+        };
 
         window.addEventListener('resize', requestUpdate);
 
@@ -6386,10 +6372,9 @@ function scrollArchiveToCard(card, instant) {
         container.querySelectorAll('.carousel-card').forEach(c => c.classList.toggle('active', c === card));
     }
 
-    const targetLeft = Math.max(
-        0,
-        card.offsetLeft + card.offsetWidth / 2 - container.clientWidth / 2
-    );
+    const targetLeft = carouselCardTargetLeft(container, card);
+    const previousSnapType = container.style.scrollSnapType;
+    container.style.scrollSnapType = 'none';
 
     container.scrollTo({
         left: targetLeft,
@@ -6411,9 +6396,10 @@ function scrollArchiveToCard(card, instant) {
         if (stable) {
             if (now - stableSince >= 100 || instant || now - started > 1600) {
                 // Pri prepnutí roka zostane aktívny presne cieľový plagát.
-                // Neurčujeme ho nanovo podľa stredu, pretože snap môže skončiť
-                // o pár pixelov mimo ideálneho stredu a zobrať susednú kartu.
+                // Pri skoku na iný rok ponecháme vybraný presne cieľový plagát.
                 if (container.__setActiveCard) container.__setActiveCard(card);
+                container.style.scrollSnapType = previousSnapType;
+                container.classList.remove('is-scrolling');
                 window.archiveJumping = false;
                 container.__programmaticTarget = null;
                 return;
@@ -6479,11 +6465,14 @@ function archiveYearStep(dir) {
 }
 
 function getCurrentArchiveCard(container) {
+    if (container.__getClosestCard) return container.__getClosestCard();
     const cards = container.querySelectorAll('.carousel-card');
-    const scrollLeft = container.scrollLeft;
+    const containerRect = container.getBoundingClientRect();
+    const centerX = containerRect.left + container.clientLeft + container.clientWidth / 2;
     let closest = null, closestDist = Infinity;
     cards.forEach(c => {
-        const dist = Math.abs(c.offsetLeft - scrollLeft);
+        const rect = c.getBoundingClientRect();
+        const dist = Math.abs(rect.left + rect.width / 2 - centerX);
         if (dist < closestDist) { closestDist = dist; closest = c; }
     });
     return closest;
@@ -6729,20 +6718,8 @@ function setupMouseDragCarousel(containerId) {
                 const cards = [...container.querySelectorAll('.carousel-card')];
                 if (!cards.length) return;
 
-                const centerX = container.scrollLeft + container.clientWidth / 2;
-                let closest = cards[0];
-                let closestDistance = Infinity;
-
-                cards.forEach(card => {
-                    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-                    const distance = Math.abs(cardCenter - centerX);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closest = card;
-                    }
-                });
-
-                const target = closest.offsetLeft + closest.offsetWidth / 2 - container.clientWidth / 2;
+                const closest = container.__getClosestCard ? container.__getClosestCard() : cards[0];
+                const target = carouselCardTargetLeft(container, closest);
 
                 container.scrollTo({
                     left: Math.max(0, target),
