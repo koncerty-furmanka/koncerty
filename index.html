@@ -525,7 +525,7 @@ function handlePushButtonClick() {
     }
 }
 
-        .poster-clean { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
+        .poster-clean { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: contain; border-radius: 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: block; }
         .card-mini-info { margin-top: 15px; text-align: center; opacity: 0; transition: opacity 0.3s; }
         .carousel-card.active .card-mini-info { opacity: 1; }
         .mini-title { font-size: 1.5rem; line-height: 1; margin-bottom: 5px; text-shadow: 0 2px 6px #000; }
@@ -918,6 +918,8 @@ function handlePushButtonClick() {
 .modal-poster { border-radius: 12px;
     width: 80%;
     max-width: 300px;
+    aspect-ratio: 3 / 4;
+    object-fit: contain;
     margin-bottom: 20px;
 }
         .modal-title { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 10px; line-height: 1; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
@@ -2280,6 +2282,29 @@ body.gallery-open {
     display: block;
     object-position: center;
     pointer-events: none;
+}
+.poster-clean:not(.media-loaded):not(.media-failed),
+.modal-poster:not(.media-loaded):not(.media-failed),
+.gallery-item img:not(.media-loaded):not(.media-failed),
+.band-photo-gallery-item img:not(.media-loaded):not(.media-failed),
+.strip-photo img:not(.media-loaded):not(.media-failed) {
+    background-color: rgba(255,255,255,0.045);
+    background-image: linear-gradient(105deg, transparent 28%, rgba(249,165,9,0.16) 48%, rgba(255,255,255,0.12) 53%, transparent 72%);
+    background-size: 220% 100%;
+    animation: photoSheen 1.7s ease-in-out infinite;
+}
+@keyframes photoSheen {
+    to { background-position-x: -220%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .poster-clean:not(.media-loaded):not(.media-failed),
+    .modal-poster:not(.media-loaded):not(.media-failed),
+    .gallery-item img:not(.media-loaded):not(.media-failed),
+    .band-photo-gallery-item img:not(.media-loaded):not(.media-failed),
+    .strip-photo img:not(.media-loaded):not(.media-failed) {
+        animation: none;
+        background-image: none;
+    }
 }
 .gallery-poster-tile img { object-fit: cover; }
 .gallery-view-all-btn:active { transform: scale(0.98); }
@@ -4767,6 +4792,21 @@ function initMerchModelViewer() {
     };
     document.body.appendChild(script);
 }
+
+const concertImageSelector = '.poster-clean, .modal-poster, .gallery-item img, .band-photo-gallery-item img, .strip-photo img';
+function markConcertImageState(event) {
+    const image = event.target;
+    if (!(image instanceof HTMLImageElement) || !image.matches(concertImageSelector)) return;
+    image.classList.toggle('media-loaded', event.type === 'load' && image.naturalWidth > 0);
+    image.classList.toggle('media-failed', event.type === 'error' || image.naturalWidth === 0);
+}
+document.addEventListener('load', markConcertImageState, true);
+document.addEventListener('error', markConcertImageState, true);
+document.querySelectorAll(concertImageSelector).forEach(image => {
+    if (!image.complete) return;
+    image.classList.toggle('media-loaded', image.naturalWidth > 0);
+    image.classList.toggle('media-failed', image.naturalWidth === 0);
+});
 
 function showScreen(screenId) {
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
