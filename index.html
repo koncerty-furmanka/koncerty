@@ -3832,6 +3832,71 @@ body.modal-scroll-locked {
     }
 }
 
+
+
+/* ===== DOMOVSKÁ OBRAZOVKA – MOBILNÉ ZOBRAZENIE ===== */
+@media (max-width: 699px) {
+    #screen-home.active {
+        height: calc(100dvh - 62px - env(safe-area-inset-bottom));
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+    }
+
+    #screen-home .home-content {
+        height: auto !important;
+        min-height: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+        padding-bottom: 14px;
+        box-sizing: border-box;
+    }
+
+    #screen-home .home-header {
+        flex: 0 0 auto;
+        margin-bottom: 0;
+    }
+
+    #screen-home .menu-grid {
+        flex: 0 0 auto;
+        height: clamp(270px, 39vh, 330px);
+        min-height: 270px;
+        padding: 4px 0;
+    }
+
+    #screen-home .bottom-container {
+        flex: 0 0 auto;
+        height: clamp(220px, 31vh, 260px);
+        min-height: 220px;
+        padding-bottom: 4px;
+    }
+
+    #screen-home .left-col,
+    #screen-home .right-col {
+        height: 100%;
+        min-height: 0;
+    }
+}
+
+/* ===== CAROUSEL – OKAMŽITÁ AKTIVÁCIA PLAGÁTU POČAS SWAJPU ===== */
+@media (max-width: 699px) {
+    .carousel-container .carousel-card {
+        transition:
+            transform .22s cubic-bezier(.22,.8,.24,1),
+            opacity .18s ease !important;
+        will-change: transform, opacity;
+    }
+
+    /* Aj počas rýchleho pohybu musí byť viditeľný plynulý prechod. */
+    .carousel-container.is-scrolling .carousel-card {
+        transition:
+            transform .22s cubic-bezier(.22,.8,.24,1) !important,
+            opacity .18s ease !important;
+    }
+}
+
 </style>
 
 </head>
@@ -6213,7 +6278,7 @@ function initCarouselObserver() {
                 if (container.__programmaticTarget) return;
                 container.classList.remove('is-scrolling');
                 updateActive();
-            }, 150);
+            }, 90);
         };
 
         const requestUpdate = () => {
@@ -6221,10 +6286,16 @@ function initCarouselObserver() {
                 container.classList.add('is-scrolling');
 
                 // Pri programovom skoku (napr. šípka roka) už cieľový plagát
-                // poznáme. Nenechaj scroll event, aby ho počas smooth pohybu
-                // prepísal na susedný plagát. Dokončenie rieši waitForStop().
+                // poznáme. Nenechaj scroll event prepísať jeho výber.
                 if (container.__programmaticTarget) return;
 
+                // Počas swajpu priebežne vyberaj kartu najbližšie k stredu.
+                // Nečakáme na zastavenie scrollu, preto aktívny plagát vystúpi
+                // dopredu hneď, ako sa dostane do stredu.
+                if (!ticking) {
+                    ticking = true;
+                    requestAnimationFrame(updateActive);
+                }
                 finishMobileScroll();
                 return;
             }
