@@ -3918,20 +3918,22 @@ body.modal-scroll-locked {
     }
 }
 
-/* ===== CAROUSEL – OKAMŽITÁ AKTIVÁCIA PLAGÁTU POČAS SWAJPU ===== */
+/* ===== CAROUSEL – PLYNULEJŠIE VYSTÚPENIE PLAGÁTU PRI SWAJPE ===== */
 @media (max-width: 699px) {
     .carousel-container .carousel-card {
         transition:
-            transform .22s cubic-bezier(.22,.8,.24,1),
-            opacity .18s ease !important;
+            transform .34s cubic-bezier(.20,.72,.25,1),
+            opacity .30s ease-out !important;
         will-change: transform, opacity;
+        backface-visibility: hidden;
     }
 
-    /* Aj počas rýchleho pohybu musí byť viditeľný plynulý prechod. */
+    /* Rovnaký jemný prechod platí aj počas pohybu prstom.
+       Plagát sa zväčšuje plynule, nie skokom pri každom scroll evente. */
     .carousel-container.is-scrolling .carousel-card {
         transition:
-            transform .22s cubic-bezier(.22,.8,.24,1) !important,
-            opacity .18s ease !important;
+            transform .34s cubic-bezier(.20,.72,.25,1) !important,
+            opacity .30s ease-out !important;
     }
 }
 
