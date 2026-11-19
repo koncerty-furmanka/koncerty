@@ -2749,6 +2749,44 @@ img.poster-clean:not(.media-loaded):not(.media-failed),
    takže sa nezasahuje do zvyšku layoutu a netreba nič zmenšovať/prekresľovať. */
 
         .home-merch-btn .small-btn-img { transform: scale(1.15); }
+
+
+/* ===== OPRAVA: DOMOVSKÁ OBRAZOVKA SA SCROLLUJE IBA V MOBILNOM PREHLIADAČI =====
+   Nainštalovaná PWA a desktop si ponechávajú svoje pôvodné rozloženie.
+   V bežnom mobilnom prehliadači sa posúva celá stránka, nie vnútorný
+   kontajner s pevnou výškou. Spodná navigácia zostáva prichytená dole. */
+@media (display-mode: browser) and (max-width: 699px) {
+    html,
+    body {
+        min-height: 100%;
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+
+    #screen-home.active {
+        height: auto !important;
+        min-height: calc(100svh - 62px) !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+        box-sizing: border-box !important;
+    }
+
+    #screen-home .home-content {
+        height: auto !important;
+        min-height: 0 !important;
+        justify-content: flex-start !important;
+        padding-bottom: 14px !important;
+    }
+
+    #bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
+}
+
 </style>
 
 <style>
