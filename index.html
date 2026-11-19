@@ -4184,6 +4184,88 @@ body.modal-scroll-locked {
 }
 </style>
 
+
+<style id="poster-crop-and-mobile-map-scroll-fix">
+/* Mobil: nechaj plagátové karty aj popis pod nimi v prirodzenej výške.
+   Predošlé pevné ohraničenie obrazovky odrezávalo spodný riadok „klik pre info“. */
+@media (max-width: 699px) {
+  #screen-upcoming.active,
+  #screen-past.active {
+    height: auto !important;
+    min-height: calc(100dvh - 62px - env(safe-area-inset-bottom)) !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+    box-sizing: border-box !important;
+  }
+
+  #screen-upcoming.active .page-header,
+  #screen-past.active .page-header {
+    margin-bottom: 2px !important;
+  }
+
+  #screen-upcoming.active .carousel-container,
+  #screen-past.active .carousel-container {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    align-items: flex-start !important;
+    padding-top: clamp(36px, 6.5vh, 72px) !important;
+    padding-bottom: 34px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  #screen-upcoming.active .carousel-card,
+  #screen-past.active .carousel-card {
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+  }
+
+  #screen-upcoming.active .card-mini-info,
+  #screen-past.active .card-mini-info {
+    padding-bottom: 8px !important;
+    margin-top: 12px !important;
+  }
+
+  /* V mobilnom Chrome musí byť možné posúvať celý obsah mapy vrátane
+     navigačných pokynov pod parkovacími kartami. */
+  html.browser-list-scroll-mode body,
+  html.browser-list-scroll-mode #app-main {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    height: auto !important;
+    min-height: 100% !important;
+  }
+
+  html.browser-list-scroll-mode #screen-map.active {
+    position: relative !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
+    touch-action: pan-y !important;
+  }
+
+  html.browser-list-scroll-mode #screen-map .map-info-grid,
+  html.browser-list-scroll-mode #screen-map .map-info-grid *,
+  html.browser-list-scroll-mode #screen-map .navigation-section,
+  html.browser-list-scroll-mode #screen-map .parking-navigation {
+    touch-action: pan-y !important;
+  }
+
+  /* Samotná mapa si ponecháva Leaflet gestá; ťahanie mimo mapy posúva stránku. */
+  html.browser-list-scroll-mode #screen-map .koncerty-map-shell,
+  html.browser-list-scroll-mode #screen-map #koncerty-map {
+    overscroll-behavior: contain !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
