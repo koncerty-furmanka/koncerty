@@ -5271,25 +5271,27 @@ function showInstallButton() {
         return;
     }
     const b = document.getElementById('install-btn');
-    if (b) b.classList.add('show');
+    if (b && (deferredPrompt || isSafariIOS())) b.classList.add('show');
 }
 
 function updatePlatformInstallButtons() {
     const chromeBtn = document.getElementById('install-chrome-btn');
     const safariBtn = document.getElementById('install-safari-btn');
 
-    // V sekcii VIAC zobraz iba tlačidlo patriace k operačnému systému.
-    // Android = Chrome, iPhone/iPad = Safari, ostatné systémy = žiadne z nich.
-    if (chromeBtn) chromeBtn.style.display = (!isInstalledApp() && isAndroidDevice()) ? 'flex' : 'none';
-    if (safariBtn) safariBtn.style.display = (!isInstalledApp() && isIOSDevice()) ? 'flex' : 'none';
+    // Android: zobraz inštaláciu iba vtedy, keď Chrome ponúkol skutočný
+    // inštalačný prompt. Ak je PWA už nainštalovaná, Chrome ho spravidla neponúkne.
+    // iPhone: Safari nemá beforeinstallprompt, preto zostáva manuálny návod.
+    const installed = isInstalledApp();
+    if (chromeBtn) chromeBtn.style.display = (!installed && isChromeAndroid() && !!deferredPrompt) ? 'flex' : 'none';
+    if (safariBtn) safariBtn.style.display = (!installed && isSafariIOS()) ? 'flex' : 'none';
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     if (isInstalledApp()) return;
     deferredPrompt = e;
-    // Hlavné tlačidlo zobrazujeme iba v podporovanom Chrome/Safari prostredí.
-    if (isChromeAndroid() || isSafariIOS()) showInstallButton();
+    showInstallButton();
+    updatePlatformInstallButtons();
 });
 
 async function installApp() {
@@ -5303,6 +5305,7 @@ async function installApp() {
         deferredPrompt = null;
         if (choice && choice.outcome === 'accepted') {
             hideInstallButtons();
+            updatePlatformInstallButtons();
         }
         return;
     }
@@ -5337,24 +5340,31 @@ if (document.readyState === 'loading') {
 
 window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    // Po úspešnej inštalácii schovaj všetky inštalačné tlačidlá,
-    // aj keď používateľ zostane ďalej v pôvodnom prehliadači.
+    // Po úspešnej inštalácii schovaj všetky inštalačné tlačidlá.
     hideInstallButtons();
+    updatePlatformInstallButtons();
 });
 
 window.addEventListener('pageshow', () => {
-    if (isInstalledApp()) hideInstallButtons();
+    if (isInstalledApp()) {
+        hideInstallButtons();
+        return;
+    }
+    // Po návrate do prehliadača znovu skontroluj, či Chrome ponúka inštaláciu.
+    updatePlatformInstallButtons();
 });
 
 (function installCompatibilityHint() {
-    updatePlatformInstallButtons();
-    if (isInstalledApp()) return;
-
-    // Hlavné tlačidlo NAINŠTALOVAŤ APPKU zobraz iba v Chrome na Androide
-    // alebo v Safari na iPhone/iPade. Opera, Firefox a iné prehliadače ho nemajú.
-    if (isChromeAndroid() || isSafariIOS()) {
-        showInstallButton();
+    if (isInstalledApp()) {
+        hideInstallButtons();
+        return;
     }
+
+    // Dôležité: v Chrome nezobrazuj tlačidlo automaticky len preto,
+    // že ide o Android. Zobrazí sa až po udalosti beforeinstallprompt.
+    // Safari na iPhone nemá túto udalosť, preto zobrazíme manuálny návod.
+    if (isSafariIOS()) showInstallButton();
+    updatePlatformInstallButtons();
 })();
 
 if ('serviceWorker' in navigator) {
