@@ -5757,7 +5757,13 @@ const getDataCsvUrl = () => {
 const getDataCacheKey = () => 'koncerty_cache_data_' + (localStorage.getItem('koncerty-language') || 'sk');
 const getDataCacheTimeKey = () => getDataCacheKey() + '_time';
 const galleryApiUrl = "https://api.github.com/repos/koncerty-furmanka/koncerty/contents/fotky?ref=main";
-const defaultUpcomingImg = "./ikony/Najblizsie-koncerty.webp?v=1";
+const getCurrentLanguage = () => localStorage.getItem('koncerty-language') || 'sk';
+const getDefaultUpcomingImg = () => {
+    const lang = getCurrentLanguage();
+    if (lang === 'en') return './ikony/Najblizsie-koncerty_en.webp?v=2';
+    if (lang === 'pl') return './ikony/Najblizsie-koncerty_pl.webp?v=2';
+    return './ikony/Najblizsie-koncerty.webp?v=2';
+};
 
 // Plagát archívu má samostatnú grafiku pre každý jazyk.
 const archiveButtonImages = {
@@ -5777,26 +5783,36 @@ function updateArchiveButtonImage() {
     image.src = archiveButtonImages[lang] || archiveButtonImages.sk;
 }
 
-// Jazykové grafiky domovskej obrazovky – všetky obrázky sa menia spolu s jazykom.
+// Jazykové grafiky domovskej obrazovky.
+// Používame absolútne CDN adresy a odstraňujeme srcset/sizes,
+// aby Chrome nemohol vybrať starú slovenskú verziu z pôvodného srcset.
 function updateHomeMenuLanguageImages() {
     const lang = localStorage.getItem("koncerty-language") || "sk";
     const suffix = lang === "en" ? "_en" : lang === "pl" ? "_pl" : "";
-    const images = [
-        ["home-gallery-img", "fottogaleria", "Fotogaléria", "Photo gallery", "Galeria zdjęć"],
-        ["home-merch-img", "nasmerch", "Náš merch", "Our merch", "Nasz merch"],
-        ["home-map-img", "mapa", "Mapa", "Map", "Mapa"],
-        ["home-contact-img", "kontakty", "Kontakt", "Contact", "Kontakt"],
-        ["home-social-img", "socialnesiete", "Sociálne siete", "Social media", "Media społecznościowe"]
+    const files = [
+        ["home-gallery-img", "fottogaleria", "webp", "Fotogaléria", "Photo gallery", "Galeria zdjęć"],
+        ["home-merch-img", "nasmerch", "webp", "Náš merch", "Our merch", "Nasz merch"],
+        ["home-map-img", "mapa", "webp", "Mapa", "Map", "Mapa"],
+        ["home-contact-img", "kontakty", "webp", "Kontakt", "Contact", "Kontakt"],
+        ["home-social-img", "socialnesiete", "webp", "Sociálne siete", "Social media", "Media społecznościowe"]
     ];
-    images.forEach(([id, base, skAlt, enAlt, plAlt]) => {
+    files.forEach(([id, base, ext, skAlt, enAlt, plAlt]) => {
         const img = document.getElementById(id);
         if (!img) return;
+        const fallback = `https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/${base}.webp?v=20261119b`;
+        const target = `https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/${base}${suffix}.${ext}?v=20261119b`;
+        img.removeAttribute("srcset");
+        img.removeAttribute("sizes");
+        img.setAttribute("srcset", "");
+        img.loading = "eager";
+        img.decoding = "async";
         img.onerror = function () {
             this.onerror = null;
-            this.src = "./ikony/" + base + ".webp?v=2";
+            this.removeAttribute("srcset");
+            this.src = fallback;
         };
-        img.src = "./ikony/" + base + suffix + ".webp?v=2";
         img.alt = lang === "en" ? enAlt : lang === "pl" ? plAlt : skAlt;
+        img.src = target;
     });
 }
         
@@ -5833,7 +5849,7 @@ function hideOfflineBanner() {
 }
 
 async function loadApp() {
-    document.getElementById('dynamic-upcoming-img').src = defaultUpcomingImg;
+    document.getElementById('dynamic-upcoming-img').src = getDefaultUpcomingImg();
     updateArchiveButtonImage();
     updateHomeMenuLanguageImages();
 
@@ -6147,7 +6163,7 @@ const clean = cols.map(c =>
                 <div class="count-band">PRACUJEME NA ĎALŠÍCH KÔŇCERTOCH</div>
                 <div class="no-event-sub">SLEDUJTE NÁS, ČOSKORO PRIDÁME NOVÝ TERMÍN</div>
             `;
-            document.getElementById('dynamic-upcoming-img').src = defaultUpcomingImg;
+            document.getElementById('dynamic-upcoming-img').src = getDefaultUpcomingImg();
         }
 
         upcomingEvents.sort((a, b) => a.date - b.date);
@@ -7294,7 +7310,7 @@ function startCountdown(queue, index) {
             <div class="count-band">PRACUJEME NA ĎALŠÍCH KÔŇCERTOCH</div>
             <div class="no-event-sub">SLEDUJTE NÁS, ČOSKORO PRIDÁME NOVÝ TERMÍN</div>
         `;
-        if (imgEl) imgEl.src = defaultUpcomingImg;
+        if (imgEl) imgEl.src = getDefaultUpcomingImg();
         return;
     }
 
@@ -7308,12 +7324,20 @@ function startCountdown(queue, index) {
         const y = d.getFullYear();
         const day = String(d.getDate()).padStart(2, '0');
         const month = String(d.getMonth() + 1).padStart(2, '0');
-        const upcomingPoster = `./najblizsie/${y}-${day}-${month}N.webp?v=1`;
-        imgEl.src = upcomingPoster;
+        const lang = getCurrentLanguage();
+        const datePrefix = `${y}-${day}-${month}N`;
+        const localizedPoster = (y === 2026 && day === '21' && month === '11' && lang !== 'sk')
+            ? `./najblizsie/${datePrefix}_${lang}.webp?v=2`
+            : `./najblizsie/${datePrefix}.webp?v=2`;
         imgEl.onerror = function() {
             this.onerror = null;
-            this.src = safeUrl(current.icon) || defaultUpcomingImg;
+            this.src = `./najblizsie/${datePrefix}.webp?v=2`;
+            this.onerror = function() {
+                this.onerror = null;
+                this.src = safeUrl(current.icon) || getDefaultUpcomingImg();
+            };
         };
+        imgEl.src = localizedPoster;
     }
 
     const bandList = (current.bands && current.bands.length > 0) ? [...current.bands] : [{ name: bandName }];
