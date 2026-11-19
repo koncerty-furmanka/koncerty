@@ -3985,6 +3985,45 @@ body.modal-scroll-locked {
 }
 </style>
 
+
+<style id="home-scroll-input-fix">
+/* ===== MOBILNÝ PREHLIADAČ: ZVISLÝ GESTOVÝ SCROLL Z CELEJ PLOCHY ===== */
+@media (display-mode: browser) and (max-width: 699px) {
+    #screen-home.active,
+    #screen-home .home-content,
+    #screen-home .home-header,
+    #screen-home #countdown-bar,
+    #screen-home .menu-grid,
+    #screen-home .bottom-container,
+    #screen-home .left-col,
+    #screen-home .right-col {
+        touch-action: pan-y !important;
+    }
+
+    #screen-home.active {
+        overflow: visible !important;
+        -webkit-overflow-scrolling: auto !important;
+    }
+
+    html,
+    body {
+        touch-action: pan-y !important;
+    }
+}
+
+/* ===== NAINŠTALOVANÁ PWA: DOMOVSKÉ MENU BEZ VNÚTORNÉHO SCROLLU ===== */
+@media (display-mode: standalone) and (max-width: 699px) {
+    #screen-home.active {
+        overflow: hidden !important;
+        overscroll-behavior: none !important;
+    }
+
+    #screen-home .home-content {
+        overflow: hidden !important;
+    }
+}
+</style>
+
 </head>
 <body>
 
