@@ -4052,6 +4052,64 @@ body.modal-scroll-locked {
 @media (max-width: 699px) { #carousel-upcoming, #carousel-past, #carousel-upcoming *, #carousel-past * { touch-action:pan-x !important; } }
 </style>
 
+
+<style id="koncerty-chrome-home-scroll-final">
+@media (max-width: 699px) {
+  html.browser-scroll-mode,
+  html.browser-scroll-mode body {
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html.browser-scroll-mode #screen-home.active {
+    display: block !important;
+    position: relative !important;
+    height: calc(100dvh - 62px - env(safe-area-inset-bottom)) !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+    scrollbar-width: none !important;
+  }
+
+  html.browser-scroll-mode #screen-home.active::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html.browser-scroll-mode #screen-home .home-content {
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    justify-content: flex-start !important;
+    touch-action: pan-y !important;
+    padding-bottom: 18px !important;
+  }
+
+  html.browser-scroll-mode #screen-home * {
+    touch-action: pan-y !important;
+  }
+
+  html.browser-scroll-mode #screen-home .carousel-container,
+  html.browser-scroll-mode #screen-home .carousel-container * {
+    touch-action: pan-x !important;
+  }
+
+  html.browser-scroll-mode #bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 10500 !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
