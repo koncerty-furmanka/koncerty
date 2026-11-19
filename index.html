@@ -7916,5 +7916,26 @@ if (spotifyPlaylistUrl) {
 }
 </style>
 
+
+<style id="home-screen-bottom-clearance-fix">
+/* Nechať na domovskej obrazovke priestor pod posledným tlačidlom,
+   aby ho spodná pevná navigácia nikdy neprekryla. */
+@media (max-width: 699px) {
+    #screen-home.active {
+        box-sizing: border-box !important;
+        padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #screen-home .home-content {
+        min-height: 100% !important;
+        height: auto !important;
+        box-sizing: border-box !important;
+        padding-bottom: 18px !important;
+    }
+}
+</style>
+
 </body>
 </html>
