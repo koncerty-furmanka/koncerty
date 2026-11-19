@@ -8568,3 +8568,77 @@ if (spotifyPlaylistUrl) {
   }
 }
 </style>
+
+<style id="chrome-inner-sections-scroll-final-fix">
+/* Chrome v režime prehliadača: kalendár, kapely, mapa, galéria a merch
+   sa posúvajú ako celý dokument. Nainštalovaná PWA zostáva nedotknutá. */
+@media (max-width: 699px) {
+  html.browser-list-scroll-mode {
+    position: static !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  html.browser-list-scroll-mode body {
+    position: static !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+  }
+
+  html.browser-list-scroll-mode #app-main {
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html.browser-list-scroll-mode #screen-calendar.active,
+  html.browser-list-scroll-mode #screen-bands.active,
+  html.browser-list-scroll-mode #screen-map.active,
+  html.browser-list-scroll-mode #screen-gallery.active,
+  html.browser-list-scroll-mode #screen-merch.active {
+    position: relative !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    touch-action: pan-y !important;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+  }
+
+  html.browser-list-scroll-mode #calendar-list,
+  html.browser-list-scroll-mode #bands-list,
+  html.browser-list-scroll-mode #gallery-grid,
+  html.browser-list-scroll-mode .merch-grid,
+  html.browser-list-scroll-mode #screen-map .map-info-grid,
+  html.browser-list-scroll-mode #screen-map .navigation-section,
+  html.browser-list-scroll-mode #screen-map .parking-navigation {
+    touch-action: pan-y !important;
+  }
+
+  /* Mapa si zachováva vlastné gestá; potiahnutie mimo mapy posúva stránku. */
+  html.browser-list-scroll-mode #screen-map .koncerty-map-shell,
+  html.browser-list-scroll-mode #screen-map #koncerty-map {
+    overscroll-behavior: contain !important;
+  }
+
+  html.browser-list-scroll-mode #bottom-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 10500 !important;
+  }
+}
+</style>
+
