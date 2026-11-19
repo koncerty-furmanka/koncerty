@@ -7968,5 +7968,27 @@ if (spotifyPlaylistUrl) {
 }
 </style>
 
+
+
+<style id="chrome-home-spacing-compact">
+/* Iba mobilny Chrome / browser: zmensit prazdne medzery na domovskej obrazovke.
+   Rozmery plagatov, spodnych ikon a nainstalovanej PWA zostavaju nezmenene. */
+@media (display-mode: browser) and (max-width: 699px) {
+    #screen-home .home-content {
+        gap: 3px !important;
+    }
+
+    #screen-home #countdown-bar {
+        margin-bottom: -3px !important;
+    }
+
+    /* Posunie fotogaleriu, merch, mapu, kontakt a socialne siete vyssie
+       bez zmensovania samotnych plagatov. */
+    #screen-home .menu-grid {
+        margin-bottom: -28px !important;
+    }
+}
+</style>
+
 </body>
 </html>
