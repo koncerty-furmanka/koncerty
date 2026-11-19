@@ -7992,12 +7992,10 @@ if (spotifyPlaylistUrl) {
 
 
 <style id="home-menu-no-scroll-all-modes">
-/* Domovske menu sa po zmenseni medzier uz nema zvislo posuvat.
-   Obmedzenie plati iba vtedy, ked je aktivna domovska obrazovka;
-   ostatne obrazovky v Chrome si ponechavaju povodne scrollovanie. */
+/* Chrome: domovska obrazovka bez scrollovania, obsah sa zmesti do realnej vysky okna. */
 @media (max-width: 699px) {
-    html.browser-scroll-mode:has(#screen-home.active),
-    html.browser-scroll-mode:has(#screen-home.active) body {
+    html.browser-scroll-mode,
+    html.browser-scroll-mode body {
         height: 100dvh !important;
         min-height: 0 !important;
         overflow: hidden !important;
@@ -8016,14 +8014,209 @@ if (spotifyPlaylistUrl) {
         touch-action: pan-x !important;
     }
     html.browser-scroll-mode #screen-home .home-content {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        gap: 0 !important;
         height: 100% !important;
         min-height: 0 !important;
         max-height: 100% !important;
+        padding-top: calc(4px + env(safe-area-inset-top)) !important;
+        padding-bottom: 0 !important;
         overflow: hidden !important;
-        touch-action: pan-x !important;
+        box-sizing: border-box !important;
+    }
+    html.browser-scroll-mode #screen-home .home-header {
+        flex: 0 0 auto !important;
+        margin-bottom: 0 !important;
+    }
+    html.browser-scroll-mode #screen-home .menu-grid {
+        flex: 0 1 clamp(220px, 34dvh, 285px) !important;
+        height: clamp(220px, 34dvh, 285px) !important;
+        min-height: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    html.browser-scroll-mode #screen-home .bottom-container {
+        flex: 0 1 clamp(165px, 25dvh, 215px) !important;
+        height: clamp(165px, 25dvh, 215px) !important;
+        min-height: 0 !important;
+        margin-top: 0 !important;
+        padding-bottom: 0 !important;
+        gap: 12px !important;
+    }
+    html.browser-scroll-mode #screen-home .left-col,
+    html.browser-scroll-mode #screen-home .right-col {
+        min-height: 0 !important;
+        height: 100% !important;
     }
 }
 </style>
 
+<style id="chrome-home-fit-final">
+/* Zabezpeci, aby sa hlavne menu v mobilnom Chrome zobrazilo cele bez scrollu. */
+@media (max-width: 699px) {
+  html.browser-scroll-mode body { padding-bottom: 0 !important; }
+  html.browser-scroll-mode #screen-home.active { overflow: hidden !important; }
+  html.browser-scroll-mode #screen-home .home-content { overflow: hidden !important; }
+  html.browser-scroll-mode #screen-home .menu-grid .img-btn-wrapper,
+  html.browser-scroll-mode #screen-home .bottom-container .left-col,
+  html.browser-scroll-mode #screen-home .bottom-container .right-col { min-height: 0 !important; }
+}
+</style>
+
+
+<style id="chrome-home-no-clip-final-v2">
+/* Mobilny Chrome: domovska obrazovka bez scrollovania, ale bez orezania obsahu.
+   Rozlozenie je riadene jednou mriežkou podla skutocnej vysky dostupnej plochy. */
+@media (max-width: 699px) {
+  html.browser-scroll-mode,
+  html.browser-scroll-mode body {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html.browser-scroll-mode #screen-home.active {
+    position: fixed !important;
+    inset: 0 0 calc(62px + env(safe-area-inset-bottom)) 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    touch-action: pan-x !important;
+  }
+
+  html.browser-scroll-mode #screen-home .home-content {
+    display: grid !important;
+    grid-template-rows: auto auto minmax(0, 0.95fr) minmax(0, 1fr) !important;
+    align-content: stretch !important;
+    justify-content: stretch !important;
+    gap: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    box-sizing: border-box !important;
+    padding: calc(4px + env(safe-area-inset-top)) 0 2px !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .home-header {
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html.browser-scroll-mode #screen-home .main-logo {
+    width: min(38vw, 230px) !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  html.browser-scroll-mode #screen-home #countdown-bar {
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 0 3px !important;
+  }
+
+  html.browser-scroll-mode #screen-home #install-btn {
+    display: none !important;
+  }
+
+  html.browser-scroll-mode #screen-home .menu-grid {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    flex: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 4px !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .menu-grid .img-btn-wrapper {
+    width: 46% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    flex: 0 1 46% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html.browser-scroll-mode #screen-home .menu-grid .btn-image {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  html.browser-scroll-mode #screen-home .bottom-container {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    flex: none !important;
+    margin: 0 !important;
+    padding: 2px 0 0 !important;
+    gap: 14px !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .left-col,
+  html.browser-scroll-mode #screen-home .right-col {
+    display: flex !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    flex: 1 1 0 !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .left-col > .action-btn,
+  html.browser-scroll-mode #screen-home .right-col > .action-btn {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .small-btn-img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  html.browser-scroll-mode #bottom-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 10500 !important;
+  }
+}
+</style>
 </body>
 </html>
