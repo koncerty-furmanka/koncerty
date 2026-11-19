@@ -4110,6 +4110,61 @@ body.modal-scroll-locked {
 }
 </style>
 
+
+<style id="browser-calendar-bands-scroll-fix">
+/* V mobilnom Chrome sa Kalendár a Kapely posúvajú ako celý dokument.
+   Domovské menu si ponecháva svoj samostatný scroll a PWA sa nemení. */
+@media (max-width: 699px) {
+  html.browser-list-scroll-mode {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
+  html.browser-list-scroll-mode body {
+    position: static !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+  }
+  html.browser-list-scroll-mode #app-main {
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  html.browser-list-scroll-mode #screen-calendar.active,
+  html.browser-list-scroll-mode #screen-bands.active {
+    display: block !important;
+    position: relative !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    touch-action: pan-y !important;
+    padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+  }
+  html.browser-list-scroll-mode #calendar-list,
+  html.browser-list-scroll-mode #bands-list,
+  html.browser-list-scroll-mode #calendar-list *,
+  html.browser-list-scroll-mode #bands-list * {
+    touch-action: pan-y !important;
+  }
+  html.browser-list-scroll-mode #bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 10500 !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -5095,6 +5150,10 @@ document.querySelectorAll(concertImageSelector).forEach(image => {
 
 function showScreen(screenId) {
     document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
+    document.documentElement.classList.toggle(
+        'browser-list-scroll-mode',
+        !isInstalledApp() && (screenId === 'screen-calendar' || screenId === 'screen-bands')
+    );
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
     }
