@@ -5799,8 +5799,14 @@ function updateHomeMenuLanguageImages() {
     files.forEach(([id, base, ext, skAlt, enAlt, plAlt]) => {
         const img = document.getElementById(id);
         if (!img) return;
-        const fallback = `https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/${base}.webp?v=20261119b`;
-        const target = `https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/${base}${suffix}.${ext}?v=20261119b`;
+        const isSocial = id === "home-social-img";
+        // Pri sociálnych sieťach používame priamu GitHub Raw adresu:
+        // názov anglického súboru je presne socialnesiete_en.webp.
+        const assetBase = isSocial
+            ? "https://raw.githubusercontent.com/koncerty-furmanka/koncerty/main/ikony/"
+            : "https://cdn.jsdelivr.net/gh/koncerty-furmanka/koncerty@main/ikony/";
+        const fallback = `${assetBase}${base}.${ext}?v=20261119c`;
+        const target = `${assetBase}${base}${suffix}.${ext}?v=20261119c`;
         img.removeAttribute("srcset");
         img.removeAttribute("sizes");
         img.setAttribute("srcset", "");
