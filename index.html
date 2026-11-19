@@ -4037,6 +4037,21 @@ body.modal-scroll-locked {
 }
 </style>
 
+
+<style id="final-mobile-browser-scroll-override">
+/* Mobilny Chrome: scrolluje dokument, nie vnutorny panel domovskej obrazovky. */
+@media (max-width: 699px) {
+  html.browser-scroll-mode { height:auto !important; min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important; overscroll-behavior-y:auto !important; }
+  html.browser-scroll-mode body { position:relative !important; height:auto !important; min-height:100vh !important; overflow-x:hidden !important; overflow-y:auto !important; overscroll-behavior-y:auto !important; touch-action:pan-y !important; padding-bottom:calc(76px + env(safe-area-inset-bottom)) !important; }
+  html.browser-scroll-mode #screen-home.active { position:relative !important; height:auto !important; min-height:calc(100svh - 62px) !important; max-height:none !important; overflow:visible !important; touch-action:pan-y !important; }
+  html.browser-scroll-mode #screen-home .home-content { height:auto !important; min-height:0 !important; max-height:none !important; overflow:visible !important; touch-action:pan-y !important; }
+  html.browser-scroll-mode #screen-home .home-header, html.browser-scroll-mode #screen-home #countdown-bar, html.browser-scroll-mode #screen-home .menu-grid, html.browser-scroll-mode #screen-home .bottom-container, html.browser-scroll-mode #screen-home .left-col, html.browser-scroll-mode #screen-home .right-col { touch-action:pan-y !important; }
+  html.browser-scroll-mode #bottom-nav { position:fixed !important; bottom:0 !important; left:0 !important; right:0 !important; z-index:10500 !important; }
+}
+/* Zachovat horizontalne ovladanie carouselov. */
+@media (max-width: 699px) { #carousel-upcoming, #carousel-past, #carousel-upcoming *, #carousel-past * { touch-action:pan-x !important; } }
+</style>
+
 </head>
 <body>
 
@@ -5021,6 +5036,7 @@ document.querySelectorAll(concertImageSelector).forEach(image => {
 });
 
 function showScreen(screenId) {
+    document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
     }
@@ -7489,6 +7505,7 @@ document.addEventListener('click', function(e) {
 
 bindPushButton();
 
+document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
 history.replaceState({ screen: 'screen-home' }, "", "#screen-home");
 showScreen('screen-home');
 
