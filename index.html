@@ -5738,7 +5738,15 @@ if ('serviceWorker' in navigator) {
 const spotifyPlaylistUrl = "";
 
 const aboutUrl = "./onas.csv"; 
-const gistUrl = "./data.csv";
+// CSV s údajmi sa vyberá podľa aktuálneho jazyka aplikácie.
+const getDataCsvUrl = () => {
+    const lang = localStorage.getItem('koncerty-language') || 'sk';
+    if (lang === 'pl') return './data_pl.csv';
+    if (lang === 'en') return './data_en.csv';
+    return './data.csv';
+};
+const getDataCacheKey = () => 'koncerty_cache_data_' + (localStorage.getItem('koncerty-language') || 'sk');
+const getDataCacheTimeKey = () => getDataCacheKey() + '_time';
 const galleryApiUrl = "https://api.github.com/repos/koncerty-furmanka/koncerty/contents/fotky?ref=main";
 const defaultUpcomingImg = "./ikony/Najblizsie-koncerty.webp?v=1";
         
@@ -5843,17 +5851,17 @@ document.getElementById('countdown-bar').innerHTML = `
     try {
         let data;
         try {
-            const response = await fetch(gistUrl + "?t=" + Date.now(), { cache: "no-store" });
+            const response = await fetch(getDataCsvUrl() + "?t=" + Date.now(), { cache: "no-store" });
             if (!response.ok) throw new Error('HTTP ' + response.status);
             data = await response.text();
-            localStorage.setItem('koncerty_cache_data', data);
-            localStorage.setItem('koncerty_cache_data_time', String(Date.now()));
+            localStorage.setItem(getDataCacheKey(), data);
+            localStorage.setItem(getDataCacheTimeKey(), String(Date.now()));
             hideOfflineBanner();
         } catch (fetchErr) {
-            const cached = localStorage.getItem('koncerty_cache_data');
+            const cached = localStorage.getItem(getDataCacheKey());
             if (!cached) throw fetchErr;
             data = cached;
-            showOfflineBanner(localStorage.getItem('koncerty_cache_data_time'));
+            showOfflineBanner(localStorage.getItem(getDataCacheTimeKey()));
         }
 
 const rows = data.trim().split(/\r?\n/);
@@ -6199,8 +6207,8 @@ initCarouselObserver();
                 <p>DÁTA SA NENAČÍTALI.<br>SKONTROLUJ NET A SKÚS ZNOVA.</p>
                 <button class="retry-btn" onclick="loadApp()">SKÚSIŤ ZNOVA</button>
                 <p style="font-size:0.8rem; color:#888; margin-top:15px;">
-                    Posledná aktualizácia: ${localStorage.getItem('koncerty_cache_data_time') ?
-                        new Date(parseInt(localStorage.getItem('koncerty_cache_data_time'))).toLocaleString() :
+                    Posledná aktualizácia: ${localStorage.getItem(getDataCacheTimeKey()) ?
+                        new Date(parseInt(localStorage.getItem(getDataCacheTimeKey()))).toLocaleString() :
                         'nikdy'}
                 </p>
             </div>`;
@@ -7818,7 +7826,7 @@ if (spotifyPlaylistUrl) {
  }
  window.setKoncertyLanguage=function(lang){
    if(!['sk','pl','en'].includes(lang)) return;
-   currentLang=lang; localStorage.setItem('koncerty-language',lang); applyLanguage();
+   currentLang=lang; localStorage.setItem('koncerty-language',lang); location.reload();
    if(typeof window.updatePushButtonUI==='function' && typeof window.__pushOptedIn!=='undefined') window.updatePushButtonUI(window.__pushOptedIn);
  };
  document.addEventListener('DOMContentLoaded',()=>{
