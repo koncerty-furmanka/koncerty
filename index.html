@@ -7959,6 +7959,12 @@ if (spotifyPlaylistUrl) {
         overflow: hidden !important;
         overscroll-behavior: none !important;
     }
+
+    /* V nainštalovanej aplikácii posunúť blok tlačidiel pod plagátmi vyššie.
+       Chrome v režime prehliadača zostáva nezmenený a môže scrollovať. */
+    html.installed-app-mode #screen-home .bottom-container {
+        transform: translateY(-35px) !important;
+    }
 }
 </style>
 
