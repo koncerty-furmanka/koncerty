@@ -4286,7 +4286,7 @@ body.modal-scroll-locked {
      alt="Najbližšie">
                 </div>
                 <div role="button" tabindex="0" id="btn-archive" class="img-btn-wrapper action-btn" onclick="this.classList.add('more-btn-pressed');setTimeout(()=>{this.classList.remove('more-btn-pressed');handleButtonClick('screen-past');},200)">
-                    <img src="./ikony/IKONA-PLAGATU-archiv-KONCERTY.webp" class="btn-image" width="332" height="470" style="aspect-ratio:332/470" alt="Archív">
+                    <img id="dynamic-archive-img" src="./ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1" class="btn-image" width="332" height="470" style="aspect-ratio:332/470" alt="Archív" decoding="async">
                 </div>
             </div>
 
@@ -5758,6 +5758,24 @@ const getDataCacheKey = () => 'koncerty_cache_data_' + (localStorage.getItem('ko
 const getDataCacheTimeKey = () => getDataCacheKey() + '_time';
 const galleryApiUrl = "https://api.github.com/repos/koncerty-furmanka/koncerty/contents/fotky?ref=main";
 const defaultUpcomingImg = "./ikony/Najblizsie-koncerty.webp?v=1";
+
+// Plagát archívu má samostatnú grafiku pre každý jazyk.
+const archiveButtonImages = {
+    sk: "./ikony/IKONA-PLAGATU-archiv-KONCERTY.webp?v=1",
+    en: "./ikony/IKONA-PLAGATU-archiv-KONCERTY_en.webp?v=1",
+    pl: "./ikony/IKONA-PLAGATU-archiv-KONCERTY_pl.png?v=1"
+};
+function updateArchiveButtonImage() {
+    const image = document.getElementById("dynamic-archive-img");
+    if (!image) return;
+    const lang = localStorage.getItem("koncerty-language") || "sk";
+    image.alt = lang === "pl" ? "Archiwum" : lang === "en" ? "Archive" : "Archív";
+    image.onerror = function () {
+        this.onerror = null;
+        this.src = archiveButtonImages.sk;
+    };
+    image.src = archiveButtonImages[lang] || archiveButtonImages.sk;
+}
         
 let updateTimer = null;
 
@@ -5793,6 +5811,7 @@ function hideOfflineBanner() {
 
 async function loadApp() {
     document.getElementById('dynamic-upcoming-img').src = defaultUpcomingImg;
+    updateArchiveButtonImage();
 
     function detectCsvDelimiter(headerLine) {
         const semi = (headerLine.match(/;/g) || []).length;
