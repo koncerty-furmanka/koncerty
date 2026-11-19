@@ -4139,7 +4139,10 @@ body.modal-scroll-locked {
     overflow: visible !important;
   }
   html.browser-list-scroll-mode #screen-calendar.active,
-  html.browser-list-scroll-mode #screen-bands.active {
+  html.browser-list-scroll-mode #screen-bands.active,
+  html.browser-list-scroll-mode #screen-map.active,
+  html.browser-list-scroll-mode #screen-gallery.active,
+  html.browser-list-scroll-mode #screen-merch.active {
     display: block !important;
     position: relative !important;
     height: auto !important;
@@ -4151,9 +4154,24 @@ body.modal-scroll-locked {
   }
   html.browser-list-scroll-mode #calendar-list,
   html.browser-list-scroll-mode #bands-list,
+  html.browser-list-scroll-mode #gallery-grid,
+  html.browser-list-scroll-mode .merch-grid,
+  html.browser-list-scroll-mode #screen-map .map-info-grid,
   html.browser-list-scroll-mode #calendar-list *,
-  html.browser-list-scroll-mode #bands-list * {
+  html.browser-list-scroll-mode #bands-list *,
+  html.browser-list-scroll-mode #gallery-grid *,
+  html.browser-list-scroll-mode .merch-grid *,
+  html.browser-list-scroll-mode #screen-map .map-info-grid,
+  html.browser-list-scroll-mode #screen-gallery .page-header,
+  html.browser-list-scroll-mode #screen-merch .page-header {
     touch-action: pan-y !important;
+  }
+
+  /* Mapa si ponecháva vlastné gestá Leafletu; stránka sa posúva
+     pri potiahnutí mimo samotnej mapovej plochy. */
+  html.browser-list-scroll-mode #screen-map .koncerty-map-shell,
+  html.browser-list-scroll-mode #screen-map #koncerty-map {
+    overscroll-behavior: contain;
   }
   html.browser-list-scroll-mode #bottom-nav {
     position: fixed !important;
@@ -5152,7 +5170,13 @@ function showScreen(screenId) {
     document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
     document.documentElement.classList.toggle(
         'browser-list-scroll-mode',
-        !isInstalledApp() && (screenId === 'screen-calendar' || screenId === 'screen-bands')
+        !isInstalledApp() && (
+            screenId === 'screen-calendar' ||
+            screenId === 'screen-bands' ||
+            screenId === 'screen-map' ||
+            screenId === 'screen-gallery' ||
+            screenId === 'screen-merch'
+        )
     );
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
