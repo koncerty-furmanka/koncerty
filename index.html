@@ -8219,6 +8219,25 @@ if (spotifyPlaylistUrl) {
 }
 </style>
 </body>
+
+
+<style id="chrome-home-columns-gap-fix">
+/* Iba mobilny Chrome: priblizit lavu a pravu skupinu tlacidiel k sebe.
+   Vertikalne odstupy medzi Fotogaleriou a Nasim merchom sa nemenia.
+   Nainstalovana aplikacia zostava bez zmeny. */
+@media (display-mode: browser) and (max-width: 699px) {
+  html.browser-scroll-mode #screen-home .bottom-container {
+    gap: 0 !important;
+  }
+  html.browser-scroll-mode #screen-home .left-col {
+    transform: translateX(18px) !important;
+  }
+  html.browser-scroll-mode #screen-home .right-col {
+    transform: translateX(-38px) !important;
+  }
+}
+</style>
+
 </html>
 
 
