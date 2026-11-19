@@ -4024,6 +4024,19 @@ body.modal-scroll-locked {
 }
 </style>
 
+
+<style id="standalone-home-no-inner-scroll">
+@media (display-mode: standalone) and (max-width: 699px) {
+    #screen-home.active {
+        overflow: hidden !important;
+        height: calc(100dvh - 62px - env(safe-area-inset-bottom)) !important;
+    }
+    #screen-home .home-content {
+        overflow: hidden !important;
+    }
+}
+</style>
+
 </head>
 <body>
 
@@ -5027,8 +5040,10 @@ function showScreen(screenId) {
         ensureGalleryDataLoaded();
     }
     
-    if(screenId === 'screen-home') {
-        document.body.style.overflow = 'hidden';
+    if (screenId === 'screen-home') {
+        // Nainštalovaná PWA: domovské menu sa nesmie samo posúvať.
+        // Bežný mobilný prehliadač: povoľ scroll celej stránky.
+        document.body.style.overflow = isInstalledApp() ? 'hidden' : 'auto';
     } else {
         document.body.style.overflow = 'auto';
     }
