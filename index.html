@@ -8220,3 +8220,144 @@ if (spotifyPlaylistUrl) {
 </style>
 </body>
 </html>
+
+
+<style id="chrome-home-layout-corrective-final">
+/* Chrome Android only: fit the complete home menu without cropping.
+   Keep the original image proportions and leave installed PWA unchanged. */
+@media (display-mode: browser) and (max-width: 699px) {
+  html.browser-scroll-mode,
+  html.browser-scroll-mode body {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home.active {
+    position: fixed !important;
+    inset: 0 0 calc(62px + env(safe-area-inset-bottom)) 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Restore the natural vertical stack; do not assign fractional rows
+     that squeeze the two-column lower menu and crop the merch image. */
+  html.browser-scroll-mode #screen-home .home-content {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 4px 0 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    zoom: .88 !important;
+  }
+
+  html.browser-scroll-mode #screen-home .home-header {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+  html.browser-scroll-mode #screen-home .main-logo {
+    width: min(38vw, 230px) !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+  html.browser-scroll-mode #screen-home #countdown-bar {
+    flex: 0 0 auto !important;
+    margin: 0 0 5px !important;
+    padding: 0 !important;
+  }
+  html.browser-scroll-mode #screen-home #install-btn { display: none !important; }
+
+  html.browser-scroll-mode #screen-home .menu-grid {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 0 5px !important;
+    padding: 0 !important;
+    gap: 4px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+  }
+  html.browser-scroll-mode #screen-home .menu-grid .img-btn-wrapper {
+    flex: 0 1 46% !important;
+    width: 46% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  html.browser-scroll-mode #screen-home .menu-grid .btn-image {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+
+  html.browser-scroll-mode #screen-home .bottom-container {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    overflow: visible !important;
+  }
+  html.browser-scroll-mode #screen-home .left-col,
+  html.browser-scroll-mode #screen-home .right-col {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 0 !important;
+    width: 50% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    justify-content: space-between !important;
+  }
+  html.browser-scroll-mode #screen-home .left-col > .action-btn,
+  html.browser-scroll-mode #screen-home .right-col > .action-btn {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  html.browser-scroll-mode #screen-home .small-btn-img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+  html.browser-scroll-mode #bottom-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+  }
+}
+</style>
