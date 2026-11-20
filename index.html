@@ -4296,6 +4296,81 @@ body.modal-scroll-locked {
   }
 }
 </style>
+
+<style id="social-install-modal-style">
+#social-install-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,.82);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+#social-install-modal.show { display: flex; }
+#social-install-modal .social-install-card {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 28px 22px 24px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #fff;
+  background: #111;
+  border: 2px solid #d18a08;
+  border-radius: 14px;
+  box-shadow: 0 12px 45px rgba(0,0,0,.8);
+}
+#social-install-modal .social-install-logo {
+  width: 108px;
+  height: auto;
+  max-width: 40%;
+  object-fit: contain;
+  margin: 0 auto 14px;
+}
+#social-install-modal .social-install-title {
+  margin: 0 0 10px;
+  color: #f5a900;
+  font-size: clamp(22px, 6vw, 29px);
+  line-height: 1.15;
+  font-weight: 800;
+}
+#social-install-modal .social-install-description {
+  margin: 0 0 22px;
+  color: #ddd;
+  font-size: 14px;
+  line-height: 1.5;
+  text-transform: none !important;
+}
+#social-install-modal .social-install-open {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  padding: 12px 14px;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  background: #d18a08;
+  color: #090909;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: .4px;
+  cursor: pointer;
+}
+#social-install-modal .social-install-later {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 8px 14px;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  font-size: 13px;
+  cursor: pointer;
+}
+</style>
+
 </head>
 <body>
 
@@ -5866,6 +5941,31 @@ window.addEventListener('pageshow', () => {
     updatePlatformInstallButtons();
 });
 
+
+function showSocialInstallModal() {
+    const modal = document.getElementById('social-install-modal');
+    if (!modal || isInstalledApp()) return;
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeSocialInstallModal() {
+    const modal = document.getElementById('social-install-modal');
+    if (!modal) return;
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
+document.addEventListener('click', (event) => {
+    if (event.target && event.target.id === 'social-install-open') {
+        closeSocialInstallModal();
+        installApp();
+    }
+    if (event.target && event.target.id === 'social-install-later') {
+        closeSocialInstallModal();
+    }
+});
+
 (function installCompatibilityHint() {
     if (isInstalledApp()) {
         hideInstallButtons();
@@ -5877,6 +5977,11 @@ window.addEventListener('pageshow', () => {
     // Safari na iPhone nemá túto udalosť, preto zobrazíme manuálny návod.
     if (isSafariIOS()) showInstallButton();
     updatePlatformInstallButtons();
+
+    const installRequested = new URLSearchParams(window.location.search).has('install');
+    if (installRequested && isChromeAndroid() && !isInstalledApp()) {
+        showSocialInstallModal();
+    }
 })();
 
 if ('serviceWorker' in navigator) {
@@ -8464,6 +8569,15 @@ if (spotifyPlaylistUrl) {
   }
 }
 </style>
+
+<div id="social-install-modal" aria-hidden="true">
+  <div class="social-install-card" role="dialog" aria-modal="true" aria-labelledby="social-install-title">
+    <h2 class="social-install-title" id="social-install-title">NAINŠTALOVAŤ APLIKÁCIU</h2>
+    <button type="button" class="social-install-open" id="social-install-open">NAINŠTALOVAŤ</button>
+    <button type="button" class="social-install-later" id="social-install-later">TERAZ NIE</button>
+  </div>
+</div>
+
 </body>
 
 
