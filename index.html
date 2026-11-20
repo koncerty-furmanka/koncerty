@@ -8406,6 +8406,22 @@ if (spotifyPlaylistUrl) {
   }
 }
 </style>
+
+<style id="restore-chrome-install-button">
+/* Chrome v režime prehliadača: obnoviť vlastné tlačidlo inštalácie.
+   Nie je aktívne v nainštalovanej PWA a zobrazí sa až po beforeinstallprompt. */
+@media (max-width: 699px) {
+  html.browser-scroll-mode #screen-home #install-btn.show {
+    display: inline-flex !important;
+    position: fixed !important;
+    top: 8px !important;
+    right: 8px !important;
+    left: auto !important;
+    z-index: 20000 !important;
+  }
+}
+</style>
+
 </body>
 
 
