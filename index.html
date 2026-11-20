@@ -5398,6 +5398,16 @@ function showScreen(screenId) {
         // Nainštalovaná PWA: domovské menu sa nesmie samo posúvať.
         // Bežný mobilný prehliadač: povoľ scroll celej stránky.
         document.body.style.overflow = isInstalledApp() ? 'hidden' : 'auto';
+        const homeScreen = document.getElementById('screen-home');
+        if (!isInstalledApp()) {
+            if (homeScreen) {
+                homeScreen.scrollTop = 0;
+                homeScreen.scrollLeft = 0;
+            }
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            window.scrollTo(0, 0);
+        }
     } else {
         document.body.style.overflow = 'auto';
     }
@@ -6017,7 +6027,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=4').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=5').catch(() => {});
     });
 }
 
@@ -8888,18 +8898,18 @@ if (spotifyPlaylistUrl) {
 @media (display-mode: browser) and (max-width: 699px) {
   html.browser-scroll-mode,
   html.browser-scroll-mode body {
-    height: 100svh !important;
-    min-height: 100svh !important;
-    max-height: 100svh !important;
+    height: var(--chrome-home-stable-height, 100svh) !important;
+    min-height: var(--chrome-home-stable-height, 100svh) !important;
+    max-height: var(--chrome-home-stable-height, 100svh) !important;
     overflow: hidden !important;
     overscroll-behavior: none !important;
   }
 
   html.browser-scroll-mode #screen-home.active {
     position: fixed !important;
-    inset: 0 0 calc(62px + env(safe-area-inset-bottom)) 0 !important;
+    inset: 0 auto auto 0 !important;
     width: 100% !important;
-    height: auto !important;
+    height: calc(var(--chrome-home-stable-height, 100svh) - 62px - env(safe-area-inset-bottom)) !important;
     min-height: 0 !important;
     max-height: none !important;
     margin: 0 !important;
@@ -8911,7 +8921,7 @@ if (spotifyPlaylistUrl) {
   html.browser-scroll-mode #screen-home .home-content {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: auto auto minmax(0, 36svh) minmax(0, 27svh) !important;
+    grid-template-rows: auto auto minmax(0, var(--chrome-home-poster-row, 36svh)) minmax(0, var(--chrome-home-actions-row, 27svh)) !important;
     align-content: start !important;
     justify-content: stretch !important;
     align-items: stretch !important;
@@ -9055,4 +9065,35 @@ if (spotifyPlaylistUrl) {
   }
 }
 </style>
+
+<script>
+// Android Chrome can report a different viewport height after an SPA screen
+// change when its address bar expands or collapses. Capture the initial small
+// viewport once and keep the home layout dimensions stable until orientation changes.
+(function keepChromeHomeViewportStable() {
+    const root = document.documentElement;
+    if (!root.classList.contains('browser-scroll-mode') || window.innerWidth >= 700) return;
+
+    let lastWidth = window.innerWidth;
+    const captureSmallViewport = () => {
+        const probe = document.createElement('div');
+        probe.style.cssText = 'position:fixed;left:-10000px;top:0;width:1px;height:100svh;visibility:hidden;pointer-events:none;';
+        document.body.appendChild(probe);
+        const height = probe.getBoundingClientRect().height;
+        probe.remove();
+        if (!height) return;
+        root.style.setProperty('--chrome-home-stable-height', `${height}px`);
+        root.style.setProperty('--chrome-home-poster-row', `${height * 0.36}px`);
+        root.style.setProperty('--chrome-home-actions-row', `${height * 0.27}px`);
+    };
+
+    captureSmallViewport();
+    window.addEventListener('resize', () => {
+        if (Math.abs(window.innerWidth - lastWidth) < 80) return;
+        lastWidth = window.innerWidth;
+        requestAnimationFrame(captureSmallViewport);
+    }, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(captureSmallViewport, 250), { passive: true });
+})();
+</script>
 
