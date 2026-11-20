@@ -4266,6 +4266,22 @@ body.modal-scroll-locked {
 }
 </style>
 
+
+<style>
+/* Len Instagram/Facebook Android: pôvodné horné inštalačné tlačidlo. */
+@media (max-width: 699px) {
+  html.social-inapp-install #screen-home #install-btn.show,
+  html.social-inapp-install.browser-scroll-mode #screen-home #install-btn.show {
+    display: inline-flex !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 6px !important;
+    width: 116px !important;
+    min-height: 52px !important;
+    z-index: 100 !important;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -5737,24 +5753,26 @@ function showInstallButton() {
         return;
     }
     const b = document.getElementById('install-btn');
-    if (b && (deferredPrompt || isSafariIOS())) b.classList.add('show');
+    if (b && (deferredPrompt || isSafariIOS() || (isAndroidDevice() && isInstagramFacebookBrowser()))) b.classList.add('show');
 }
 
 function updatePlatformInstallButtons() {
     const chromeBtn = document.getElementById('install-chrome-btn');
     const safariBtn = document.getElementById('install-safari-btn');
-
-    // V Chrome zobrazíme tlačidlo, keď je dostupný natívny inštalačný prompt.
-    // V Instagram/Facebook prehliadači na Androide ho zobrazíme aj bez promptu:
-    // kliknutie otvorí túto stránku priamo v Google Chrome.
+    const topBtn = document.getElementById('install-btn');
     const installed = isInstalledApp();
-    const inAppAndroid = isAndroidDevice() && isInstagramFacebookBrowser();
-    if (chromeBtn) {
-        chromeBtn.style.display = (!installed && (inAppAndroid || (isChromeAndroid() && !!deferredPrompt))) ? 'flex' : 'none';
-        const label = chromeBtn.querySelector('span');
-        if (label) label.textContent = inAppAndroid ? 'OTVORIŤ V GOOGLE CHROME' : 'NAINŠTALOVAŤ APLIKÁCIU';
-    }
+    const inAppAndroid = isAndroidDevice() && isInstagramFacebookBrowser() && !installed;
+
+    document.documentElement.classList.toggle('social-inapp-install', inAppAndroid);
+    // Vo vloženom prehliadači je inštalácia výhradne hore na domovskej obrazovke.
+    if (chromeBtn) chromeBtn.style.display = (!inAppAndroid && !installed && isChromeAndroid() && !!deferredPrompt) ? 'flex' : 'none';
     if (safariBtn) safariBtn.style.display = (!installed && isSafariIOS()) ? 'flex' : 'none';
+    if (topBtn) {
+        const label = topBtn.querySelector('span');
+        if (label) label.textContent = inAppAndroid ? 'NAINŠTALOVAŤ CEZ PREHLIADAČ' : 'NAINŠTALOVAŤ APPKU';
+        if (inAppAndroid) topBtn.classList.add('show');
+        else if (!deferredPrompt && !isSafariIOS()) topBtn.classList.remove('show');
+    }
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -5767,6 +5785,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 async function installApp() {
     buzz();
+    if (isAndroidDevice() && isInstagramFacebookBrowser()) {
+        confirmOpenChromeAndroid();
+        return;
+    }
     const b = document.getElementById('install-btn');
 
     // Chromium browsers (Chrome, Edge, Opera...) can open the native install prompt.
