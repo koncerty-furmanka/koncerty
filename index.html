@@ -5363,11 +5363,12 @@ document.querySelectorAll(concertImageSelector).forEach(image => {
 });
 
 function showScreen(screenId) {
-    document.documentElement.classList.toggle('installed-app-mode', isInstalledApp());
-    document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
+    const runningAsInstalledApp = isStandaloneApp();
+    document.documentElement.classList.toggle('installed-app-mode', runningAsInstalledApp);
+    document.documentElement.classList.toggle('browser-scroll-mode', !runningAsInstalledApp);
     document.documentElement.classList.toggle(
         'browser-list-scroll-mode',
-        !isInstalledApp() && screenId !== 'screen-home'
+        !runningAsInstalledApp && screenId !== 'screen-home'
     );
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
@@ -5391,9 +5392,9 @@ function showScreen(screenId) {
     if (screenId === 'screen-home') {
         // Nainštalovaná PWA: domovské menu sa nesmie samo posúvať.
         // Bežný mobilný prehliadač: povoľ scroll celej stránky.
-        document.body.style.overflow = isInstalledApp() ? 'hidden' : 'auto';
+        document.body.style.overflow = runningAsInstalledApp ? 'hidden' : 'auto';
         const homeScreen = document.getElementById('screen-home');
-        if (!isInstalledApp()) {
+        if (!runningAsInstalledApp) {
             if (homeScreen) {
                 homeScreen.scrollTop = 0;
                 homeScreen.scrollLeft = 0;
@@ -5813,9 +5814,15 @@ document.addEventListener('click', (e) => {
 });
 
 function isInstalledApp() {
+    return isStandaloneApp() || pwaInstalledRelated;
+}
+
+// Layout mode depends on how this page was opened. The related-app check only
+// tells us that a PWA is installed somewhere on the device; Chrome tabs must
+// continue to use the browser layout and document scrolling.
+function isStandaloneApp() {
     return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true
-        || pwaInstalledRelated;
+        || window.navigator.standalone === true;
 }
 
 // Chrome Android vie cez túto API rozpoznať aj PWA otvorenú v bežnej karte.
@@ -6021,7 +6028,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=6').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=7').catch(() => {});
     });
 }
 
@@ -8054,8 +8061,9 @@ document.addEventListener('click', function(e) {
 
 bindPushButton();
 
-document.documentElement.classList.toggle('installed-app-mode', isInstalledApp());
-document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
+const runningAsInstalledApp = isStandaloneApp();
+document.documentElement.classList.toggle('installed-app-mode', runningAsInstalledApp);
+document.documentElement.classList.toggle('browser-scroll-mode', !runningAsInstalledApp);
 history.replaceState({ screen: 'screen-home' }, "", "#screen-home");
 showScreen('screen-home');
 
@@ -8616,23 +8624,6 @@ if (spotifyPlaylistUrl) {
 </body>
 
 
-<style id="chrome-home-columns-gap-fix">
-/* Iba mobilny Chrome: priblizit lavu a pravu skupinu tlacidiel k sebe.
-   Vertikalne odstupy medzi Fotogaleriou a Nasim merchom sa nemenia.
-   Nainstalovana aplikacia zostava bez zmeny. */
-@media (display-mode: browser) and (max-width: 699px) {
-  html.browser-scroll-mode #screen-home .bottom-container {
-    gap: 0 !important;
-  }
-  html.browser-scroll-mode #screen-home .left-col {
-    transform: translateX(28px) !important;
-  }
-  html.browser-scroll-mode #screen-home .right-col {
-    transform: translateX(-48px) !important;
-  }
-}
-</style>
-
 </html>
 
 
@@ -9002,7 +8993,7 @@ if (spotifyPlaylistUrl) {
     flex: none !important;
     align-items: stretch !important;
     justify-content: center !important;
-    gap: clamp(20px, 5vw, 28px) !important;
+    gap: clamp(10px, 2.5vw, 14px) !important;
     width: 100% !important;
     height: 100% !important;
     min-height: 0 !important;
