@@ -5842,7 +5842,7 @@ function showInstallButton() {
         return;
     }
     const b = document.getElementById('install-btn');
-    if (b && (deferredPrompt || isSafariIOS() || (isAndroidDevice() && isInstagramFacebookBrowser()))) b.classList.add('show');
+    if (b && (deferredPrompt || isSafariIOS() || isChromeAndroid() || (isAndroidDevice() && isInstagramFacebookBrowser()))) b.classList.add('show');
 }
 
 function updatePlatformInstallButtons() {
@@ -8836,6 +8836,23 @@ if (spotifyPlaylistUrl) {
   }
   html.social-inapp-install #screen-home #install-btn.show i {
     font-size: 0.98rem !important;
+  }
+}
+</style>
+
+<style id="android-chrome-install-button-final-fix">
+/* Chrome Android: zobraz tlačidlo aj v mobilnom režime so scrollovaním.
+   Inštaláciu stále spúšťa natívny beforeinstallprompt, ak je dostupný. */
+@media (max-width: 699px) {
+  html #screen-home #install-btn.show,
+  html.browser-scroll-mode #screen-home #install-btn.show {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 6px !important;
+    z-index: 100000 !important;
   }
 }
 </style>
