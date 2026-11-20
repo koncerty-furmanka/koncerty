@@ -5678,6 +5678,8 @@ async function copyAppShareLink() {
 }
 
 let deferredPrompt = null;
+// Stav zistený cez getInstalledRelatedApps() pre Chrome na Androide.
+let pwaInstalledRelated = false;
 
 const APP_URL = 'https://koncerty-furmanka.github.io/koncerty/';
 
@@ -5808,7 +5810,31 @@ document.addEventListener('click', (e) => {
 
 function isInstalledApp() {
     return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true;
+        || window.navigator.standalone === true
+        || pwaInstalledRelated;
+}
+
+// Chrome Android vie cez túto API rozpoznať aj PWA otvorenú v bežnej karte.
+// Funguje po deklarovaní vlastnej PWA v related_applications v manifeste.
+async function refreshInstalledPWAStatus() {
+    if (window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true) {
+        pwaInstalledRelated = true;
+    } else if (isChromeAndroid() && 'getInstalledRelatedApps' in navigator) {
+        try {
+            const relatedApps = await navigator.getInstalledRelatedApps();
+            pwaInstalledRelated = relatedApps.some(app => app.platform === 'webapp');
+        } catch (error) {
+            console.warn('Stav nainštalovanej PWA sa nepodarilo zistiť:', error);
+        }
+    }
+
+    if (isInstalledApp()) {
+        hideInstallButtons();
+        closeSocialInstallModal();
+    } else {
+        updatePlatformInstallButtons();
+    }
 }
 
 function isIOSDevice() {
@@ -5930,18 +5956,15 @@ if (document.readyState === 'loading') {
 
 window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
+    pwaInstalledRelated = true;
     // Po úspešnej inštalácii schovaj všetky inštalačné tlačidlá.
     hideInstallButtons();
     updatePlatformInstallButtons();
 });
 
 window.addEventListener('pageshow', () => {
-    if (isInstalledApp()) {
-        hideInstallButtons();
-        return;
-    }
-    // Po návrate do prehliadača znovu skontroluj, či Chrome ponúka inštaláciu.
-    updatePlatformInstallButtons();
+    // Opätovná kontrola zachytí aj inštaláciu alebo odinštalovanie medzi návštevami.
+    refreshInstalledPWAStatus();
 });
 
 
@@ -5989,6 +6012,7 @@ document.addEventListener('click', (event) => {
     if (installRequested && isChromeAndroid() && !isInstalledApp()) {
         showSocialInstallModal();
     }
+    refreshInstalledPWAStatus();
 })();
 
 if ('serviceWorker' in navigator) {
