@@ -4282,6 +4282,20 @@ body.modal-scroll-locked {
   }
 }
 </style>
+
+<style>
+/* OBNOVA HORNÉHO INŠTALAČNÉHO TLAČIDLA V BEŽNOM MOBILNOM CHROME
+   Staršie mobilné pravidlo ho skrývalo cez display:none !important. */
+@media (max-width: 699px) {
+  #screen-home #install-btn.show {
+    display: inline-flex !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 6px !important;
+    z-index: 100 !important;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -5628,7 +5642,7 @@ function openChromeAndroid() {
 
 function confirmOpenChromeAndroid() {
     closeChromeOpenChoice();
-    const url = APP_URL;
+    const url = APP_URL + '?install=1';
 
     // Explicitne cielime na Google Chrome. Nepoužívame všeobecný https intent,
     // pretože Android by mohol zobraziť výber Opera/Chrome.
@@ -5769,9 +5783,14 @@ function updatePlatformInstallButtons() {
     if (safariBtn) safariBtn.style.display = (!installed && isSafariIOS()) ? 'flex' : 'none';
     if (topBtn) {
         const label = topBtn.querySelector('span');
-        if (label) label.textContent = inAppAndroid ? 'NAINŠTALOVAŤ CEZ PREHLIADAČ' : 'NAINŠTALOVAŤ APPKU';
-        if (inAppAndroid) topBtn.classList.add('show');
-        else if (!deferredPrompt && !isSafariIOS()) topBtn.classList.remove('show');
+        const installRequested = new URLSearchParams(window.location.search).has('install');
+        if (label) {
+            label.textContent = inAppAndroid
+                ? 'NAINŠTALOVAŤ CEZ PREHLIADAČ'
+                : (installRequested ? 'DOKONČIŤ INŠTALÁCIU' : 'NAINŠTALOVAŤ APPKU');
+        }
+        const shouldShowTopButton = !installed && (inAppAndroid || !!deferredPrompt || isSafariIOS());
+        topBtn.classList.toggle('show', shouldShowTopButton);
     }
 }
 
