@@ -8880,3 +8880,126 @@ if (spotifyPlaylistUrl) {
   }
 }
 </style>
+
+
+<!-- Stabilizácia úvodnej obrazovky v mobilnom Chrome.
+     Používa malý viewport (svh), ktorý sa nemení pri skrývaní/zobrazovaní
+     adresného riadku. Platí iba pre Chrome v režime prehliadača. -->
+<style id="chrome-home-stable-viewport-fix">
+@media (display-mode: browser) and (max-width: 699px) {
+  html.browser-scroll-mode,
+  html.browser-scroll-mode body {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home.active {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(62px + env(safe-area-inset-bottom)) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  html.browser-scroll-mode #screen-home .home-content {
+    display: grid !important;
+    grid-template-rows: auto auto minmax(0, 1.12fr) minmax(0, .9fr) !important;
+    align-content: stretch !important;
+    justify-content: stretch !important;
+    gap: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    padding: calc(4px + env(safe-area-inset-top)) 0 2px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    zoom: .88 !important;
+  }
+
+  html.browser-scroll-mode #screen-home .home-header,
+  html.browser-scroll-mode #screen-home #countdown-bar {
+    min-height: 0 !important;
+    height: auto !important;
+    margin-top: 0 !important;
+  }
+
+  html.browser-scroll-mode #screen-home .menu-grid {
+    display: flex !important;
+    flex: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .menu-grid .img-btn-wrapper {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+  }
+
+  html.browser-scroll-mode #screen-home .menu-grid .btn-image {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  html.browser-scroll-mode #screen-home .bottom-container {
+    display: flex !important;
+    flex: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding: 2px 0 0 !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .left-col,
+  html.browser-scroll-mode #screen-home .right-col {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .left-col > .action-btn,
+  html.browser-scroll-mode #screen-home .right-col > .action-btn {
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .small-btn-img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  html.browser-scroll-mode #bottom-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 10500 !important;
+  }
+}
+</style>
+
