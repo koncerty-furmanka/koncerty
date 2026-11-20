@@ -5367,13 +5367,7 @@ function showScreen(screenId) {
     document.documentElement.classList.toggle('browser-scroll-mode', !isInstalledApp());
     document.documentElement.classList.toggle(
         'browser-list-scroll-mode',
-        !isInstalledApp() && (
-            screenId === 'screen-calendar' ||
-            screenId === 'screen-bands' ||
-            screenId === 'screen-map' ||
-            screenId === 'screen-gallery' ||
-            screenId === 'screen-merch'
-        )
+        !isInstalledApp() && screenId !== 'screen-home'
     );
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
@@ -6027,7 +6021,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=5').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=6').catch(() => {});
     });
 }
 
@@ -8818,7 +8812,8 @@ if (spotifyPlaylistUrl) {
   html.browser-list-scroll-mode #screen-bands.active,
   html.browser-list-scroll-mode #screen-map.active,
   html.browser-list-scroll-mode #screen-gallery.active,
-  html.browser-list-scroll-mode #screen-merch.active {
+  html.browser-list-scroll-mode #screen-merch.active,
+  html.browser-list-scroll-mode #screen-contact.active {
     position: relative !important;
     display: block !important;
     height: auto !important;
@@ -8833,6 +8828,7 @@ if (spotifyPlaylistUrl) {
   html.browser-list-scroll-mode #bands-list,
   html.browser-list-scroll-mode #gallery-grid,
   html.browser-list-scroll-mode .merch-grid,
+  html.browser-list-scroll-mode #screen-contact .msg-form,
   html.browser-list-scroll-mode #screen-map .map-info-grid,
   html.browser-list-scroll-mode #screen-map .navigation-section,
   html.browser-list-scroll-mode #screen-map .parking-navigation {
@@ -8896,8 +8892,8 @@ if (spotifyPlaylistUrl) {
    Stabilný small viewport zabraňuje preskupeniu prvkov po návrate na úvodnú obrazovku.
    Nainštalovaná PWA a desktop zostávajú bez zmeny. */
 @media (display-mode: browser) and (max-width: 699px) {
-  html.browser-scroll-mode,
-  html.browser-scroll-mode body {
+  html.browser-scroll-mode:not(.browser-list-scroll-mode),
+  html.browser-scroll-mode:not(.browser-list-scroll-mode) body {
     height: var(--chrome-home-stable-height, 100svh) !important;
     min-height: var(--chrome-home-stable-height, 100svh) !important;
     max-height: var(--chrome-home-stable-height, 100svh) !important;
@@ -9006,7 +9002,7 @@ if (spotifyPlaylistUrl) {
     flex: none !important;
     align-items: stretch !important;
     justify-content: center !important;
-    gap: 0 !important;
+    gap: clamp(20px, 5vw, 28px) !important;
     width: 100% !important;
     height: 100% !important;
     min-height: 0 !important;
@@ -9032,6 +9028,7 @@ if (spotifyPlaylistUrl) {
     gap: 4px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    transform: none !important;
   }
 
   html.browser-scroll-mode #screen-home .left-col > .action-btn,
