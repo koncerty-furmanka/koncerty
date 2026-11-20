@@ -6028,7 +6028,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=8').catch(() => {});
     });
 }
 
@@ -8908,7 +8908,7 @@ if (spotifyPlaylistUrl) {
   html.browser-scroll-mode #screen-home .home-content {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: auto auto minmax(0, var(--chrome-home-poster-row, 36svh)) minmax(0, var(--chrome-home-actions-row, 27svh)) !important;
+    grid-template-rows: auto auto minmax(0, var(--chrome-home-poster-row, 35svh)) minmax(0, var(--chrome-home-actions-row, 30svh)) !important;
     align-content: start !important;
     justify-content: stretch !important;
     align-items: stretch !important;
@@ -9044,6 +9044,12 @@ if (spotifyPlaylistUrl) {
     object-fit: contain !important;
   }
 
+  /* Keep the merch artwork inside its image bounds; the old 1.15 scale
+     enlarged it past the wrapper and cut off both sides. */
+  html.browser-scroll-mode #screen-home .home-merch-btn .small-btn-img {
+    transform: none !important;
+  }
+
   html.browser-scroll-mode #bottom-nav {
     position: fixed !important;
     left: 0 !important;
@@ -9071,8 +9077,8 @@ if (spotifyPlaylistUrl) {
         probe.remove();
         if (!height) return;
         root.style.setProperty('--chrome-home-stable-height', `${height}px`);
-        root.style.setProperty('--chrome-home-poster-row', `${height * 0.36}px`);
-        root.style.setProperty('--chrome-home-actions-row', `${height * 0.27}px`);
+        root.style.setProperty('--chrome-home-poster-row', `${height * 0.35}px`);
+        root.style.setProperty('--chrome-home-actions-row', `${height * 0.30}px`);
     };
 
     captureSmallViewport();
