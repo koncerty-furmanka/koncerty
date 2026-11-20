@@ -5580,6 +5580,12 @@ function isChromeAndroid() {
     return isAndroidDevice() && /chrome\//i.test(navigator.userAgent) && !/edg\//i.test(navigator.userAgent) && !/opr\//i.test(navigator.userAgent);
 }
 
+// Instagram a Facebook používajú vlastný vložený prehliadač.
+// Na Androide preto ponúkneme otvorenie rovnakej stránky priamo v Chrome.
+function isInstagramFacebookBrowser() {
+    return /instagram|fbav|fban|fb_iab|fb4a|messenger/i.test(navigator.userAgent);
+}
+
 function isSafariIOS() {
     return isIOSDevice() && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios|opios/i.test(navigator.userAgent);
 }
@@ -5649,9 +5655,15 @@ async function installViaChrome() {
         return;
     }
 
+    if (isAndroidDevice() && isInstagramFacebookBrowser()) {
+        // Instagram/Facebook môžu v User-Agent obsahovať aj Chrome.
+        // Preto ich kontrolujeme osobitne a vždy otvoríme systémový Chrome.
+        confirmOpenChromeAndroid();
+        return;
+    }
+
     if (isAndroidDevice() && !isChromeAndroid()) {
-        // Mimo Chrome nepoužívame žiadnu vlastnú hlášku ani výber prehliadača.
-        // Používateľa rovno prepneme do Google Chrome na tejto stránke.
+        // V ostatných Android prehliadačoch ponúkneme otvorenie v Chrome.
         confirmOpenChromeAndroid();
         return;
     }
@@ -5732,11 +5744,16 @@ function updatePlatformInstallButtons() {
     const chromeBtn = document.getElementById('install-chrome-btn');
     const safariBtn = document.getElementById('install-safari-btn');
 
-    // Android: zobraz inštaláciu iba vtedy, keď Chrome ponúkol skutočný
-    // inštalačný prompt. Ak je PWA už nainštalovaná, Chrome ho spravidla neponúkne.
-    // iPhone: Safari nemá beforeinstallprompt, preto zostáva manuálny návod.
+    // V Chrome zobrazíme tlačidlo, keď je dostupný natívny inštalačný prompt.
+    // V Instagram/Facebook prehliadači na Androide ho zobrazíme aj bez promptu:
+    // kliknutie otvorí túto stránku priamo v Google Chrome.
     const installed = isInstalledApp();
-    if (chromeBtn) chromeBtn.style.display = (!installed && isChromeAndroid() && !!deferredPrompt) ? 'flex' : 'none';
+    const inAppAndroid = isAndroidDevice() && isInstagramFacebookBrowser();
+    if (chromeBtn) {
+        chromeBtn.style.display = (!installed && (inAppAndroid || (isChromeAndroid() && !!deferredPrompt))) ? 'flex' : 'none';
+        const label = chromeBtn.querySelector('span');
+        if (label) label.textContent = inAppAndroid ? 'OTVORIŤ V GOOGLE CHROME' : 'NAINŠTALOVAŤ APLIKÁCIU';
+    }
     if (safariBtn) safariBtn.style.display = (!installed && isSafariIOS()) ? 'flex' : 'none';
 }
 
@@ -8406,22 +8423,6 @@ if (spotifyPlaylistUrl) {
   }
 }
 </style>
-
-<style id="restore-chrome-install-button">
-/* Chrome v režime prehliadača: obnoviť vlastné tlačidlo inštalácie.
-   Nie je aktívne v nainštalovanej PWA a zobrazí sa až po beforeinstallprompt. */
-@media (max-width: 699px) {
-  html.browser-scroll-mode #screen-home #install-btn.show {
-    display: inline-flex !important;
-    position: fixed !important;
-    top: 8px !important;
-    right: 8px !important;
-    left: auto !important;
-    z-index: 20000 !important;
-  }
-}
-</style>
-
 </body>
 
 
