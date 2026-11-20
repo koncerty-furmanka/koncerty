@@ -5875,6 +5875,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e;
     showInstallButton();
     updatePlatformInstallButtons();
+    if (new URLSearchParams(window.location.search).has('install') && isChromeAndroid()) {
+        showSocialInstallModal();
+    }
 });
 
 async function installApp() {
@@ -5958,8 +5961,12 @@ function closeSocialInstallModal() {
 
 document.addEventListener('click', (event) => {
     if (event.target && event.target.id === 'social-install-open') {
-        closeSocialInstallModal();
-        installApp();
+        if (deferredPrompt) {
+            closeSocialInstallModal();
+            installApp();
+        } else {
+            showToast('CHROME EŠTE NEPRIPRAVIL INŠTALÁCIU. SKÚS TO O CHVÍĽU ALEBO OTVOR MENU CHROME.');
+        }
     }
     if (event.target && event.target.id === 'social-install-later') {
         closeSocialInstallModal();
