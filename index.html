@@ -5363,12 +5363,16 @@ document.querySelectorAll(concertImageSelector).forEach(image => {
 });
 
 function showScreen(screenId) {
+    const previousScreenId = activeScreenId;
     const runningAsInstalledApp = isStandaloneApp();
     document.documentElement.classList.toggle('installed-app-mode', runningAsInstalledApp);
     document.documentElement.classList.toggle('browser-scroll-mode', !runningAsInstalledApp);
     document.documentElement.classList.toggle(
         'browser-list-scroll-mode',
-        !runningAsInstalledApp && screenId !== 'screen-home'
+        !runningAsInstalledApp && (
+            screenId !== 'screen-home' ||
+            (isChromeAndroid() && window.matchMedia('(max-width: 699px)').matches)
+        )
     );
     if (screenId !== 'screen-contact' || !merchCheckoutMode) {
         resetMerchCheckoutView();
@@ -5402,6 +5406,16 @@ function showScreen(screenId) {
             document.documentElement.scrollTop = 0;
             document.body.scrollTop = 0;
             window.scrollTo(0, 0);
+            if (previousScreenId !== 'screen-home') {
+                requestAnimationFrame(() => {
+                    if (activeScreenId !== 'screen-home' || !isChromeAndroid() || window.innerWidth >= 700) return;
+                    const maxPageScroll = Math.max(
+                        document.documentElement.scrollHeight,
+                        document.body.scrollHeight
+                    ) - window.innerHeight;
+                    window.scrollTo(0, Math.max(0, maxPageScroll));
+                });
+            }
         }
     } else {
         document.body.style.overflow = 'auto';
@@ -6028,7 +6042,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=8').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=9').catch(() => {});
     });
 }
 
@@ -8768,8 +8782,8 @@ if (spotifyPlaylistUrl) {
 </style>
 
 <style id="chrome-inner-sections-scroll-final-fix">
-/* Chrome v režime prehliadača: kalendár, kapely, mapa, galéria a merch
-   sa posúvajú ako celý dokument. Nainštalovaná PWA zostáva nedotknutá. */
+/* Mobilný Chrome: sekcie sa posúvajú ako celý dokument; domovské menu si
+   ponecháva krátky skrytý scroll rozsah na opätovné zobrazenie hornej lišty. */
 @media (max-width: 699px) {
   html.browser-list-scroll-mode {
     position: static !important;
@@ -8788,6 +8802,8 @@ if (spotifyPlaylistUrl) {
     overflow-y: auto !important;
     overscroll-behavior-y: auto !important;
     touch-action: pan-y !important;
+    /* The Chrome home screen itself stays fixed. This short document scroll
+       range lets users swipe down to bring Chrome's hidden top controls back. */
     padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
   }
 
@@ -9033,6 +9049,10 @@ if (spotifyPlaylistUrl) {
     min-height: 0 !important;
     max-height: 100% !important;
     overflow: hidden !important;
+  }
+
+  html.browser-scroll-mode #screen-home .right-col > .small-btn-wrapper {
+    transform: translateX(-5px) !important;
   }
 
   html.browser-scroll-mode #screen-home .small-btn-img {

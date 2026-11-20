@@ -1,7 +1,7 @@
 // Kôňcerty – service worker
 // Cache: rýchly štart + offline záloha + obrázky podľa potreby.
 
-const CACHE = 'koncerty-v24.57';
+const CACHE = 'koncerty-v24.58';
 const SHELL = ['./', './index.html', './manifest.json', './vinyl.png'];
 
 const DATA_URLS = [
