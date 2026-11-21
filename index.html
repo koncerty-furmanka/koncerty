@@ -6042,7 +6042,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=9').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=10').catch(() => {});
     });
 }
 
@@ -6694,11 +6694,10 @@ async function loadGalleryData() {
 
     // Fotogaléria sa už nespolieha na galeria.csv.
     // Zoznam súborov načítame priamo z priečinka /fotky/ na GitHube.
-    // Formát názvov:
-    //   RRRR-DD-MM.webp
-    //   RRRR-DD-MM (1).webp
-    //   RRRR-DD-MM-kapela.webp
-    //   RRRR-DD-MM-kapela (1).webp
+    // Podporované formáty názvov:
+    //   starší RRRR-DD-MM.webp (deň a potom mesiac)
+    //   nový RRRR_MM_DD.webp (mesiac a potom deň)
+    //   voliteľný číselný suffix, napr. " (1)"; názov kapely môže nasledovať po pomlčke
     // Prvá skupina patrí iba do všeobecnej galérie, druhá aj ku konkrétnej kapele.
     try {
         const resp = await fetch(galleryApiUrl + '&t=' + Date.now(), {
@@ -6726,10 +6725,12 @@ async function loadGalleryData() {
 
         imageFiles.forEach(file => {
             const name = String(file.name || '');
-            const match = name.match(/^(\d{4})-(\d{2})-(\d{2})(.*)\.(webp|jpg|jpeg|png)$/i);
+            const match = name.match(/^(\d{4})([-_])(\d{2})\2(\d{2})(.*)\.(webp|jpg|jpeg|png)$/i);
             if (!match) return;
 
-            const [, year, day, month, suffix] = match;
+            const [, year, separator, firstDatePart, secondDatePart, suffix] = match;
+            const day = separator === '_' ? secondDatePart : firstDatePart;
+            const month = separator === '_' ? firstDatePart : secondDatePart;
             const dateKey = `${parseInt(day, 10)}.${parseInt(month, 10)}.${year}`;
 
             // Z URL odstránime iba číselný duplikát "(1)", "(2)"...
