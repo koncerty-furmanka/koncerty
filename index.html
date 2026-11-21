@@ -5362,8 +5362,23 @@ document.querySelectorAll(concertImageSelector).forEach(image => {
     image.classList.toggle('media-failed', image.naturalWidth === 0);
 });
 
+function dismissGalleryOverlaysForNavigation() {
+    if (isLightboxOpen) closeLightbox(true);
+
+    if (isGalleryOpen) {
+        const overlay = document.getElementById('event-gallery-overlay');
+        if (overlay) overlay.classList.remove('active');
+        isGalleryOpen = false;
+        previousScreenForGallery = null;
+        unlockBodyScroll();
+    }
+}
+
 function showScreen(screenId) {
     const previousScreenId = activeScreenId;
+    if (screenId !== activeScreenId && (isLightboxOpen || isGalleryOpen)) {
+        dismissGalleryOverlaysForNavigation();
+    }
     const runningAsInstalledApp = isStandaloneApp();
     document.documentElement.classList.toggle('installed-app-mode', runningAsInstalledApp);
     document.documentElement.classList.toggle('browser-scroll-mode', !runningAsInstalledApp);
@@ -6042,7 +6057,7 @@ document.addEventListener('click', (event) => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=10').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=11').catch(() => {});
     });
 }
 
